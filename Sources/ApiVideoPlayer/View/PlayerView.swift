@@ -15,11 +15,7 @@ public class PlayerView: UIView {
     var player: Player!
     let videoType: VideoType!
     let videoId: String!
-    
-    let playPauseButton: UIButton = {
-        let btn = UIButton(type: .system)
-        return btn
-    }()
+    var timeObserver: Any?
     let videoPlayerView = UIView()
     
     private let playerLayer = AVPlayerLayer()
@@ -58,14 +54,16 @@ public class PlayerView: UIView {
         TasksExecutor.execute(session: session, request: request) { (data, error) in
             if data != nil {
                 self.player = try! JSONDecoder().decode(Player.self, from: data!)
+                // TODO: handle the video mp4 if error on .m3u8
+                // Fatal error: 'try!' expression unexpectedly raised an error: Swift.DecodingError.keyNotFound(CodingKeys(stringValue: "mp4", intValue: nil), Swift.DecodingError.Context(codingPath: [CodingKeys(stringValue: "video", intValue: nil)], debugDescription: "No value associated with key CodingKeys(stringValue: \"mp4\", intValue: nil) (\"mp4\").", underlyingError: nil))
                 print("player : \(String(describing: self.player))")
                 print("Current thread \(Thread.current)")
                 DispatchQueue.main.async {
                     completion(self.player, nil)
                 }
                 
-//                let json = try? JSONSerialization.jsonObject(with: data!) as? [String: AnyObject]
-//                print("json response : \(String(describing: json))")
+                //                let json = try? JSONSerialization.jsonObject(with: data!) as? [String: AnyObject]
+                //                print("json response : \(String(describing: json))")
             } else {
                 DispatchQueue.main.async {
                     completion(nil, error)
@@ -83,62 +81,26 @@ public class PlayerView: UIView {
         }else{
             self.backgroundColor = .black
         }
-        
-        self.addSubview(playPauseButton)
-        playPauseButton.addTarget(self, action: #selector(seekPlayAction), for: .touchUpInside)
-        getIconPlayBtn()
         avPlayer = AVPlayer(url: URL(string: player.video.src)!)
         playerLayer.player = avPlayer
         self.layer.addSublayer(playerLayer)
-        self.bringSubviewToFront(playPauseButton)
-        constraints()
+        if(videoType == .vod){
+            let vodControlsView = VodControls(frame: .zero, parentView: self, player: avPlayer)
+            let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+            timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+                vodControlsView.updatePlayerState()
+            })
+        }else{
+            print("this is a live please set liveControls")
+        }
+        
+        
     }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer.frame = bounds
     }
-    
-    private func constraints(){
-        playPauseButton.translatesAutoresizingMaskIntoConstraints = false
-        playPauseButton.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        playPauseButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        playPauseButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        playPauseButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-    }
-    
-    
-    @objc func seekPlayAction() {
-        print("seek play")
-        if !isPlaying{
-            avPlayer.play()
-            isPlaying = true
-        }else{
-            avPlayer.pause()
-            isPlaying = false
-        }
-        getIconPlayBtn()
-    }
-    
-    
-    private func getIconPlayBtn(){
-        if !isPlaying{
-            if #available(tvOS 13.0, *) {
-                playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
-            } else {
-                // Fallback on earlier versions
-            }
-            playPauseButton.tintColor = .systemOrange
-        }else{
-            if #available(tvOS 13.0, *) {
-                playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-            } else {
-                // Fallback on earlier versions
-            }
-            playPauseButton.tintColor = .systemOrange
-        }
-    }
-    
 }
 
 #else
