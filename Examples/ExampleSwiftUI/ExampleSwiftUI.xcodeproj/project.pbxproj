@@ -11,7 +11,7 @@
 		C75C791227E1E259001CA24D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C791127E1E259001CA24D /* ContentView.swift */; };
 		C75C791427E1E25A001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C791327E1E25A001CA24D /* Assets.xcassets */; };
 		C75C791727E1E25A001CA24D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C791627E1E25A001CA24D /* Preview Assets.xcassets */; };
-		C7D3E68227E9DE27006A8462 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7D3E68127E9DE27006A8462 /* ApiVideoPlayer */; };
+		C7FA1CB927FC406400823F88 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7FA1CB827FC406400823F88 /* ApiVideoPlayer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +21,7 @@
 		C75C791327E1E25A001CA24D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C75C791627E1E25A001CA24D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C75C795C27E1E739001CA24D /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
+		C7FA1CB027F1FB2800823F88 /* ExampleSwiftUI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExampleSwiftUI.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,7 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7D3E68227E9DE27006A8462 /* ApiVideoPlayer in Frameworks */,
+				C7FA1CB927FC406400823F88 /* ApiVideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,9 +75,15 @@
 		C75C795B27E1E739001CA24D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C7FA1CB027F1FB2800823F88 /* ExampleSwiftUI.xcodeproj */,
 				C75C795C27E1E739001CA24D /* ApiVideoPlayer */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C7FA1CB127F1FB2800823F88 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -96,7 +103,7 @@
 			);
 			name = ExampleSwiftUI;
 			packageProductDependencies = (
-				C7D3E68127E9DE27006A8462 /* ApiVideoPlayer */,
+				C7FA1CB827FC406400823F88 /* ApiVideoPlayer */,
 			);
 			productName = ExampleSwiftUI;
 			productReference = C75C790C27E1E259001CA24D /* ExampleSwiftUI.app */;
@@ -128,6 +135,12 @@
 			mainGroup = C75C790327E1E259001CA24D;
 			productRefGroup = C75C790D27E1E259001CA24D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = C7FA1CB127F1FB2800823F88 /* Products */;
+					ProjectRef = C7FA1CB027F1FB2800823F88 /* ExampleSwiftUI.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				C75C790B27E1E259001CA24D /* ExampleSwiftUI */,
@@ -358,7 +371,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C7D3E68127E9DE27006A8462 /* ApiVideoPlayer */ = {
+		C7FA1CB827FC406400823F88 /* ApiVideoPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ApiVideoPlayer;
 		};

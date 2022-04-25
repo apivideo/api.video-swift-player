@@ -9,14 +9,19 @@ import SwiftUI
 import ApiVideoPlayer
 
 struct ContentView: View {
-    //private var player: PlayerSwiftUIView!
+    private var player: PlayerSwiftUIView!
     init(){
-       // player = PlayerSwiftUIView()
+        player = PlayerSwiftUIView(videoId: "li5wq1x0g0v3AQws2Y5OyqJq", videoType: .live)
+        player.getPaused({ (paused) in
+            print()
+        })
     }
     var body: some View {
-        PlayerSwiftUIView(videoId: "vi4HJALHgFlKMmosVsiI9nBd", videoType: .vod)
+        player
             .frame(width: UIScreen.main.bounds.width * 0.85, height: UIScreen.main.bounds.height * 0.5, alignment: .center)
             .cornerRadius(40)
+            
+            
     }
 }
 

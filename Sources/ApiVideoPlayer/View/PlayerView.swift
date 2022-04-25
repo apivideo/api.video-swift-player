@@ -21,35 +21,60 @@ public class PlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private var avPlayer: AVPlayer!
     private var isPlaying = false
+    private var isLoop =  false
+    
+    private var vodControlsView: VodControls?
+    private var liveControlsView: LiveControls?
+    private var isHiddenControls = false
+    
+    public var events: PlayerEvents? = nil
     
     
-    init(frame: CGRect, videoId: String, videoType: VideoType) {
+    public init(frame: CGRect, videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
         self.videoId = videoId
         self.videoType = videoType
+        self.events = events
         super.init(frame: frame)
-        print("Current thread \(Thread.current)")
-        getPlayerJSON(){ (player, error) in
+        getPlayerJSON(videoType: videoType){ (player, error) in
+            if player != nil{
+                print("Current thread \(Thread.current)")
+                self.setupView()
+            }
+        }
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.videoId = "vidzPxbDRoC23yzdajOq04t"
+        self.videoType = .vod
+        self.events = PlayerEvents()
+        super.init(coder: aDecoder)
+        getPlayerJSON(videoType: videoType){ (player, error) in
             if player != nil{
                 print("Current thread \(Thread.current)")
                 self.setupView()
             }
         }
         
+        //fatalError("init(coder:) has not been implemented")
     }
     
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     //https://cdn.api.video/vod/vi4HJALHgFlKMmosVsiI9nBd/player.json
-    private func getVideoUrl() -> String{
-        let baseUrl = "https://cdn.api.video/"
-        let url = baseUrl + self.videoType.rawValue + "/\(self.videoId!)/player.json"
+    private func getVideoUrl(videoType: VideoType) -> String{
+        var baseUrl = ""
+        if videoType == .vod {
+            baseUrl = "https://cdn.api.video/vod/"
+        }else{
+            baseUrl = "https://live.api.video/"
+        }
+        
+        let url = baseUrl + "\(self.videoId!)/player.json"
         return url
     }
     
-    private func getPlayerJSON(completion: @escaping (Player?, Error?) -> Void){
-        let request = RequestsBuilder().getPlayerData(path: getVideoUrl())
+    private func getPlayerJSON(videoType: VideoType, completion: @escaping (Player?, Error?) -> Void){
+        let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data, error) in
             if data != nil {
@@ -81,17 +106,33 @@ public class PlayerView: UIView {
         }else{
             self.backgroundColor = .black
         }
-        avPlayer = AVPlayer(url: URL(string: player.video.src)!)
+        let item = AVPlayerItem(url: URL(string: player.video.src)!)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+        
+        avPlayer = AVPlayer(playerItem: item)
         playerLayer.player = avPlayer
         self.layer.addSublayer(playerLayer)
         if(videoType == .vod){
-            let vodControlsView = VodControls(frame: .zero, parentView: self, player: avPlayer)
-            let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-            timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-                vodControlsView.updatePlayerState()
-            })
+            if(!isHiddenControls){
+                self.vodControlsView = VodControls(frame: .zero, parentView: self, player: avPlayer)
+                //self.vodControlsView?.hideControls()
+                let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+                timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+                    self.vodControlsView!.updatePlayerState()
+                })
+            }
+            
         }else{
-            print("this is a live please set liveControls")
+            let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+            
+            if isHiddenControls {
+                self.liveControlsView = LiveControls(frame: .zero, parentView: self, player: avPlayer)
+                
+                timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+                    // liveControlsView.updatePlayerState()
+                })
+            }
+            
         }
         
         
@@ -101,6 +142,117 @@ public class PlayerView: UIView {
         super.layoutSubviews()
         playerLayer.frame = bounds
     }
+    
+    
+    public func isVideoPlaying() -> Bool{
+        var isVideoPlaying = false
+        if(avPlayer.timeControlStatus == .playing){
+            isVideoPlaying = true
+        }
+        return isVideoPlaying
+    }
+    
+    public func play(){
+        avPlayer.play()
+        isPlaying = true
+        if(self.events?.didPlay != nil){
+            self.events?.didPlay!()
+        }
+    }
+    
+    public func replay(){
+        print("current time: \(getCurrentTime().seconds)")
+        avPlayer.seek(to: CMTime.zero)
+        avPlayer.play()
+        if(self.events?.didRePlay != nil){
+            self.events?.didRePlay!()
+        }
+    }
+    public func pause(){
+        avPlayer.pause()
+        isPlaying = false
+        if(self.events?.didPause != nil){
+            self.events?.didPause!()
+        }
+    }
+    public func mute(){
+        avPlayer.isMuted = true
+        if(self.events?.didMute != nil){
+            self.events?.didMute!()
+        }
+    }
+    public func unMute(){
+        avPlayer.isMuted = false
+        if(self.events?.didUnMute != nil){
+            self.events?.didUnMute!()
+        }
+    }
+    public func isMuted() -> Bool{
+        return avPlayer.isMuted
+    }
+    public func hideControls(){
+        isHiddenControls = true
+        if(videoType == .vod){
+            self.vodControlsView?.hideControls()
+        }else{
+            self.liveControlsView?.hideControls()
+        }
+    }
+    public func showControls(){
+        
+    }
+    public func showSubtitle(){
+        if(self.events?.didShowSubtitle != nil){
+            self.events?.didShowSubtitle!()
+        }
+    }
+    public func hideSubtitle(){
+        if(self.events?.didHideSubtitle != nil){
+            self.events?.didHideSubtitle!()
+        }
+    }
+    public func setLoop(loop: Bool){
+        isLoop = true
+    }
+    public func seek(time: Double){
+        guard let currentTime = avPlayer?.currentTime() else { return }
+        var currentTimeInSeconds =  CMTimeGetSeconds(currentTime).advanced(by: time)
+        let seekTime = CMTime(value: CMTimeValue(currentTimeInSeconds), timescale: 1)
+        avPlayer?.seek(to: seekTime)
+        if(self.events?.didSeekTime != nil){
+            if currentTimeInSeconds < 0 {
+                currentTimeInSeconds = 0.0
+            }
+            self.events?.didSeekTime!(currentTime.seconds, currentTimeInSeconds)
+        }
+    }
+    public func setVolume(volume: Float){
+        avPlayer.volume = volume
+        if(self.events?.didSetVolume != nil){
+            self.events?.didSetVolume!(volume)
+        }
+    }
+    
+    public func getDuration(completion: @escaping (CMTime) -> ()){
+        completion(avPlayer.currentItem!.asset.duration)
+    }
+    public func getCurrentTime() -> CMTime{
+        return avPlayer.currentTime()
+    }
+    
+    @objc func donePlaying(sender: Notification) {
+         //Dismiss AVPlayerViewController
+        if isLoop {
+            replay()
+            if(self.events?.didLoop != nil){
+                self.events?.didLoop!()
+            }
+        }
+        if(self.events?.didFinish != nil){
+            self.events?.didFinish!()
+        }
+    }
+    
 }
 
 #else
@@ -117,3 +269,32 @@ public class PlayerView: NSView{
     }
 }
 #endif
+
+public struct PlayerEvents{
+    public var didPause: (() -> ())? = nil
+    public var didPlay: (() -> ())? = nil
+    public var didRePlay: (() -> ())? = nil
+    public var didMute: (() -> ())? = nil
+    public var didUnMute: (() -> ())? = nil
+    public var didShowSubtitle: (() -> ())? = nil
+    public var didHideSubtitle: (() -> ())? = nil
+    public var didLoop: (() -> ())? = nil
+    public var didSetVolume: ((_ volume: Float) -> ())? = nil
+    public var didSeekTime: ((_ from: Double, _ to: Double) -> ())? = nil
+    public var didFinish: (() -> ())? = nil
+
+    
+    public init(didPause: (() -> ())? = nil, didPlay: (() -> ())? = nil, didRePlay: (() -> ())? = nil, didMute: (() -> ())? = nil, didUnMute:(() -> ())? = nil, didShowSubtitle: (() -> ())? = nil, didHideSubtitle: (() -> ())? = nil, didLoop: (() -> ())? = nil, didSetVolume: ((Float) -> ())? = nil, didSeekTime: ((Double,Double) -> ())? = nil, didFinish: (() -> ())? = nil) {
+        self.didPause = didPause
+        self.didPlay = didPlay
+        self.didRePlay = didRePlay
+        self.didMute = didMute
+        self.didUnMute = didUnMute
+        self.didLoop = didLoop
+        self.didShowSubtitle = didShowSubtitle
+        self.didHideSubtitle = didHideSubtitle
+        self.didSetVolume = didSetVolume
+        self.didSeekTime = didSeekTime
+        self.didFinish = didFinish
+    }
+}

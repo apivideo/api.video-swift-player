@@ -17,6 +17,8 @@ class VodControls: UIView{
     private var avPlayer: AVPlayer!
     private var pView: UIView!
     
+    private var isHiddenControls = false
+    
     
     init(frame: CGRect, parentView: UIView, player: AVPlayer) {
         self.avPlayer = player
@@ -67,9 +69,11 @@ class VodControls: UIView{
     private func setVodControls(){
         //Controls View
         pView.addSubview(self)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-        self.addGestureRecognizer(tap)
-        self.isUserInteractionEnabled = true
+        if !isHiddenControls {
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+            self.addGestureRecognizer(tap)
+            self.isUserInteractionEnabled = true
+        }
         
         //Play Pause Button
         self.addSubview(playPauseButton)
@@ -164,8 +168,20 @@ class VodControls: UIView{
         
     }
     
+    public func hideControls(){
+        isHiddenControls = true
+        playPauseButton.isHidden = true
+        vodControlGoForward15Button.isHidden = true
+        vodControlGoBackward15Button.isHidden = true
+        vodControlSliderView.isHidden = true
+        
+    }
+    
     
     func seekControls(){
+        if isHiddenControls {
+            
+        }else{
         if(!playPauseButton.isHidden){
             UIView.animate(withDuration: 0.2, animations: {
                 self.playPauseButton.alpha = 0
@@ -225,12 +241,15 @@ class VodControls: UIView{
             }
             activateTimer()
         }
+        }
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
         print("view tapped")
-        resetTimer()
-        seekControls()
+        if(!isHiddenControls){
+            resetTimer()
+            seekControls()
+        }
     }
     
     @objc func seekPlayAction() {

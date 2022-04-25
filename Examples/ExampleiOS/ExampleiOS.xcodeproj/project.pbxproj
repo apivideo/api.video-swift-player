@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		C75C78F027E1E1FA001CA24D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */; };
 		C75C78F227E1E1FA001CA24D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */; };
-		C75C78F427E1E1FA001CA24D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78F327E1E1FA001CA24D /* ViewController.swift */; };
 		C75C78F727E1E1FA001CA24D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F527E1E1FA001CA24D /* Main.storyboard */; };
 		C75C78F927E1E1FD001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F827E1E1FD001CA24D /* Assets.xcassets */; };
 		C75C78FC27E1E1FD001CA24D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */; };
+		C7922D942811685C00957116 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7922D932811685B00957116 /* PlayerViewController.swift */; };
 		C7AD13BA27E8CD760039E779 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7AD13B927E8CD760039E779 /* ApiVideoPlayer */; };
 /* End PBXBuildFile section */
 
@@ -20,13 +20,13 @@
 		C75C78EC27E1E1FA001CA24D /* ExampleiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		C75C78F327E1E1FA001CA24D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C75C78F627E1E1FA001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C75C78F827E1E1FD001CA24D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C75C78FB27E1E1FD001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C75C78FD27E1E1FD001CA24D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C75C795327E1E6AC001CA24D /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../../Package.swift; sourceTree = "<group>"; };
 		C75C795427E1E6CC001CA24D /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
+		C7922D932811685B00957116 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,11 +63,11 @@
 			children = (
 				C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */,
 				C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */,
-				C75C78F327E1E1FA001CA24D /* ViewController.swift */,
 				C75C78F527E1E1FA001CA24D /* Main.storyboard */,
 				C75C78F827E1E1FD001CA24D /* Assets.xcassets */,
 				C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */,
 				C75C78FD27E1E1FD001CA24D /* Info.plist */,
+				C7922D932811685B00957116 /* PlayerViewController.swift */,
 			);
 			path = ExampleiOS;
 			sourceTree = "<group>";
@@ -155,9 +155,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C75C78F427E1E1FA001CA24D /* ViewController.swift in Sources */,
 				C75C78F027E1E1FA001CA24D /* AppDelegate.swift in Sources */,
 				C75C78F227E1E1FA001CA24D /* SceneDelegate.swift in Sources */,
+				C7922D942811685C00957116 /* PlayerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

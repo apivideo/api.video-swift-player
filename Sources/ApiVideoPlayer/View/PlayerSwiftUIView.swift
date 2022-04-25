@@ -13,17 +13,27 @@ import AVKit
 public struct PlayerSwiftUIView: UIViewRepresentable {
     let videoId: String!
     let videoType: VideoType!
+    let events = PlayerEvents()
+    //let player: Player
     public init(videoId : String, videoType: VideoType){
         self.videoId = videoId
         self.videoType = videoType
     }
     public func makeUIView(context: Context) -> UIView {
-        return PlayerView(frame: .zero, videoId: videoId, videoType: videoType)
+        return PlayerView(frame: .zero, videoId: videoId, videoType: videoType, events: events)
     }
     
     public func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PlayerSwiftUIView>) {
         
     }
+    public func pause(){
+        
+    }
+    
+    public func getPaused(completion: @escaping (Bool)->()){
+        
+    }
+    
 }
 
 @available(iOS 13.0, *)
