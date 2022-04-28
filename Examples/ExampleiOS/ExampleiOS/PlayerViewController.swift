@@ -44,10 +44,10 @@ class PlayerViewController: UIViewController {
             didSeekTime: {(from, to)in
                 print("seek from : \(from), to: \(to)")
             }
-
+            
         )
         
-        let player = PlayerView(frame: .zero, videoId: "vi59FqvVyn2KjOC2vF21g2au", videoType: .vod, events: events)
+        let player = PlayerView(frame: .zero, videoId: "vi1fP8xxejHTkWH2I9ISpBTx", videoType: .vod, events: events)
         return player
     }()
     
@@ -62,7 +62,15 @@ class PlayerViewController: UIViewController {
         constraintPlayer.addGestureRecognizer(doubleTap)
         //constraintPlayer.isUserInteractionEnabled = true
         
+//        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
+//        longPressRecognizer.minimumPressDuration = 0.5
+//        longPressRecognizer.numberOfTouchesRequired = 1
+//        longPressRecognizer.allowableMovement = 1
+//        longPressRecognizer.delaysTouchesBegan = true
+//        constraintPlayer.addGestureRecognizer(longPressRecognizer)
+        
         tap.require(toFail: doubleTap)
+        
         
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
@@ -108,9 +116,14 @@ class PlayerViewController: UIViewController {
     }
     
     @objc private func didSwipe(_ sender: UISwipeGestureRecognizer) {
-        var vol = AVAudioSession.sharedInstance().outputVolume
-        vol = vol + 0.1
-        constraintPlayer.setVolume(volume: vol)
-        print("volume: \(vol)")
+//        var vol = AVAudioSession.sharedInstance().outputVolume
+//        vol = vol + 0.1
+//        constraintPlayer.setVolume(volume: vol)
+//        print("volume: \(vol)")
+        
+        constraintPlayer.setViewController(vc: self)
+        
     }
 }
+
+

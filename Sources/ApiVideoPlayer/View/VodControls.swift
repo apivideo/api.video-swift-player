@@ -66,6 +66,14 @@ class VodControls: UIView{
         return label
     }()
     
+    let fullScreenButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
+        btn.tintColor = .systemOrange
+        return btn
+    }()
+
+    
     private func setVodControls(){
         //Controls View
         pView.addSubview(self)
@@ -100,7 +108,11 @@ class VodControls: UIView{
         //Timer Label
         vodControlSliderView.addSubview(vodControlTimerLabel)
         vodControlTimerLabel.textColor = UIColor.orange
+
         
+        //Full Screen Button
+        self.addSubview(fullScreenButton)
+        fullScreenButton.addTarget(self, action: #selector(goFullScreenAction), for: .touchUpInside)
         
         // TODO: handle device orientation to set the style of controls
         
@@ -164,6 +176,13 @@ class VodControls: UIView{
         vodControlTimerLabel.translatesAutoresizingMaskIntoConstraints = false
         vodControlTimerLabel.centerYAnchor.constraint(equalTo: vodControlSliderView.centerYAnchor).isActive = true
         vodControlTimerLabel.rightAnchor.constraint(equalTo: vodControlSliderView.rightAnchor, constant: -10).isActive = true
+        
+        //FullScreen Button
+        fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
+        fullScreenButton.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
+        fullScreenButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
+        fullScreenButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        fullScreenButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
         
     }
@@ -284,6 +303,11 @@ class VodControls: UIView{
         let seekTime = CMTime(value: CMTimeValue(currentTimeInSecondsMinus15), timescale: 1)
         avPlayer?.seek(to: seekTime)
         activateTimer()
+    }
+    
+    @objc func goFullScreenAction() {
+        print("goFullScreenAction")
+        
     }
     
     public func updatePlayerState() {

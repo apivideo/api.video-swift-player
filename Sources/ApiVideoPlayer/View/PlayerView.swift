@@ -26,9 +26,16 @@ public class PlayerView: UIView {
     private var vodControlsView: VodControls?
     private var liveControlsView: LiveControls?
     private var isHiddenControls = false
+    private var isFullScreenAvailable = false
     
     public var events: PlayerEvents? = nil
-    
+    public var viewController: UIViewController? = nil {
+        didSet{
+            isFullScreenAvailable = !isFullScreenAvailable
+            displayFullScreen()
+            displayFullScreenAction()
+        }
+    }
     
     public init(frame: CGRect, videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
         self.videoId = videoId
@@ -45,7 +52,7 @@ public class PlayerView: UIView {
     
     
     required init?(coder aDecoder: NSCoder) {
-        self.videoId = "vidzPxbDRoC23yzdajOq04t"
+        self.videoId = "vi1fP8xxejHTkWH2I9ISpBTx"
         self.videoType = .vod
         self.events = PlayerEvents()
         super.init(coder: aDecoder)
@@ -57,6 +64,54 @@ public class PlayerView: UIView {
         }
         
         //fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func setViewController(vc: UIViewController){
+        self.viewController = vc
+    }
+        
+    private func displayFullScreenAction(){
+        //let playerLayer = AVPlayerLayer(player: avPlayer)
+        if isFullScreenAvailable{
+            self.layer.name = "customPlayer"
+            self.viewController?.view.layer.addSublayer(self.layer)
+            self.frame = (self.viewController?.view.layer.bounds)!
+            
+            if let sublayers = self.viewController?.view.layer.sublayers {
+                print("---------")
+                for layer in sublayers {
+                    print(layer)
+                    print(layer.name)
+                }
+                print("---------")
+            }
+        }else{
+            //self.videoPlayerView.layer.sublayers?.removeAll()
+            if let sublayers = self.viewController?.view.layer.sublayers {
+                print("layer main view")
+                for layer in sublayers {
+                    print(layer)
+                    print(layer.name)
+                    if layer.name == "customPlayer" {
+                        print("====== rm ======")
+                        //layer.removeFromSuperlayer()
+                    }
+                }
+            }
+            //self.videoPlayerView.layer.addSublayer(self.layer)
+            //self.layer.frame = self.videoPlayerView.layer.bounds
+        }
+    }
+    
+    private func displayFullScreen(){
+        if isFullScreenAvailable {
+            playerLayer.videoGravity = AVLayerVideoGravity.resizeAspect
+            playerLayer.goFullscreen()
+        }else{
+            playerLayer.videoGravity = AVLayerVideoGravity.resizeAspect
+            playerLayer.removeFullScreen()
+        }
+        
     }
     
     
@@ -134,8 +189,6 @@ public class PlayerView: UIView {
             }
             
         }
-        
-        
     }
     
     public override func layoutSubviews() {
@@ -296,5 +349,44 @@ public struct PlayerEvents{
         self.didSetVolume = didSetVolume
         self.didSeekTime = didSeekTime
         self.didFinish = didFinish
+    }
+}
+
+extension CGAffineTransform {
+
+    static let ninetyDegreeRotation = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2))
+    static let initialRotation = CGAffineTransform(rotationAngle: CGFloat(Double.pi * 2))
+}
+
+extension AVPlayerLayer {
+
+    var fullScreenAnimationDuration: TimeInterval {
+        return 0.15
+    }
+
+    func minimizeToFrame(_ frame: CGRect) {
+        UIView.animate(withDuration: fullScreenAnimationDuration) {
+            self.setAffineTransform(.identity)
+            self.frame = frame
+        }
+    }
+
+    func goFullscreen() {
+        print("animation")
+        UIView.animate(withDuration: fullScreenAnimationDuration) {
+            //self.setAffineTransform(.ninetyDegreeRotation)
+            self.frame = UIScreen.main.bounds
+            let value = UIInterfaceOrientation.landscapeRight.rawValue
+            UIDevice.current.setValue(value, forKey: "orientation")
+        }
+    }
+    
+    func removeFullScreen(){
+        UIView.animate(withDuration: fullScreenAnimationDuration) {
+            //self.setAffineTransform(.initialRotation)
+            self.frame = UIScreen.main.bounds
+            let value = UIInterfaceOrientation.portrait.rawValue
+            UIDevice.current.setValue(value, forKey: "orientation")
+        }
     }
 }
