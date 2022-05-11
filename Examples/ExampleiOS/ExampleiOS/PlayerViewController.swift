@@ -13,17 +13,14 @@ class PlayerViewController: UIViewController {
     
     @IBOutlet weak var constraintLabel: UILabel!
     @IBOutlet weak var player: PlayerView!
-    
-    //private var events = PlayerEvents()
-    
+        
     private var didFinish: Bool = false {
         didSet{
-            print("totto")
             replayVideo()
         }
     }
     
-    let constraintPlayer: PlayerView = {
+    let constraintPlayer: PlayerView? = {
         let events = PlayerEvents(
             didPause: {() in
                 print("paused")
@@ -33,7 +30,6 @@ class PlayerViewController: UIViewController {
             },
             didRePlay: {() in
                 print("video replayed")
-                
             },
             didLoop: {() in
                 print("video replayed from loop")
@@ -47,61 +43,58 @@ class PlayerViewController: UIViewController {
             
         )
         
-        let player = PlayerView(frame: .zero, videoId: "vi1fP8xxejHTkWH2I9ISpBTx", videoType: .vod, events: events)
+        var player: PlayerView? = nil
+        do {
+            player = try PlayerView(frame: .zero, videoId: "vi7UO8DlQryZKssj3oiXBD12", videoType: .vod, events: events)
+        } catch {
+            print("erreur lors de l'init verifier video id")
+        }
+
         return player
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(constraintPlayer)
+        view.addSubview(constraintPlayer!)
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTapMain(_:)))
-        constraintPlayer.addGestureRecognizer(tap)
+        constraintPlayer!.addGestureRecognizer(tap)
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
-        constraintPlayer.addGestureRecognizer(doubleTap)
-        //constraintPlayer.isUserInteractionEnabled = true
-        
-//        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
-//        longPressRecognizer.minimumPressDuration = 0.5
-//        longPressRecognizer.numberOfTouchesRequired = 1
-//        longPressRecognizer.allowableMovement = 1
-//        longPressRecognizer.delaysTouchesBegan = true
-//        constraintPlayer.addGestureRecognizer(longPressRecognizer)
+        constraintPlayer!.addGestureRecognizer(doubleTap)
         
         tap.require(toFail: doubleTap)
         
         
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
-        constraintPlayer.addGestureRecognizer(swipeGestureRecognizerRight)
+        constraintPlayer!.addGestureRecognizer(swipeGestureRecognizerRight)
         constraints()
         
-        // Do any additional setup after loading the view.
     }
     
     private func replayVideo(){
-        constraintPlayer.replay()
+        constraintPlayer!.replay()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        constraintPlayer.hideControls()
+        constraintPlayer!.hideControls()
     }
     
     private func constraints(){
-        constraintPlayer.translatesAutoresizingMaskIntoConstraints = false
-        constraintPlayer.topAnchor.constraint(equalTo: constraintLabel.bottomAnchor, constant: 20).isActive = true
-        constraintPlayer.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        constraintPlayer.widthAnchor.constraint(equalToConstant: (view.frame.width - 40 )).isActive = true
-        constraintPlayer.heightAnchor.constraint(equalToConstant: 400).isActive = true
+        constraintPlayer!.translatesAutoresizingMaskIntoConstraints = false
+        constraintPlayer!.topAnchor.constraint(equalTo: constraintLabel.bottomAnchor, constant: 20).isActive = true
+        constraintPlayer!.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        constraintPlayer!.widthAnchor.constraint(equalToConstant: (view.frame.width - 40 )).isActive = true
+        constraintPlayer!.heightAnchor.constraint(equalToConstant: 400).isActive = true
     }
     
     @objc func handleTapMain(_ sender: UITapGestureRecognizer? = nil) {
         print("view tapped should start")
-        if(constraintPlayer.isVideoPlaying()){
-            self.constraintPlayer.pause()
+        if(constraintPlayer!.isVideoPlaying()){
+            self.constraintPlayer!.pause()
         }else{
-            self.constraintPlayer.play()
+            self.constraintPlayer!.play()
         }
     }
     
@@ -109,20 +102,14 @@ class PlayerViewController: UIViewController {
         let viewCenterPosition = self.view.frame.width / 2
         let touchPoint = sender!.location(in: self.view)
         if(touchPoint.x < viewCenterPosition) {
-            constraintPlayer.seek(time: -15)
+            constraintPlayer!.seek(time: -15)
         }else{
-            constraintPlayer.seek(time: 15)
+            constraintPlayer!.seek(time: 15)
         }
     }
     
     @objc private func didSwipe(_ sender: UISwipeGestureRecognizer) {
-//        var vol = AVAudioSession.sharedInstance().outputVolume
-//        vol = vol + 0.1
-//        constraintPlayer.setVolume(volume: vol)
-//        print("volume: \(vol)")
-        
-        constraintPlayer.setViewController(vc: self)
-        
+        constraintPlayer!.setViewController(vc: self)
     }
 }
 

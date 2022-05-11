@@ -31,7 +31,7 @@ class VodControls: UIView{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     
     let playPauseButton: UIButton = {
         let btn = UIButton(type: .system)
@@ -72,7 +72,7 @@ class VodControls: UIView{
         btn.tintColor = .systemOrange
         return btn
     }()
-
+    
     
     private func setVodControls(){
         //Controls View
@@ -108,7 +108,7 @@ class VodControls: UIView{
         //Timer Label
         vodControlSliderView.addSubview(vodControlTimerLabel)
         vodControlTimerLabel.textColor = UIColor.orange
-
+        
         
         //Full Screen Button
         self.addSubview(fullScreenButton)
@@ -193,7 +193,7 @@ class VodControls: UIView{
         vodControlGoForward15Button.isHidden = true
         vodControlGoBackward15Button.isHidden = true
         vodControlSliderView.isHidden = true
-        
+        fullScreenButton.isHidden = true
     }
     
     
@@ -201,65 +201,79 @@ class VodControls: UIView{
         if isHiddenControls {
             
         }else{
-        if(!playPauseButton.isHidden){
-            UIView.animate(withDuration: 0.2, animations: {
+            if(!playPauseButton.isHidden){
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.playPauseButton.alpha = 0
+                }) { (finished) in
+                    self.playPauseButton.isHidden = finished
+                }
+            }else{
                 self.playPauseButton.alpha = 0
-            }) { (finished) in
-                self.playPauseButton.isHidden = finished
+                self.playPauseButton.isHidden = false
+                UIView.animate(withDuration: 0.2) {
+                    self.playPauseButton.alpha = 1
+                }
+                activateTimer()
             }
-        }else{
-            self.playPauseButton.alpha = 0
-            self.playPauseButton.isHidden = false
-            UIView.animate(withDuration: 0.2) {
-                self.playPauseButton.alpha = 1
-            }
-            activateTimer()
-        }
-        
-        if(!vodControlGoForward15Button.isHidden){
-            UIView.animate(withDuration: 0.2, animations: {
+            
+            if(!vodControlGoForward15Button.isHidden){
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.vodControlGoForward15Button.alpha = 0
+                }) { (finished) in
+                    self.vodControlGoForward15Button.isHidden = finished
+                }
+            }else{
                 self.vodControlGoForward15Button.alpha = 0
-            }) { (finished) in
-                self.vodControlGoForward15Button.isHidden = finished
+                self.vodControlGoForward15Button.isHidden = false
+                UIView.animate(withDuration: 0.2) {
+                    self.vodControlGoForward15Button.alpha = 1
+                }
+                activateTimer()
             }
-        }else{
-            self.vodControlGoForward15Button.alpha = 0
-            self.vodControlGoForward15Button.isHidden = false
-            UIView.animate(withDuration: 0.2) {
-                self.vodControlGoForward15Button.alpha = 1
-            }
-            activateTimer()
-        }
-        
-        if(!vodControlGoBackward15Button.isHidden){
-            UIView.animate(withDuration: 0.2, animations: {
+            
+            if(!vodControlGoBackward15Button.isHidden){
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.vodControlGoBackward15Button.alpha = 0
+                }) { (finished) in
+                    self.vodControlGoBackward15Button.isHidden = finished
+                }
+            }else{
                 self.vodControlGoBackward15Button.alpha = 0
-            }) { (finished) in
-                self.vodControlGoBackward15Button.isHidden = finished
+                self.vodControlGoBackward15Button.isHidden = false
+                UIView.animate(withDuration: 0.2) {
+                    self.vodControlGoBackward15Button.alpha = 1
+                }
+                activateTimer()
             }
-        }else{
-            self.vodControlGoBackward15Button.alpha = 0
-            self.vodControlGoBackward15Button.isHidden = false
-            UIView.animate(withDuration: 0.2) {
-                self.vodControlGoBackward15Button.alpha = 1
-            }
-            activateTimer()
-        }
-        
-        if(!vodControlSliderView.isHidden){
-            UIView.animate(withDuration: 0.2, animations: {
+            
+            if(!vodControlSliderView.isHidden){
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.vodControlSliderView.alpha = 0
+                }) { (finished) in
+                    self.vodControlSliderView.isHidden = finished
+                }
+            }else{
                 self.vodControlSliderView.alpha = 0
-            }) { (finished) in
-                self.vodControlSliderView.isHidden = finished
+                self.vodControlSliderView.isHidden = false
+                UIView.animate(withDuration: 0.2) {
+                    self.vodControlSliderView.alpha = 1
+                }
+                activateTimer()
             }
-        }else{
-            self.vodControlSliderView.alpha = 0
-            self.vodControlSliderView.isHidden = false
-            UIView.animate(withDuration: 0.2) {
-                self.vodControlSliderView.alpha = 1
+            if(!fullScreenButton.isHidden){
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.fullScreenButton.alpha = 0
+                }) { (finished) in
+                    self.fullScreenButton.isHidden = finished
+                }
+            }else{
+                self.fullScreenButton.alpha = 0
+                self.fullScreenButton.isHidden = false
+                UIView.animate(withDuration: 0.2) {
+                    self.fullScreenButton.alpha = 1
+                }
+                activateTimer()
             }
-            activateTimer()
-        }
         }
     }
     

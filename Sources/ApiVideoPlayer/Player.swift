@@ -13,6 +13,4 @@ public struct Player: Codable{
     var panoramic : Bool?
     var live: Bool?
     // var theme: [Any]
-    
-
 }

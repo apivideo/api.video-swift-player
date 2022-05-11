@@ -31,28 +31,34 @@ public class PlayerView: UIView {
     public var events: PlayerEvents? = nil
     public var viewController: UIViewController? = nil {
         didSet{
-            isFullScreenAvailable = !isFullScreenAvailable
-            displayFullScreen()
-            displayFullScreenAction()
+            
         }
     }
     
-    public init(frame: CGRect, videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
+    public init(frame: CGRect, videoId: String, videoType: VideoType, events: PlayerEvents? = nil) throws {
         self.videoId = videoId
         self.videoType = videoType
         self.events = events
         super.init(frame: frame)
+        var finalError: Error? = nil
         getPlayerJSON(videoType: videoType){ (player, error) in
             if player != nil{
                 print("Current thread \(Thread.current)")
                 self.setupView()
+            }else{
+                //do something with the error here
+                print("error toto=> \(error.debugDescription)")
+                finalError = error
             }
+        }
+        if(finalError != nil){
+            throw finalError!
         }
     }
     
     
     required init?(coder aDecoder: NSCoder) {
-        self.videoId = "vi1fP8xxejHTkWH2I9ISpBTx"
+        self.videoId = "vi7UO8DlQryZKssj3oiXBD12"
         self.videoType = .vod
         self.events = PlayerEvents()
         super.init(coder: aDecoder)
@@ -62,7 +68,6 @@ public class PlayerView: UIView {
                 self.setupView()
             }
         }
-        
         //fatalError("init(coder:) has not been implemented")
     }
     
@@ -86,7 +91,6 @@ public class PlayerView: UIView {
                 print("---------")
             }
         }else{
-            //self.videoPlayerView.layer.sublayers?.removeAll()
             if let sublayers = self.viewController?.view.layer.sublayers {
                 print("layer main view")
                 for layer in sublayers {
@@ -98,8 +102,6 @@ public class PlayerView: UIView {
                     }
                 }
             }
-            //self.videoPlayerView.layer.addSublayer(self.layer)
-            //self.layer.frame = self.videoPlayerView.layer.bounds
         }
     }
     
@@ -133,8 +135,13 @@ public class PlayerView: UIView {
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data, error) in
             if data != nil {
-                self.player = try! JSONDecoder().decode(Player.self, from: data!)
-                // TODO: handle the video mp4 if error on .m3u8
+                do{
+                    self.player = try JSONDecoder().decode(Player.self, from: data!)
+                }catch let decodeError{
+                    completion(nil, decodeError)
+                    return
+                }
+                
                 // Fatal error: 'try!' expression unexpectedly raised an error: Swift.DecodingError.keyNotFound(CodingKeys(stringValue: "mp4", intValue: nil), Swift.DecodingError.Context(codingPath: [CodingKeys(stringValue: "video", intValue: nil)], debugDescription: "No value associated with key CodingKeys(stringValue: \"mp4\", intValue: nil) (\"mp4\").", underlyingError: nil))
                 print("player : \(String(describing: self.player))")
                 print("Current thread \(Thread.current)")
@@ -155,13 +162,19 @@ public class PlayerView: UIView {
     
     
     private func setupView(){
-        print("Current thread \(Thread.current)")
+        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         if(self.traitCollection.userInterfaceStyle == .dark){
             self.backgroundColor = .lightGray
         }else{
             self.backgroundColor = .black
         }
-        let item = AVPlayerItem(url: URL(string: player.video.src)!)
+        var item: AVPlayerItem
+        do{
+            item = AVPlayerItem(url: URL(string: player.video.src)!)
+        }catch{
+            item = AVPlayerItem(url: URL(string: player.video.mp4!)!)
+        }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
         
         avPlayer = AVPlayer(playerItem: item)
@@ -170,24 +183,17 @@ public class PlayerView: UIView {
         if(videoType == .vod){
             if(!isHiddenControls){
                 self.vodControlsView = VodControls(frame: .zero, parentView: self, player: avPlayer)
-                //self.vodControlsView?.hideControls()
-                let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
                 timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
                     self.vodControlsView!.updatePlayerState()
                 })
             }
-            
         }else{
-            let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-            
             if isHiddenControls {
                 self.liveControlsView = LiveControls(frame: .zero, parentView: self, player: avPlayer)
-                
                 timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
                     // liveControlsView.updatePlayerState()
                 })
             }
-            
         }
     }
     
@@ -251,9 +257,9 @@ public class PlayerView: UIView {
             self.liveControlsView?.hideControls()
         }
     }
-    public func showControls(){
-        
-    }
+//    public func showControls(){
+//
+//    }
     public func showSubtitle(){
         if(self.events?.didShowSubtitle != nil){
             self.events?.didShowSubtitle!()
@@ -264,8 +270,11 @@ public class PlayerView: UIView {
             self.events?.didHideSubtitle!()
         }
     }
-    public func setLoop(loop: Bool){
+    public func setLoop(){
         isLoop = true
+    }
+    public func stopLooping(){
+        isLoop = false
     }
     public func seek(time: Double){
         guard let currentTime = avPlayer?.currentTime() else { return }
@@ -291,6 +300,12 @@ public class PlayerView: UIView {
     }
     public func getCurrentTime() -> CMTime{
         return avPlayer.currentTime()
+    }
+    
+    public func goFullScreen(){
+        isFullScreenAvailable = !isFullScreenAvailable
+        displayFullScreen()
+        displayFullScreenAction()
     }
     
     @objc func donePlaying(sender: Notification) {

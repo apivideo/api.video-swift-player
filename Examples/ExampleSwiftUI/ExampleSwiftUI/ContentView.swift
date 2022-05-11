@@ -11,15 +11,99 @@ import ApiVideoPlayer
 struct ContentView: View {
     private var player: PlayerSwiftUIView!
     init(){
-        player = PlayerSwiftUIView(videoId: "li5wq1x0g0v3AQws2Y5OyqJq", videoType: .live)
-        player.getPaused({ (paused) in
-            print()
-        })
+        let events = PlayerEvents(
+            didPause: {() in
+                print("paused")
+            },
+            didPlay: {() in
+                print("play")
+            },
+            didRePlay: {() in
+                print("video replayed")
+            },
+            didMute: {() in
+                print("video muted")
+            },
+            didUnMute: {() in
+                print("video unMuted")
+            },
+            didLoop: {() in
+                print("video replayed from loop")
+            },
+            didSetVolume: {(volume) in
+                print("volume set to : \(volume)")
+            },
+            didSeekTime: {(from, to)in
+                print("seek from : \(from), to: \(to)")
+            },
+            didFinish: {() in
+                print("video finished")
+            }
+            
+        )
+        player = PlayerSwiftUIView(videoId: "vi5n7EGMKVS2x3nDbA29xu18", videoType: .vod, events: events)
+
     }
     var body: some View {
-        player
-            .frame(width: UIScreen.main.bounds.width * 0.85, height: UIScreen.main.bounds.height * 0.5, alignment: .center)
+        VStack {
+            player
+                .frame(width: UIScreen.main.bounds.width * 0.85, height: UIScreen.main.bounds.height * 0.5, alignment: .center)
             .cornerRadius(40)
+            Spacer()
+            VStack {
+                Spacer()
+                HStack {
+                    Button("Pause") {
+                        player.pause()
+                    }
+                    .padding()
+                    Button("Play") {
+                        player.play()
+                    }
+                    .padding()
+                    Button("Replay") {
+                        player.replay()
+                    }
+                    .padding()
+                    Button("FullScreen") {
+                        player.goFullScreen()
+                    }
+                    .padding()
+                }
+                Spacer()
+                HStack {
+                    Button("Mute") {
+                        player.mute()
+                    }
+                    .padding()
+                    Button("Unmute") {
+                        player.unMute()
+                    }
+                    .padding()
+                    Button("Seek +15s") {
+                        player.seek(time: 15)
+                    }
+                    .padding()
+                    Button("Seek -15s") {
+                        player.seek(time: -15)
+                    }
+                    .padding()
+                }
+                Spacer()
+                HStack {
+                    Button("HideControls") {
+                        player.hideControls()
+                    }
+                    .padding()
+                }
+                Spacer()
+            }
+            
+        }
+        
+        
+        
+        
             
             
     }
