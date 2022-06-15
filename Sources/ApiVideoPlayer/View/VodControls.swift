@@ -1,30 +1,38 @@
-//
-//  File.swift
-//  
-//
-//  Created by Romain Petit on 30/03/2022.
-//
-
 import Foundation
 import UIKit
 import AVFoundation
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 class VodControls: UIView{
     
     private var timer: Timer?
-    private var isPlaying = false
-    private var avPlayer: AVPlayer!
+    public var playerController: PlayerController!
     private var pView: UIView!
-    
     private var isHiddenControls = false
+    private var isSubtitleViewDisplay = false
+    private var subtitleView: SubtitleView!
+    private var timeObserver: Any?
+
+
     
+    var viewController: UIViewController? {
+        didSet{
+            
+        }
+    }
     
-    init(frame: CGRect, parentView: UIView, player: AVPlayer) {
-        self.avPlayer = player
+    init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
+        self.playerController = playerController
         self.pView = parentView
         super.init(frame: frame)
         setVodControls()
+        
+        playerController.events?.didPlay! = {() in
+            self.getIconPlayBtn()
+        }
+        playerController.events?.didPause! = {() in
+            self.getIconPlayBtn()
+        }
     }
     
     
@@ -35,19 +43,23 @@ class VodControls: UIView{
     
     let playPauseButton: UIButton = {
         let btn = UIButton(type: .system)
+        btn.tintColor = .white
+        btn.contentHorizontalAlignment = .fill
+        btn.contentVerticalAlignment = .fill
+        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         return btn
     }()
     
     let vodControlGoForward15Button: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
-        btn.tintColor = .systemOrange
+        btn.tintColor = .white
         return btn
     }()
     let vodControlGoBackward15Button: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
-        btn.tintColor = .systemOrange
+        btn.tintColor = .white
         return btn
     }()
     
@@ -69,11 +81,18 @@ class VodControls: UIView{
     let fullScreenButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
-        btn.tintColor = .systemOrange
+        btn.tintColor = .white
+        return btn
+    }()
+    let subtitleButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
+        btn.tintColor = .white
         return btn
     }()
     
     
+    @available(iOS 14.0, *)
     private func setVodControls(){
         //Controls View
         pView.addSubview(self)
@@ -85,7 +104,7 @@ class VodControls: UIView{
         
         //Play Pause Button
         self.addSubview(playPauseButton)
-        playPauseButton.addTarget(self, action: #selector(seekPlayAction), for: .touchUpInside)
+        playPauseButton.addTarget(self, action: #selector(playPauseAction), for: .touchUpInside)
         getIconPlayBtn()
         
         //Go Forward Button
@@ -102,23 +121,28 @@ class VodControls: UIView{
         
         //Slider
         vodControlSliderView.addSubview(vodControlSlider)
+        vodControlSlider.addTarget(self, action: #selector(playbackSliderValueChanged), for: .valueChanged)
         vodControlSlider.tintColor = UIColor.orange.withAlphaComponent(0.7)
-        vodControlSlider.thumbTintColor = UIColor.orange
+        vodControlSlider.thumbTintColor = UIColor.white
         
         //Timer Label
         vodControlSliderView.addSubview(vodControlTimerLabel)
-        vodControlTimerLabel.textColor = UIColor.orange
+        vodControlTimerLabel.textColor = UIColor.white
+        
+        //Subtitle
+        vodControlSliderView.addSubview(subtitleButton)
+        subtitleButton.addTarget(self, action: #selector(displaySubtitle), for: .touchUpInside)
         
         
         //Full Screen Button
         self.addSubview(fullScreenButton)
         fullScreenButton.addTarget(self, action: #selector(goFullScreenAction), for: .touchUpInside)
         
-        // TODO: handle device orientation to set the style of controls
-        
-        // TODO: handle the disparition of controls
-        
-        
+        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        timeObserver = playerController.avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+            self.updatePlayerState()
+        })
+                
         setVodControlConstraints()
         activateTimer()
     }
@@ -128,8 +152,8 @@ class VodControls: UIView{
         //Controls View
         self.translatesAutoresizingMaskIntoConstraints = false
         self.topAnchor.constraint(equalTo: pView.topAnchor).isActive = true
-        self.leftAnchor.constraint(equalTo: pView.leftAnchor).isActive = true
-        self.rightAnchor.constraint(equalTo: pView.rightAnchor).isActive = true
+        self.leadingAnchor.constraint(equalTo: pView.leadingAnchor).isActive = true
+        self.trailingAnchor.constraint(equalTo: pView.trailingAnchor).isActive = true
         self.bottomAnchor.constraint(equalTo: pView.bottomAnchor).isActive = true
         
         
@@ -138,48 +162,49 @@ class VodControls: UIView{
         playPauseButton.centerXAnchor.constraint(equalTo: pView.centerXAnchor).isActive = true
         playPauseButton.centerYAnchor.constraint(equalTo: pView.centerYAnchor).isActive = true
         playPauseButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        playPauseButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        playPauseButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
         
         //Go Forward Button
         vodControlGoForward15Button.translatesAutoresizingMaskIntoConstraints = false
         vodControlGoForward15Button.centerYAnchor.constraint(equalTo: pView.centerYAnchor).isActive = true
-        vodControlGoForward15Button.leftAnchor.constraint(equalTo: playPauseButton.rightAnchor, constant: (self.frame.width / 16)).isActive = true
+        vodControlGoForward15Button.leadingAnchor.constraint(equalTo: playPauseButton.trailingAnchor, constant: (self.frame.width / 16)).isActive = true
         vodControlGoForward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
         vodControlGoForward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
-        print("frame : \(self.frame.width / 16)")
-        
+                
         //Go Backward Button
         vodControlGoBackward15Button.translatesAutoresizingMaskIntoConstraints = false
         vodControlGoBackward15Button.centerYAnchor.constraint(equalTo: pView.centerYAnchor).isActive = true
-        vodControlGoBackward15Button.rightAnchor.constraint(equalTo: playPauseButton.leftAnchor, constant: -(self.frame.width / 16)).isActive = true
+        vodControlGoBackward15Button.trailingAnchor.constraint(equalTo: playPauseButton.leadingAnchor, constant: -(self.frame.width / 16)).isActive = true
         vodControlGoBackward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
         vodControlGoBackward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        //        vodControlGoForward15Button.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         
         //Slider View
         vodControlSliderView.translatesAutoresizingMaskIntoConstraints = false
         vodControlSliderView.centerXAnchor.constraint(equalTo: pView.centerXAnchor).isActive = true
-        vodControlSliderView.rightAnchor.constraint(equalTo: pView.rightAnchor).isActive = true
-        vodControlSliderView.leftAnchor.constraint(equalTo: pView.leftAnchor).isActive = true
+        vodControlSliderView.trailingAnchor.constraint(equalTo: pView.trailingAnchor).isActive = true
+        vodControlSliderView.leadingAnchor.constraint(equalTo: pView.leadingAnchor).isActive = true
         vodControlSliderView.bottomAnchor.constraint(equalTo: pView.bottomAnchor, constant: -12).isActive = true
         vodControlSliderView.heightAnchor.constraint(equalToConstant: (pView.frame.height / 4)).isActive = true
         
         //Slider
         vodControlSlider.translatesAutoresizingMaskIntoConstraints = false
         vodControlSlider.centerYAnchor.constraint(equalTo: vodControlSliderView.centerYAnchor).isActive = true
-        vodControlSlider.leftAnchor.constraint(equalTo: vodControlSliderView.leftAnchor, constant: 5).isActive = true
+        vodControlSlider.leadingAnchor.constraint(equalTo: vodControlSliderView.leadingAnchor, constant: 10).isActive = true
         vodControlSlider.rightAnchor.constraint(equalTo: vodControlTimerLabel.leftAnchor, constant: -10).isActive = true
         
         //Timer Label
         vodControlTimerLabel.translatesAutoresizingMaskIntoConstraints = false
         vodControlTimerLabel.centerYAnchor.constraint(equalTo: vodControlSliderView.centerYAnchor).isActive = true
-        vodControlTimerLabel.rightAnchor.constraint(equalTo: vodControlSliderView.rightAnchor, constant: -10).isActive = true
+        vodControlTimerLabel.trailingAnchor.constraint(equalTo: subtitleButton.leadingAnchor, constant: -10).isActive = true
+        
+        subtitleButton.translatesAutoresizingMaskIntoConstraints = false
+        subtitleButton.centerYAnchor.constraint(equalTo: vodControlSliderView.centerYAnchor).isActive = true
+        subtitleButton.trailingAnchor.constraint(equalTo: vodControlSliderView.trailingAnchor, constant: -10).isActive = true
         
         //FullScreen Button
         fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
-        fullScreenButton.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
+        fullScreenButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10).isActive = true
         fullScreenButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
         fullScreenButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
         fullScreenButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
@@ -196,8 +221,7 @@ class VodControls: UIView{
         fullScreenButton.isHidden = true
     }
     
-    
-    func seekControls(){
+    func toggleControlsDisplay(){
         if isHiddenControls {
             
         }else{
@@ -278,57 +302,66 @@ class VodControls: UIView{
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-        print("view tapped")
         if(!isHiddenControls){
             resetTimer()
-            seekControls()
+            toggleControlsDisplay()
+        }
+        if(isSubtitleViewDisplay){
+            isSubtitleViewDisplay.toggle()
+            subtitleView?.dismissView()
         }
     }
     
-    @objc func seekPlayAction() {
-        print("seek play")
+    @objc func playPauseAction() {
         resetTimer()
-        if !isPlaying{
-            avPlayer.play()
-            isPlaying = true
+        if !playerController.isPlaying{
+            playerController.play()
         }else{
-            avPlayer.pause()
-            isPlaying = false
+            playerController.pause()
         }
         getIconPlayBtn()
         activateTimer()
     }
     
     @objc func goForward15Action() {
-        print("goForward15Action")
         resetTimer()
-        guard let currentTime = avPlayer?.currentTime() else { return }
-        let currentTimeInSecondsMinus15 =  CMTimeGetSeconds(currentTime).advanced(by: 15)
-        let seekTime = CMTime(value: CMTimeValue(currentTimeInSecondsMinus15), timescale: 1)
-        avPlayer?.seek(to: seekTime)
+        playerController.seek(time: 15)
         activateTimer()
     }
     
     @objc func goBackward15Action() {
-        print("goBackward15Action")
         resetTimer()
-        guard let currentTime = avPlayer?.currentTime() else { return }
-        let currentTimeInSecondsMinus15 =  CMTimeGetSeconds(currentTime).advanced(by: -15)
-        let seekTime = CMTime(value: CMTimeValue(currentTimeInSecondsMinus15), timescale: 1)
-        avPlayer?.seek(to: seekTime)
+        playerController.seek(time: -15)
         activateTimer()
     }
     
     @objc func goFullScreenAction() {
-        print("goFullScreenAction")
+        playerController.goFullScreen()
+    }
+    
+    @available(iOS 14.0, *)
+    @objc func displaySubtitle(){
+        let sliderviewheight = vodControlSliderView.frame.height - 24
+        let posX = subtitleButton.frame.origin.x - 120
+        
+        if(isSubtitleViewDisplay){
+            isSubtitleViewDisplay.toggle()
+            subtitleView.dismissView()
+        }else{
+            isSubtitleViewDisplay.toggle()
+
+            subtitleView = SubtitleView(frame: CGRect(x: posX, y: sliderviewheight, width: 130, height: 3*45), self)
+            subtitleView.tag = 101
+            pView.addSubview(subtitleView)
+        }
         
     }
     
     public func updatePlayerState() {
-        guard let currentTime = avPlayer?.currentTime() else { return }
+        guard let currentTime = playerController.avPlayer?.currentTime() else { return }
         let currentTimeInSeconds = CMTimeGetSeconds(currentTime)
         vodControlSlider.value = Float(currentTimeInSeconds)
-        if let currentItem = avPlayer?.currentItem {
+        if let currentItem = playerController.avPlayer?.currentItem {
             let duration = currentItem.duration
             if (CMTIME_IS_INVALID(duration)) {
                 return;
@@ -364,25 +397,34 @@ class VodControls: UIView{
     }
     
     @objc func disableControls() {
-        seekControls()
+        toggleControlsDisplay()
     }
     
     private func getIconPlayBtn(){
-        if !isPlaying{
+        playPauseButton.tintColor = .white
+        if !playerController.isPlaying{
             if #available(tvOS 13.0, *) {
-                playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                playPauseButton.setImage(UIImage(named: "play-primary", in: Bundle.module, compatibleWith: nil), for: .normal)
             } else {
                 // Fallback on earlier versions
             }
-            playPauseButton.tintColor = .systemOrange
         }else{
             if #available(tvOS 13.0, *) {
-                playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+                playPauseButton.setImage(UIImage(named: "pause-primary", in: Bundle.module, compatibleWith: nil), for: .normal)
             } else {
                 // Fallback on earlier versions
             }
-            playPauseButton.tintColor = .systemOrange
         }
+    }
+    
+    
+    @objc func playbackSliderValueChanged(_ sender: UISlider) {
+        playerController.avPlayer.pause()
+        guard let duration = playerController.avPlayer.currentItem?.duration else { return }
+        let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
+        let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
+        playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
+        playerController.avPlayer.play()
     }
     
 }
