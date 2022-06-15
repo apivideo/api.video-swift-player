@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "api.video-ios-player-analytics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apivideo/api.video-ios-player-analytics.git",
+      "state" : {
+        "revision" : "f3583da845e9cff2b7e26ba70895afd776a12118",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}

@@ -15,51 +15,9 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a9W-2q-rhp" customClass="PlayerView" customModule="ApiVideoPlayer">
-                                <rect key="frame" x="14" y="115" width="400" height="300"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="Ojj-wI-Mbq"/>
-                                    <constraint firstAttribute="width" constant="400" id="SsH-Jn-1FP"/>
-                                </constraints>
-                            </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Storyboard" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gHV-jj-tVK">
-                                <rect key="frame" x="20" y="64" width="85" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="85" id="E5m-Rz-1zj"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Constraints" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AaP-cW-ZAX">
-                                <rect key="frame" x="20" y="435" width="88" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="88" id="mzR-Fq-hBb"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="AaP-cW-ZAX" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="3gR-Hf-9Pb"/>
-                            <constraint firstItem="gHV-jj-tVK" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="DrV-70-M2c"/>
-                            <constraint firstItem="a9W-2q-rhp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Hep-sx-oLs"/>
-                            <constraint firstItem="a9W-2q-rhp" firstAttribute="top" secondItem="gHV-jj-tVK" secondAttribute="bottom" constant="30" id="Hny-a1-H3n"/>
-                            <constraint firstItem="AaP-cW-ZAX" firstAttribute="top" secondItem="a9W-2q-rhp" secondAttribute="bottom" constant="20" id="LG1-ae-8Wk"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="AaP-cW-ZAX" secondAttribute="trailing" constant="320" id="ayj-uB-7CP"/>
-                            <constraint firstItem="gHV-jj-tVK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="iYX-ty-dIa"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="gHV-jj-tVK" secondAttribute="trailing" constant="323" id="vvN-Sa-ofY"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="constraintLabel" destination="AaP-cW-ZAX" id="kBW-Lg-pqk"/>
-                        <outlet property="player" destination="a9W-2q-rhp" id="YWD-II-2sz"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

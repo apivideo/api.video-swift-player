@@ -13,7 +13,7 @@
 		C75C78F927E1E1FD001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F827E1E1FD001CA24D /* Assets.xcassets */; };
 		C75C78FC27E1E1FD001CA24D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */; };
 		C7922D942811685C00957116 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7922D932811685B00957116 /* PlayerViewController.swift */; };
-		C7AD13BA27E8CD760039E779 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7AD13B927E8CD760039E779 /* ApiVideoPlayer */; };
+		C7D403EB285897E5004563EC /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7D403EA285897E5004563EC /* ApiVideoPlayer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +26,7 @@
 		C75C78FD27E1E1FD001CA24D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C75C795327E1E6AC001CA24D /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../../Package.swift; sourceTree = "<group>"; };
 		C75C795427E1E6CC001CA24D /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
+		C792283428587C6100F99A00 /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sources; path = ../../Sources; sourceTree = "<group>"; };
 		C7922D932811685B00957116 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -34,7 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7AD13BA27E8CD760039E779 /* ApiVideoPlayer in Frameworks */,
+				C7D403EB285897E5004563EC /* ApiVideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +76,7 @@
 		C75C795227E1E6AB001CA24D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C792283428587C6100F99A00 /* Sources */,
 				C75C795427E1E6CC001CA24D /* ApiVideoPlayer */,
 				C75C795327E1E6AC001CA24D /* Package.swift */,
 			);
@@ -98,7 +100,7 @@
 			);
 			name = ExampleiOS;
 			packageProductDependencies = (
-				C7AD13B927E8CD760039E779 /* ApiVideoPlayer */,
+				C7D403EA285897E5004563EC /* ApiVideoPlayer */,
 			);
 			productName = ExampleiOS;
 			productReference = C75C78EC27E1E1FA001CA24D /* ExampleiOS.app */;
@@ -128,6 +130,9 @@
 				Base,
 			);
 			mainGroup = C75C78E327E1E1FA001CA24D;
+			packageReferences = (
+				C7179FB3285390CE00F2279E /* XCRemoteSwiftPackageReference "api" */,
+			);
 			productRefGroup = C75C78ED27E1E1FA001CA24D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -234,6 +239,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -288,6 +294,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -316,6 +323,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.ExampleiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -344,6 +352,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.ExampleiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -376,8 +385,19 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		C7179FB3285390CE00F2279E /* XCRemoteSwiftPackageReference "api" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apivideo/api.video-ios-player-analytics";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		C7AD13B927E8CD760039E779 /* ApiVideoPlayer */ = {
+		C7D403EA285897E5004563EC /* ApiVideoPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ApiVideoPlayer;
 		};
