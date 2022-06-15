@@ -2,6 +2,6 @@ import Foundation
 
 public protocol TasksExecutorProtocol {
   static func execute(
-    session: URLSession, request: URLRequest, completion: @escaping (Data?, Error?) -> Void)
+    session: URLSession, request: URLRequest, completion: @escaping (Data?,URLResponse?, Error?) -> Void)
 
 }
