@@ -54,7 +54,7 @@ class LiveControls: UIView{
         
         //Play Pause Button
         self.addSubview(playPauseButton)
-        playPauseButton.addTarget(self, action: #selector(seekPlayAction), for: .touchUpInside)
+        playPauseButton.addTarget(self, action: #selector(playPauseAction), for: .touchUpInside)
         getIconPlayBtn()
         
         
@@ -65,7 +65,7 @@ class LiveControls: UIView{
         //Slider
         liveControlSliderView.addSubview(liveControlSlider)
         liveControlSlider.tintColor = UIColor.orange.withAlphaComponent(0.7)
-        liveControlSlider.thumbTintColor = UIColor.orange
+        liveControlSlider.thumbTintColor = UIColor.white
         
         //Go to direct Button
         
@@ -115,7 +115,7 @@ class LiveControls: UIView{
         
     }
     
-    @objc private func seekPlayAction() {
+    @objc private func playPauseAction() {
         print("seek play")
         resetTimer()
         if !isPlaying{
@@ -142,14 +142,14 @@ class LiveControls: UIView{
             } else {
                 // Fallback on earlier versions
             }
-            playPauseButton.tintColor = .systemOrange
+            playPauseButton.tintColor = .white
         }else{
             if #available(tvOS 13.0, *) {
                 playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
             } else {
                 // Fallback on earlier versions
             }
-            playPauseButton.tintColor = .systemOrange
+            playPauseButton.tintColor = .white
         }
     }
     
