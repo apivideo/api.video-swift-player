@@ -11,16 +11,13 @@ import AVKit
 
 class PlayerViewController: UIViewController {
     
-    @IBOutlet weak var constraintLabel: UILabel!
-    @IBOutlet weak var player: PlayerView!
-        
     private var didFinish: Bool = false {
         didSet{
             replayVideo()
         }
     }
     
-    let constraintPlayer: PlayerView? = {
+    let customPlayer: ApiPlayerView? = {
         let events = PlayerEvents(
             didPause: {() in
                 print("paused")
@@ -43,74 +40,270 @@ class PlayerViewController: UIViewController {
             
         )
         
-        var player: PlayerView? = nil
+        var player: ApiPlayerView? = nil
         do {
-            player = try PlayerView(frame: .zero, videoId: "vi7UO8DlQryZKssj3oiXBD12", videoType: .vod, events: events)
+            player = try ApiPlayerView(frame: .zero, videoId: "vi1E4DjTiquzUmWdnV1YhY5Y", videoType: .vod, events: events)
         } catch {
             print("erreur lors de l'init verifier video id")
         }
-
+        
         return player
+    }()
+    
+    let scrollView: UIScrollView = {
+        let scrlview = UIScrollView()
+        return scrlview
+    }()
+    
+    let vStack: UIStackView = {
+        let vStack = UIStackView()
+        vStack.axis = .vertical
+        vStack.distribution = .fillEqually
+        vStack.alignment = .fill
+        return vStack
+    }()
+    
+    let hStackFirst: UIStackView = {
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.distribution = .fillEqually
+        hStack.alignment = .center
+        return hStack
+    }()
+    let hStackSecond: UIStackView = {
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.distribution = .fillEqually
+        hStack.alignment = .fill
+        return hStack
+    }()
+    let hStackLast: UIStackView = {
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.distribution = .fillEqually
+        hStack.alignment = .fill
+        return hStack
+    }()
+    
+    let pauseButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Pause", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let playButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Play", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let replayButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Replay", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let fullscreenButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("FullScreen", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let muteButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Mute", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let unmuteButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Unmute", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let goForwardButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Seek +15s", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let goBackwardButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Seek -15s", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let hideControlsButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Hide Controls", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    
+    let frSubtitleButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("French Subtitle", for: .normal)
+        btn.sizeToFit()
+        return btn
+    }()
+    let turnOffSubtitleButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Turn Off Subtitle", for: .normal)
+        btn.sizeToFit()
+        return btn
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(constraintPlayer!)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTapMain(_:)))
-        constraintPlayer!.addGestureRecognizer(tap)
+        view.addSubview(scrollView)
+        scrollView.addSubview(customPlayer!)
         
+        
+//        scrollView.addSubview(testView)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTapMain(_:)))
+        customPlayer!.addGestureRecognizer(tap)
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
-        constraintPlayer!.addGestureRecognizer(doubleTap)
-        
+        customPlayer!.addGestureRecognizer(doubleTap)
+
         tap.require(toFail: doubleTap)
-        
-        
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
-        constraintPlayer!.addGestureRecognizer(swipeGestureRecognizerRight)
+        customPlayer!.addGestureRecognizer(swipeGestureRecognizerRight)
+        scrollView.addSubview(vStack)
+        vStack.addArrangedSubview(hStackFirst)
+        vStack.addArrangedSubview(hStackSecond)
+        vStack.addArrangedSubview(hStackLast)
+
+        hStackFirst.addArrangedSubview(pauseButton)
+        pauseButton.addTarget(self, action: #selector(pauseAction), for: .touchUpInside)
+
+        hStackFirst.addArrangedSubview(playButton)
+        playButton.addTarget(self, action: #selector(playAction), for: .touchUpInside)
+
+        hStackFirst.addArrangedSubview(replayButton)
+        replayButton.addTarget(self, action: #selector(replayAction), for: .touchUpInside)
+
+        hStackFirst.addArrangedSubview(fullscreenButton)
+        fullscreenButton.addTarget(self, action: #selector(fullscreenAction), for: .touchUpInside)
+
+
+        hStackSecond.addArrangedSubview(muteButton)
+        muteButton.addTarget(self, action: #selector(muteAction), for: .touchUpInside)
+
+        hStackSecond.addArrangedSubview(unmuteButton)
+        unmuteButton.addTarget(self, action: #selector(unmuteAction), for: .touchUpInside)
+
+        hStackSecond.addArrangedSubview(goForwardButton)
+        goForwardButton.addTarget(self, action: #selector(forwardAction), for: .touchUpInside)
+
+        hStackSecond.addArrangedSubview(goBackwardButton)
+        goBackwardButton.addTarget(self, action: #selector(backwardAction), for: .touchUpInside)
+
+        hStackLast.addArrangedSubview(hideControlsButton)
+        hideControlsButton.addTarget(self, action: #selector(hideControlsAction), for: .touchUpInside)
+        
+        
+        hStackLast.addArrangedSubview(frSubtitleButton)
+        frSubtitleButton.addTarget(self, action: #selector(frSubtitleAction), for: .touchUpInside)
+        
+        hStackLast.addArrangedSubview(turnOffSubtitleButton)
+        turnOffSubtitleButton.addTarget(self, action: #selector(turnOffSubtitleAction), for: .touchUpInside)
+        
+        
+        
         constraints()
         
     }
     
     private func replayVideo(){
-        constraintPlayer!.replay()
+        customPlayer!.replay()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        constraintPlayer!.hideControls()
+        customPlayer!.setViewController(vc: self)
+        //        constraintPlayer!.hideControls()
     }
     
     private func constraints(){
-        constraintPlayer!.translatesAutoresizingMaskIntoConstraints = false
-        constraintPlayer!.topAnchor.constraint(equalTo: constraintLabel.bottomAnchor, constant: 20).isActive = true
-        constraintPlayer!.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        constraintPlayer!.widthAnchor.constraint(equalToConstant: (view.frame.width - 40 )).isActive = true
-        constraintPlayer!.heightAnchor.constraint(equalToConstant: 400).isActive = true
+        // ScrollView
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+
+        // PlayerView
+        customPlayer!.translatesAutoresizingMaskIntoConstraints = false
+        customPlayer!.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        customPlayer!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16.0).isActive = true
+        customPlayer!.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16.0).isActive = true
+        customPlayer!.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height * 0.3).isActive = true
+        
+        
+        // Main VStack
+        vStack.translatesAutoresizingMaskIntoConstraints = false
+        vStack.topAnchor.constraint(equalTo: customPlayer!.bottomAnchor, constant: 20).isActive = true
+        vStack.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16.0 ).isActive = true
+        vStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0).isActive = true
+        vStack.heightAnchor.constraint(equalToConstant: 220).isActive = true
+        vStack.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -16).isActive = true
     }
     
+    @objc func pauseAction(sender: UIButton!) {
+        customPlayer!.pause()
+    }
+    @objc func playAction(sender: UIButton!) {
+        customPlayer!.play()
+    }
+    @objc func replayAction(sender: UIButton!) {
+        customPlayer!.replay()
+    }
+    @objc func fullscreenAction(sender: UIButton!) {
+        customPlayer!.goFullScreen()
+    }
+    @objc func muteAction(sender: UIButton!) {
+        customPlayer!.mute()
+    }
+    @objc func unmuteAction(sender: UIButton!) {
+        customPlayer!.unMute()
+    }
+    @objc func forwardAction(sender: UIButton!) {
+        customPlayer!.seek(time: 15)
+    }
+    @objc func backwardAction(sender: UIButton!) {
+        customPlayer!.seek(time: -15)
+    }
+    @objc func hideControlsAction(sender: UIButton!) {
+        customPlayer!.hideControls()
+    }
+    @objc func frSubtitleAction(sender: UIButton!) {
+        customPlayer!.showSubtitle(language: "fr")
+    }
+    @objc func turnOffSubtitleAction(sender: UIButton!) {
+        customPlayer!.turnOffSubtitle()
+    }
+    
+    
+    
+    
     @objc func handleTapMain(_ sender: UITapGestureRecognizer? = nil) {
-        print("view tapped should start")
-        if(constraintPlayer!.isVideoPlaying()){
-            self.constraintPlayer!.pause()
-        }else{
-            self.constraintPlayer!.play()
-        }
+        print("main view tapped")
+        
     }
     
     @objc func handleDoubleTap(_ sender: UITapGestureRecognizer? = nil) {
         let viewCenterPosition = self.view.frame.width / 2
         let touchPoint = sender!.location(in: self.view)
         if(touchPoint.x < viewCenterPosition) {
-            constraintPlayer!.seek(time: -15)
+            customPlayer!.seek(time: -15)
         }else{
-            constraintPlayer!.seek(time: 15)
+            customPlayer!.seek(time: 15)
         }
     }
     
     @objc private func didSwipe(_ sender: UISwipeGestureRecognizer) {
-        constraintPlayer!.setViewController(vc: self)
+        customPlayer!.goFullScreen()
     }
 }
-
-
