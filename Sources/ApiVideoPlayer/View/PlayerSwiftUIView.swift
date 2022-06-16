@@ -15,7 +15,6 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     @State private var fullScreen = false
     
     let videoId: String!
-    let videoType: VideoType!
     let events: PlayerEvents!
     var playerView: ApiPlayerView?
     
@@ -25,13 +24,12 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     ///   - videoType: VideoType object to display vod or live controls
     ///   - events: Callback to get all the player events
     ///   - privateToken: Use only if your video is private, is nil by default
-    public init(videoId : String, videoType: VideoType, events: PlayerEvents, privateToken: String? = nil){
+    public init(videoId : String, videoType: VideoType, events: PlayerEvents){
         self.videoId = videoId
-        self.videoType = videoType
         self.events = events
         
         do{
-            playerView = try ApiPlayerView(frame: .zero, videoId: videoId, videoType: videoType, events: events, privateToken: privateToken)
+            playerView = try ApiPlayerView(frame: .zero, videoId: videoId, events: events)
         }catch{
             playerView = nil
         }
