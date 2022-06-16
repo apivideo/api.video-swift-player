@@ -17,7 +17,7 @@ class PlayerViewController: UIViewController {
         }
     }
     
-    let customPlayer: ApiPlayerView? = {
+    let customPlayer: ApiVideoPlayerView? = {
         let events = PlayerEvents(
             didPause: {() in
                 print("paused")
@@ -40,9 +40,9 @@ class PlayerViewController: UIViewController {
             
         )
         
-        var player: ApiPlayerView? = nil
+        var player: ApiVideoPlayerView? = nil
         do {
-            player = try ApiPlayerView(frame: .zero, videoId: "vi7j8cPsdTxHv26lqbCbaQZd", events: events)
+            player = try ApiVideoPlayerView(frame: .zero, videoId: "vi7j8cPsdTxHv26lqbCbaQZd", events: events)
         } catch {
             print("error during init, please check videoId")
         }

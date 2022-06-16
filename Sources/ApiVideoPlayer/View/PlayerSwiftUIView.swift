@@ -16,7 +16,7 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     
     let videoId: String!
     let events: PlayerEvents!
-    var playerView: ApiPlayerView?
+    var playerView: ApiVideoPlayerView?
     
     /// Init method for the player
     /// - Parameters:
@@ -29,7 +29,7 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
         self.events = events
         
         do{
-            playerView = try ApiPlayerView(frame: .zero, videoId: videoId, events: events)
+            playerView = try ApiVideoPlayerView(frame: .zero, videoId: videoId, events: events)
         }catch{
             playerView = nil
         }
