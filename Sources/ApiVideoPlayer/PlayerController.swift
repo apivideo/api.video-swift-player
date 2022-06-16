@@ -4,10 +4,19 @@ import AVKit
 import ApiVideoPlayerAnalytics
 
 public class PlayerController{
-    public var avPlayer: AVPlayer!
-    public var events: PlayerEvents?
+    public var avPlayer: AVPlayer!{
+        didSet{
+            NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: avPlayer.currentItem)
+        }
+    }
     private var analytics: PlayerAnalytics?
     private var option : Options?
+    public let videoType: VideoType = .vod
+    public let videoId: String!
+    public var events: PlayerEvents? = nil
+
+    public var player: Player!
+    
     public var viewController: UIViewController? {
         didSet{
             print("view controller set")
@@ -19,13 +28,63 @@ public class PlayerController{
         }
     }
     
-    init(avPlayer: AVPlayer,_ events: PlayerEvents? = nil,_ vc: UIViewController? = nil, player: Player) {
-        self.avPlayer = avPlayer
+    init(videoId: String, events: PlayerEvents? = nil) throws {
         self.events = events
-        self.viewController = vc
+        self.videoId = videoId
+    }
+    
+    
+    
+    
+    
+    private func getVideoUrl(videoType: VideoType, privateToken: String? = nil) -> String{
+        var baseUrl = ""
+        if videoType == .vod {
+            baseUrl = "https://cdn.api.video/vod/"
+        }else{
+            baseUrl = "https://live.api.video/"
+        }
+        var url: String!
+        if privateToken != nil{
+            url = baseUrl + "\(self.videoId!)/token/\(privateToken!)/player.json"
+        }else{
+            url = baseUrl + "\(self.videoId!)/player.json"
+        }
+        
+        return url
+    }
+    
+    
+    public func getPlayerJSON(videoType: VideoType, completion: @escaping (Player?, Error?) -> Void){
+        let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
+        let session = RequestsBuilder().buildUrlSession()
+        TasksExecutor.execute(session: session, request: request) { (data,response, error) in
+            if data != nil {
+                do{
+                    self.player = try JSONDecoder().decode(Player.self, from: data!)
+                }catch let decodeError{
+                    completion(nil, decodeError)
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.setUpAnalytics()
+                    completion(self.player, nil)
+                }
+                
+            } else {
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+                
+            }
+        }
+        
+    }
+    
+    private func setUpAnalytics(){
         do {
               option = try Options(
-                mediaUrl: player.video.src, metadata: [],
+                mediaUrl: self.player.video.src, metadata: [],
                 onSessionIdReceived: { (id) in
                   print("session ID : \(id)")
                 })
@@ -34,8 +93,10 @@ public class PlayerController{
             }
 
         analytics = PlayerAnalytics(options: option!)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: avPlayer.currentItem)
     }
+    
+    
+    
     
     @available(iOS 10.0, *)
     public func isVideoPlaying()-> Bool{
@@ -159,9 +220,9 @@ public class PlayerController{
         analytics?.end(){(result)in
             switch result {
             case .success(let data):
-                print("player analytics video ended : \(data)")
+                print("player analytics video ended successfully : \(data)")
             case .failure(let error):
-                print("player analytics video ended : \(error)")
+                print("player analytics video ended with an error : \(error)")
             }
         }
         if(self.events?.didEnd != nil){

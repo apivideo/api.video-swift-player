@@ -42,7 +42,7 @@ class PlayerViewController: UIViewController {
         
         var player: ApiPlayerView? = nil
         do {
-            player = try ApiPlayerView(frame: .zero, videoId: "vi1E4DjTiquzUmWdnV1YhY5Y", videoType: .vod, events: events)
+            player = try ApiPlayerView(frame: .zero, videoId: "vi7j8cPsdTxHv26lqbCbaQZd", events: events)
         } catch {
             print("error during init, please check videoId")
         }

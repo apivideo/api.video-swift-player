@@ -6,26 +6,22 @@ import AVKit
 @available(iOS 14.0, *)
 public class ApiPlayerView: UIView {
     
-    public let videoType: VideoType!
     public let videoId: String!
     public var events: PlayerEvents? = nil
+    private var basicPlayerItem: AVPlayerItem!
+    private let playerLayer = AVPlayerLayer()
+
     
     
-    var player: Player!
     private var timeObserver: Any?
     private let videoPlayerView = UIView()
-    private let playerLayer = AVPlayerLayer()
     public var avPlayer: AVPlayer!
     private var isPlaying = false
     private var isLoop =  false
     private var vodControlsView: VodControls?
-    private var liveControlsView: LiveControls?
     private var playerController: PlayerController?
     private var isHiddenControls = false
     private var isFullScreenAvailable = false
-    private var tokenVideo: String? = nil
-    
-    private var basicPlayerItem: AVPlayerItem!
     
     public var viewController: UIViewController? {
         didSet{
@@ -42,85 +38,35 @@ public class ApiPlayerView: UIView {
     ///   - videoId: Need videoid to display the video
     ///   - videoType: VideoType object to display vod or live controls
     ///   - events: Callback to get all the player events
-    ///   - privateToken: Use only if your video is private, is nil by default
-    public init(frame: CGRect, videoId: String, videoType: VideoType, events: PlayerEvents? = nil, privateToken: String? = nil) throws {
+    public init(frame: CGRect, videoId: String, events: PlayerEvents? = nil) throws {
         self.videoId = videoId
-        self.videoType = videoType
         self.events = events
         super.init(frame: frame)
-        var finalError: Error? = nil
-        getPlayerJSON(videoType: videoType, privateToken: privateToken){ (player, error) in
-            if player != nil{
-                self.setupView()
-            }else{
-                print("error => \(error.debugDescription)")
-                finalError = error
+        
+        do{
+            playerController = try PlayerController(videoId: videoId, events: events)
+            var finalError: Error? = nil
+            playerController!.getPlayerJSON(videoType: .vod){ (player, error) in
+                if player != nil{
+                    self.setupView()
+                }else{
+                    print("error => \(error.debugDescription)")
+                    finalError = error
+                }
             }
+            
+            if(finalError != nil){
+                throw finalError!
+            }
+        }catch{
+            return
         }
-        
-        if(finalError != nil){
-            throw finalError!
-        }
-        
+                
     }
-        
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    /// Set the UIViewController to be able to display the player in full screen
-    /// - Parameter vc: pass your UIViewController
-    public func setViewController(vc: UIViewController){
-        self.viewController = vc
-    }
-    
-    private func getVideoUrl(videoType: VideoType, privateToken: String? = nil) -> String{
-        var baseUrl = ""
-        if videoType == .vod {
-            baseUrl = "https://cdn.api.video/vod/"
-        }else{
-            baseUrl = "https://live.api.video/"
-        }
-        var url: String!
-        if privateToken != nil{
-            url = baseUrl + "\(self.videoId!)/token/\(privateToken!)/player.json"
-        }else{
-            url = baseUrl + "\(self.videoId!)/player.json"
-        }
-        
-        return url
-    }
-    
-    private func getPlayerJSON(videoType: VideoType, privateToken: String? = nil, completion: @escaping (Player?, Error?) -> Void){
-        let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType, privateToken: privateToken))
-        let session = RequestsBuilder().buildUrlSession()
-        TasksExecutor.execute(session: session, request: request) { (data,response, error) in
-            if data != nil {
-                if let response = response as? HTTPURLResponse {
-                    self.tokenVideo = response.value(forHTTPHeaderField: "x-token-session") ?? nil
-                    print("Specific header: \(response.value(forHTTPHeaderField: "x-token-session") ?? " header not found")")
-                }
-                
-                do{
-                    self.player = try JSONDecoder().decode(Player.self, from: data!)
-                }catch let decodeError{
-                    completion(nil, decodeError)
-                    return
-                }
-                DispatchQueue.main.async {
-                    completion(self.player, nil)
-                }
-                
-            } else {
-                DispatchQueue.main.async {
-                    completion(nil, error)
-                }
-                
-            }
-        }
-    }
-    
     
     private func setupView(){
         let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
@@ -129,58 +75,34 @@ public class ApiPlayerView: UIView {
         }else{
             self.backgroundColor = .black
         }
-        
-        do{
-            var url: String!
-            if(tokenVideo != nil){
-                url = player.video.src.replacingOccurrences(of: ":token", with: tokenVideo!)
-                let headers: [String: String] = [
-                    "X-Token-Session": tokenVideo!
-                ]
-                let asset = AVURLAsset(url: URL(string: url)!, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
-                basicPlayerItem = AVPlayerItem(asset: asset)
-                
+        if let url = URL(string: (self.playerController?.player.video.src)!){
+            basicPlayerItem = AVPlayerItem(url: url)
+        }else{
+            if let urlMp4 = self.playerController?.player.video.mp4 {
+                basicPlayerItem = AVPlayerItem(url: URL(string: urlMp4)!)
             }else{
-                url = player.video.src
-                basicPlayerItem = AVPlayerItem(url: URL(string: url)!)
-            }
-        }catch{
-            var url: String!
-            if(tokenVideo != nil){
-                url = player.video.mp4!.replacingOccurrences(of: ":token", with: tokenVideo!)
-                let headers: [String: String] = [
-                    "X-Token-Session": tokenVideo!
-                ]
-                let asset = AVURLAsset(url: URL(string: url)!, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
-                basicPlayerItem = AVPlayerItem(asset: asset)
-            }else{
-                url = player.video.mp4!
-                basicPlayerItem = AVPlayerItem(url: URL(string: url)!)
+                return
             }
         }
-        
         NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
         let item = basicPlayerItem
         avPlayer = AVPlayer(playerItem: item)
         
         playerLayer.player = avPlayer
         self.layer.addSublayer(playerLayer)
-        playerController = PlayerController(avPlayer: avPlayer, events, self.viewController, player: self.player)
-        if(videoType == .vod){
-            if(!isHiddenControls){
-                self.vodControlsView = VodControls(frame: .zero, parentView: self, playerController: playerController!)
-                timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-                    self.vodControlsView!.updatePlayerState()
-                })
-            }
-        }else{
-            if isHiddenControls {
-                self.liveControlsView = LiveControls(frame: .zero, parentView: self, player: avPlayer)
-                timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-                    // liveControlsView.updatePlayerState()
-                })
-            }
+        playerController?.avPlayer = avPlayer
+        if(!isHiddenControls){
+            self.vodControlsView = VodControls(frame: .zero, parentView: self, playerController: self.playerController!)
+            timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+                self.vodControlsView!.updatePlayerState()
+            })
         }
+    }
+    
+    /// Set the UIViewController to be able to display the player in full screen
+    /// - Parameter vc: pass your UIViewController
+    public func setViewController(vc: UIViewController){
+        self.viewController = vc
     }
     
     public override func layoutSubviews() {
@@ -226,11 +148,7 @@ public class ApiPlayerView: UIView {
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func hideControls(){
         isHiddenControls = true
-        if(videoType == .vod){
-            self.vodControlsView?.hideControls()
-        }else{
-            self.liveControlsView?.hideControls()
-        }
+        self.vodControlsView?.hideControls()
     }
     
     
