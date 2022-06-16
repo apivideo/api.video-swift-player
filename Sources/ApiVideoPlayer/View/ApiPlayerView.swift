@@ -10,9 +10,6 @@ public class ApiPlayerView: UIView {
     public var events: PlayerEvents? = nil
     private var basicPlayerItem: AVPlayerItem!
     private let playerLayer = AVPlayerLayer()
-
-    
-    
     private var timeObserver: Any?
     private let videoPlayerView = UIView()
     public var avPlayer: AVPlayer!
@@ -46,8 +43,8 @@ public class ApiPlayerView: UIView {
         do{
             playerController = try PlayerController(videoId: videoId, events: events)
             var finalError: Error? = nil
-            playerController!.getPlayerJSON(videoType: .vod){ (player, error) in
-                if player != nil{
+            playerController!.getPlayerJSON(videoType: .vod){ (playerManifest, error) in
+                if playerManifest != nil{
                     self.setupView()
                 }else{
                     print("error => \(error.debugDescription)")
@@ -75,10 +72,10 @@ public class ApiPlayerView: UIView {
         }else{
             self.backgroundColor = .black
         }
-        if let url = URL(string: (self.playerController?.player.video.src)!){
+        if let url = URL(string: (self.playerController?.playerManifest.video.src)!){
             basicPlayerItem = AVPlayerItem(url: url)
         }else{
-            if let urlMp4 = self.playerController?.player.video.mp4 {
+            if let urlMp4 = self.playerController?.playerManifest.video.mp4 {
                 basicPlayerItem = AVPlayerItem(url: URL(string: urlMp4)!)
             }else{
                 return
@@ -88,7 +85,7 @@ public class ApiPlayerView: UIView {
         let item = basicPlayerItem
         avPlayer = AVPlayer(playerItem: item)
         
-        playerLayer.player = avPlayer
+        playerLayer.playerManifest = avPlayer
         self.layer.addSublayer(playerLayer)
         playerController?.avPlayer = avPlayer
         if(!isHiddenControls){

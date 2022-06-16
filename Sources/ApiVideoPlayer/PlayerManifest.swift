@@ -6,7 +6,7 @@
 //
 
 import Foundation
-public struct Player: Codable{
+public struct PlayerManifest: Codable{
     var id: String
     var title: String
     var video: Video

@@ -15,7 +15,7 @@ public class PlayerController{
     public let videoId: String!
     public var events: PlayerEvents? = nil
 
-    public var player: Player!
+    public var playerManifest: PlayerManifest!
     
     public var viewController: UIViewController? {
         didSet{
@@ -55,20 +55,20 @@ public class PlayerController{
     }
     
     
-    public func getPlayerJSON(videoType: VideoType, completion: @escaping (Player?, Error?) -> Void){
+    public func getPlayerJSON(videoType: VideoType, completion: @escaping (PlayerManifest?, Error?) -> Void){
         let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data,response, error) in
             if data != nil {
                 do{
-                    self.player = try JSONDecoder().decode(Player.self, from: data!)
+                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
                 }catch let decodeError{
                     completion(nil, decodeError)
                     return
                 }
                 DispatchQueue.main.async {
                     self.setUpAnalytics()
-                    completion(self.player, nil)
+                    completion(self.playerManifest, nil)
                 }
                 
             } else {
@@ -84,7 +84,7 @@ public class PlayerController{
     private func setUpAnalytics(){
         do {
               option = try Options(
-                mediaUrl: self.player.video.src, metadata: [],
+                mediaUrl: self.playerManifest.video.src, metadata: [],
                 onSessionIdReceived: { (id) in
                   print("session ID : \(id)")
                 })
