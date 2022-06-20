@@ -22,7 +22,6 @@ public class ApiPlayerView: UIView {
     
     public var viewController: UIViewController? {
         didSet{
-            vodControlsView?.viewController = viewController
             playerController?.viewController = viewController
         }
     }
