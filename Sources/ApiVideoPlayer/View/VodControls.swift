@@ -6,7 +6,7 @@ import AVFoundation
 class VodControls: UIView{
     
     private var timer: Timer?
-    public var playerController: PlayerController!
+    private(set) var playerController: PlayerController!
     private var pView: UIView!
     private var isHiddenControls = false
     private var isSubtitleViewDisplay = false
@@ -15,11 +15,7 @@ class VodControls: UIView{
 
 
     
-    var viewController: UIViewController? {
-        didSet{
-            
-        }
-    }
+    var viewController: UIViewController?
     
     init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
         self.playerController = playerController

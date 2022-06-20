@@ -5,11 +5,11 @@ import ApiVideoPlayerAnalytics
 
 @available(iOS 14.0, *)
 public class PlayerController{
-    private var avPlayer: AVPlayer!
+    private(set) var avPlayer: AVPlayer!
     private var analytics: PlayerAnalytics?
     private var option : Options?
-    public let videoType: VideoType = .vod
-    public let videoId: String!
+    private let videoType: VideoType = .vod
+    private let videoId: String!
     public var events: PlayerEvents? = nil
     private var basicPlayerItem: AVPlayerItem!
     private var vodControlsView: VodControls?
