@@ -3,6 +3,7 @@ import AVFoundation
 import AVKit
 import ApiVideoPlayerAnalytics
 
+@available(iOS 14.0, *)
 public class PlayerController{
     public var avPlayer: AVPlayer!{
         didSet{
@@ -14,23 +15,32 @@ public class PlayerController{
     public let videoType: VideoType = .vod
     public let videoId: String!
     public var events: PlayerEvents? = nil
+    private var basicPlayerItem: AVPlayerItem!
+    private var vodControlsView: VodControls?
+    private var isHiddenControls = false
+    private var timeObserver: Any?
 
-    public var playerManifest: PlayerManifest!
+
     
-    public var viewController: UIViewController? {
+    public var isReady: (() -> ())? = nil
+
+    public var playerManifest: PlayerManifest!{
         didSet{
-            print("view controller set")
+            self.isReady!()
         }
     }
-    public var isPlaying = false {
-        didSet{
-            
-        }
-    }
+    
+    public var viewController: UIViewController?
+    public var isPlaying = false     
+    
     
     init(videoId: String, events: PlayerEvents? = nil) throws {
         self.events = events
         self.videoId = videoId
+        
+        getPlayerJSON(videoType: .vod){ (playerManifest, error) in
+        }
+        
     }
     
     
@@ -81,6 +91,31 @@ public class PlayerController{
         
     }
     
+    private func setUpPlayer(_ view: UIView, _ playerLayer: AVPlayerLayer){
+        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        if let url = URL(string: (self.playerManifest.video.src)){
+            basicPlayerItem = AVPlayerItem(url: url)
+        }else{
+            if let urlMp4 = self.playerManifest.video.mp4 {
+                basicPlayerItem = AVPlayerItem(url: URL(string: urlMp4)!)
+            }else{
+                return
+            }
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
+        let item = basicPlayerItem
+        avPlayer = AVPlayer(playerItem: item)
+        
+        playerLayer.player = avPlayer
+        view.layer.addSublayer(playerLayer)
+        if(!isHiddenControls){
+            self.vodControlsView = VodControls(frame: .zero, parentView: view, playerController: self)
+            timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+                self.vodControlsView!.updatePlayerState()
+            })
+        }
+    }
+    
     private func setUpAnalytics(){
         do {
               option = try Options(
@@ -95,10 +130,13 @@ public class PlayerController{
         analytics = PlayerAnalytics(options: option!)
     }
     
+    public func setAvPlayerManifest(_ view: UIView,_ playerLayer: AVPlayerLayer){
+        self.setUpPlayer(view, playerLayer)
+    }
     
     
     
-    @available(iOS 10.0, *)
+    
     public func isVideoPlaying()-> Bool{
         return avPlayer.isVideoPlaying()
     }
@@ -206,7 +244,6 @@ public class PlayerController{
         return avPlayer.currentTime()
     }
     
-    @available(iOS 11.0, *)
     public func goFullScreen(){
         let playerViewController = AVPlayerViewController()
         playerViewController.player = avPlayer

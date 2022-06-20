@@ -42,18 +42,12 @@ public class ApiPlayerView: UIView {
         
         do{
             playerController = try PlayerController(videoId: videoId, events: events)
-            var finalError: Error? = nil
-            playerController!.getPlayerJSON(videoType: .vod){ (playerManifest, error) in
-                if playerManifest != nil{
+            playerController?.isReady = {() in
+                print("is ready")
+                DispatchQueue.main.async {
+                    self.playerController?.setAvPlayerManifest(self,self.playerLayer)
                     self.setupView()
-                }else{
-                    print("error => \(error.debugDescription)")
-                    finalError = error
                 }
-            }
-            
-            if(finalError != nil){
-                throw finalError!
             }
         }catch{
             return
@@ -66,33 +60,10 @@ public class ApiPlayerView: UIView {
     }
     
     private func setupView(){
-        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         if(self.traitCollection.userInterfaceStyle == .dark){
             self.backgroundColor = .lightGray
         }else{
             self.backgroundColor = .black
-        }
-        if let url = URL(string: (self.playerController?.playerManifest.video.src)!){
-            basicPlayerItem = AVPlayerItem(url: url)
-        }else{
-            if let urlMp4 = self.playerController?.playerManifest.video.mp4 {
-                basicPlayerItem = AVPlayerItem(url: URL(string: urlMp4)!)
-            }else{
-                return
-            }
-        }
-        NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
-        let item = basicPlayerItem
-        avPlayer = AVPlayer(playerItem: item)
-        
-        playerLayer.playerManifest = avPlayer
-        self.layer.addSublayer(playerLayer)
-        playerController?.avPlayer = avPlayer
-        if(!isHiddenControls){
-            self.vodControlsView = VodControls(frame: .zero, parentView: self, playerController: self.playerController!)
-            timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-                self.vodControlsView!.updatePlayerState()
-            })
         }
     }
     
@@ -238,7 +209,6 @@ public struct PlayerEvents{
     public var didLoop: (() -> ())? = nil
     public var didSetVolume: ((_ volume: Float) -> ())? = nil
     public var didSeekTime: ((_ from: Double, _ to: Double) -> ())? = nil
-    // TODO: rename didEnd
     public var didEnd: (() -> ())? = nil
     
     
