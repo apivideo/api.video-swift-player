@@ -12,10 +12,6 @@ class VodControls: UIView{
     private var isSubtitleViewDisplay = false
     private var subtitleView: SubtitleView!
     private var timeObserver: Any?
-
-
-    
-    var viewController: UIViewController?
     
     init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
         self.playerController = playerController

@@ -12,13 +12,10 @@ public class ApiPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private var timeObserver: Any?
     private let videoPlayerView = UIView()
-    public var avPlayer: AVPlayer!
-    private var isPlaying = false
     private var isLoop =  false
     private var vodControlsView: VodControls?
-    private var playerController: PlayerController?
+    private(set) var playerController: PlayerController?
     private var isHiddenControls = false
-    private var isFullScreenAvailable = false
     
     public var viewController: UIViewController? {
         didSet{
@@ -81,7 +78,7 @@ public class ApiPlayerView: UIView {
     /// Get information if the video is playing
     /// - Returns: Boolean
     public func isVideoPlaying() -> Bool{
-        return avPlayer.isVideoPlaying()
+        return playerController?.avPlayer.isVideoPlaying() ?? false
     }
     
     /// Play the video
@@ -98,19 +95,13 @@ public class ApiPlayerView: UIView {
     public func pause(){
         playerController!.pause()
     }
-    /// Mute the playing video
-    public func mute(){
-        playerController!.mute()
+    
+    /// Getter and Setter to mute or unmute video player
+    public var isMuted: Bool {
+        get{return playerController!.isMuted}
+        set(newValue){ playerController!.isMuted = newValue}
     }
-    /// Unmute the playing video
-    public func unMute(){
-        playerController!.unMute()
-    }
-    /// Get information if the video is muted or not
-    /// - Returns: Boolean
-    public func isMuted() -> Bool{
-        return playerController!.isMuted()
-    }
+    
     /// Hide all the controls of the player
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func hideControls(){
@@ -118,23 +109,16 @@ public class ApiPlayerView: UIView {
         self.vodControlsView?.hideControls()
     }
     
-    
-    
     public func turnOffSubtitle(){
-        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
-            avPlayer.currentItem!.select(nil, in: group)
-        }
+        playerController?.turnOffSubtitle()
     }
     
     public func showSubtitle(language: String){
-        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
-            let locale = Locale(identifier: language)
-            let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
-            if let option = options.first {
-                avPlayer.currentItem!.select(option, in: group)
-            }
-        }
+        playerController?.showSubtitle(language: language)
     }
+    
+    
+    public var isLooping: Bool = false
     
     /// Video player is looping.
     /// (When the video play is finished, the player will start again the video)
@@ -153,19 +137,23 @@ public class ApiPlayerView: UIView {
     /// The video player volume is connected to the device audio volume
     /// - Parameter volume: Float between 0 to 1
     public func setVolume(volume: Float){
-        playerController!.setVolume(volume: volume)
+        playerController!.volume = volume
     }
     
     // do setter getter
-    public func getDuration()-> CMTime{
-        return playerController!.getDuration()
+    var duration: CMTime{
+        get{
+            playerController!.duration
+        }
     }
-    public func getCurrentTime() -> CMTime{
-        return playerController!.getCurrentTime()
+    
+    var currentTime: CMTime{
+        get{
+            playerController!.currentTime
+        }
     }
     
     public func goFullScreen(){
-        isFullScreenAvailable = !isFullScreenAvailable
         playerController!.goFullScreen()
     }
     

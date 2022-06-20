@@ -27,7 +27,6 @@ public class PlayerController{
     }
     
     public var viewController: UIViewController?
-    public var isPlaying = false     
     
     
     init(videoId: String, events: PlayerEvents? = nil) throws {
@@ -72,16 +71,10 @@ public class PlayerController{
                     completion(nil, decodeError)
                     return
                 }
-                DispatchQueue.main.async {
                     self.setUpAnalytics()
                     completion(self.playerManifest, nil)
-                }
-                
             } else {
-                DispatchQueue.main.async {
                     completion(nil, error)
-                }
-                
             }
         }
         
@@ -139,7 +132,6 @@ public class PlayerController{
     
     public func play(){
         avPlayer.play()
-        isPlaying = true
         if(self.events?.didPlay != nil){
             self.events?.didPlay!()
         }
@@ -172,7 +164,6 @@ public class PlayerController{
     
     public func pause(){
         avPlayer.pause()
-        isPlaying = false
         analytics?.pause(){(result) in
             switch result {
             case .success(let data):
@@ -207,45 +198,66 @@ public class PlayerController{
         }
     }
     
-    public func mute(){
-        avPlayer.isMuted = true
-        if(self.events?.didMute != nil){
-            self.events?.didMute!()
+    public var isMuted: Bool {
+        get {
+            return self.isMuted
+        }
+        set(newValue) {
+            avPlayer.isMuted = newValue
+            if newValue{
+                if(self.events?.didMute != nil){
+                    self.events?.didMute!()
+                }
+            }else{
+                if(self.events?.didUnMute != nil){
+                    self.events?.didUnMute!()
+                }
+            }
         }
     }
     
-    public func unMute(){
-        avPlayer.isMuted = false
-        if(self.events?.didUnMute != nil){
-            self.events?.didUnMute!()
+    
+    public var volume: Float{
+        get{ return avPlayer.volume}
+        set(newVolume){
+            avPlayer.volume = newVolume
+            if(self.events?.didSetVolume != nil){
+                self.events?.didSetVolume!(volume)
+            }
         }
     }
     
-    public func isMuted() -> Bool{
-        return avPlayer.isMuted
-    }
-    
-    public func setVolume(volume: Float){
-        avPlayer.volume = volume
-        if(self.events?.didSetVolume != nil){
-            self.events?.didSetVolume!(volume)
+    public var duration: CMTime{
+        get{
+            return avPlayer.currentItem!.asset.duration
         }
     }
     
-    public func getDuration() -> CMTime{
-        return avPlayer.currentItem!.asset.duration
-    }
-    
-    public func getCurrentTime() -> CMTime{
+    public var currentTime: CMTime{
         return avPlayer.currentTime()
     }
     
     public func goFullScreen(){
         let playerViewController = AVPlayerViewController()
         playerViewController.player = avPlayer
-        print("view controller \(self.viewController.debugDescription)")
         viewController?.present(playerViewController, animated: true) {
             self.avPlayer.play()
+        }
+    }
+    
+    public func turnOffSubtitle(){
+        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
+            avPlayer.currentItem!.select(nil, in: group)
+        }
+    }
+    
+    public func showSubtitle(language: String){
+        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
+            let locale = Locale(identifier: language)
+            let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
+            if let option = options.first {
+                avPlayer.currentItem!.select(option, in: group)
+            }
         }
     }
     

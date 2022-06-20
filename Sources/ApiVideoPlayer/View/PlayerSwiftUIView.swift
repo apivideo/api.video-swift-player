@@ -56,7 +56,7 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     /// Get the current time of the video
     /// - Returns: Current time in CMTime
     public func getCurrentTime() -> CMTime{
-       return playerView!.getCurrentTime()
+       return playerView!.currentTime
     }
     /// Mute the playing video
     public func mute(){
@@ -107,7 +107,7 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     /// Display the player in fullscreen
     public func goFullScreen(){
         let controller = AVPlayerViewController()
-        controller.player = playerView!.avPlayer
+        controller.player = playerView!.playerController?.avPlayer
         
         self.fullScreen.toggle()
         print(fullScreen.description)
