@@ -228,11 +228,7 @@ public struct PlayerEvents{
 extension AVPlayer{
     @available(iOS 10.0, *)
     func isVideoPlaying()-> Bool{
-        var isVideoPlaying = false
-        if(self.timeControlStatus == .playing){
-            isVideoPlaying = true
-        }
-        return isVideoPlaying
+        return (self.rate != 0 && self.error == nil)
     }
 }
 
