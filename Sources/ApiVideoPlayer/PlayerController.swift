@@ -5,11 +5,7 @@ import ApiVideoPlayerAnalytics
 
 @available(iOS 14.0, *)
 public class PlayerController{
-    public var avPlayer: AVPlayer!{
-        didSet{
-            NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: avPlayer.currentItem)
-        }
-    }
+    private var avPlayer: AVPlayer!
     private var analytics: PlayerAnalytics?
     private var option : Options?
     public let videoType: VideoType = .vod
@@ -265,5 +261,9 @@ public class PlayerController{
         if(self.events?.didEnd != nil){
             self.events?.didEnd!()
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
     }
 }
