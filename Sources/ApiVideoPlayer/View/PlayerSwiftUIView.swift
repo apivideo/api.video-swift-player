@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Romain Petit on 16/03/2022.
-//
-
 import SwiftUI
 import AVKit
 
