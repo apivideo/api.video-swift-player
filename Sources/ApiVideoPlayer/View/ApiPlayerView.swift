@@ -16,6 +16,7 @@ public class ApiPlayerView: UIView {
     private var vodControlsView: VodControls?
     private(set) var playerController: PlayerController?
     private var isHiddenControls = false
+    private var isFirstPlay = true
     
     public var viewController: UIViewController? {
         didSet{
@@ -38,10 +39,12 @@ public class ApiPlayerView: UIView {
         
         do{
             playerController = try PlayerController(videoId: videoId, events: events)
+            
             playerController?.isReady = {() in
                 print("is ready")
                 DispatchQueue.main.async {
                     self.playerController?.setAvPlayerManifest(self,self.playerLayer)
+                    self.playerController?.avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
                     self.setupView()
                 }
             }
@@ -167,6 +170,68 @@ public class ApiPlayerView: UIView {
         if(self.events?.didEnd != nil){
             self.events?.didEnd!()
         }
+    }
+    
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "rate" {
+            if let status = playerController?.avPlayer.timeControlStatus {
+                switch status{
+                case .paused:
+                    //Paused mode
+                    playerController?.analytics?.pause(){(result) in
+                        switch result {
+                        case .success(_): break
+                        case .failure(let error):
+                            print("analytics error on pause event: \(error)")
+                        }
+                    }
+                    if(self.events?.didPause != nil){
+                        self.events?.didPause!()
+                    }
+                case .waitingToPlayAtSpecifiedRate:
+                    //Resumed
+                    if(isFirstPlay){
+                        isFirstPlay = false
+                        playerController?.analytics?.play(){(result) in
+                            switch result {
+                            case .success(_): break
+                            case .failure(let error):
+                                print("analytics error on play event: \(error)")
+                            }
+                        }
+                    }else{
+                        playerController?.analytics?.resume(){(result) in
+                            switch result {
+                            case .success(_): break
+                            case .failure(let error):
+                                print("analytics error on resume event: \(error)")
+                            }
+                        }
+                    }
+                    if(self.events?.didPlay != nil){
+                        self.events?.didPlay!()
+                    }
+                case .playing:
+                    //Video Ended
+                        playerController?.analytics?.end(){(result)in
+                        switch result {
+                        case .success(_):break
+                        case .failure(let error):
+                            print("analytics error on ended event: \(error)")
+                        }
+                    }
+                    if(self.events?.didEnd != nil){
+                        self.events?.didEnd!()
+                    }
+                @unknown default:
+                    break
+                }
+            }
+        }
+    }
+    
+    deinit {
+        playerController!.avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
     }
     
 }

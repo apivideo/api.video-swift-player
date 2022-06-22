@@ -6,7 +6,7 @@ import ApiVideoPlayerAnalytics
 @available(iOS 14.0, *)
 public class PlayerController{
     private(set) var avPlayer: AVPlayer!
-    private var analytics: PlayerAnalytics?
+    private(set) var analytics: PlayerAnalytics?
     private var option : Options?
     private let videoType: VideoType = .vod
     private let videoId: String!
@@ -15,11 +15,11 @@ public class PlayerController{
     private var vodControlsView: VodControls?
     private var isHiddenControls = false
     private var timeObserver: Any?
-
-
+    
+    
     
     public var isReady: (() -> ())? = nil
-
+    
     public var playerManifest: PlayerManifest!{
         didSet{
             self.isReady!()
@@ -33,8 +33,7 @@ public class PlayerController{
         self.events = events
         self.videoId = videoId
         
-        getPlayerJSON(videoType: .vod){ (playerManifest, error) in
-        }
+        getPlayerJSON(videoType: .vod){ (playerManifest, error) in}
         
     }
     
@@ -71,10 +70,10 @@ public class PlayerController{
                     completion(nil, decodeError)
                     return
                 }
-                    self.setUpAnalytics()
-                    completion(self.playerManifest, nil)
+                self.setUpAnalytics()
+                completion(self.playerManifest, nil)
             } else {
-                    completion(nil, error)
+                completion(nil, error)
             }
         }
         
@@ -91,10 +90,8 @@ public class PlayerController{
                 return
             }
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(self.donePlaying(sender:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
         let item = basicPlayerItem
         avPlayer = AVPlayer(playerItem: item)
-        
         playerLayer.player = avPlayer
         view.layer.addSublayer(playerLayer)
         if(!isHiddenControls){
@@ -105,17 +102,20 @@ public class PlayerController{
         }
     }
     
+    
+    
+    
     private func setUpAnalytics(){
         do {
-              option = try Options(
+            option = try Options(
                 mediaUrl: self.playerManifest.video.src, metadata: [],
                 onSessionIdReceived: { (id) in
-                  print("session ID : \(id)")
+                    print("session ID : \(id)")
                 })
-            } catch {
-              print("error with the url")
-            }
-
+        } catch {
+            print("error with the url")
+        }
+        
         analytics = PlayerAnalytics(options: option!)
     }
     
@@ -132,28 +132,23 @@ public class PlayerController{
     
     public func play(){
         avPlayer.play()
-        if(self.events?.didPlay != nil){
-            self.events?.didPlay!()
-        }
     }
     
     public func replay(){
         analytics?.seek(from: Float(CMTimeGetSeconds(avPlayer.currentTime())), to: Float(CMTimeGetSeconds(CMTime.zero))){ (result) in
             switch result {
-            case .success(let data):
-                print("player analytics seek : \(data)")
+            case .success(_):break
             case .failure(let error):
-                print("player analytics seek : \(error)")
+                print("analytics error on seek event: \(error)")
             }
         }
         avPlayer.seek(to: CMTime.zero)
         avPlayer.play()
         analytics?.resume(){(result) in
             switch result {
-            case .success(let data):
-                print("player analytics play : \(data)")
+            case .success(_):break
             case .failure(let error):
-                print("player analytics play : \(error)")
+                print("analytics error on resume event: \(error)")
             }
         }
         
@@ -164,17 +159,6 @@ public class PlayerController{
     
     public func pause(){
         avPlayer.pause()
-        analytics?.pause(){(result) in
-            switch result {
-            case .success(let data):
-                print("player analytics pause : \(data)")
-            case .failure(let error):
-                print("player analytics pause : \(error)")
-            }
-        }
-        if(self.events?.didPause != nil){
-            self.events?.didPause!()
-        }
     }
     
     public func seek(time: Double){
@@ -262,17 +246,7 @@ public class PlayerController{
     }
     
     @objc func donePlaying(sender: Notification) {
-        analytics?.end(){(result)in
-            switch result {
-            case .success(let data):
-                print("player analytics video ended successfully : \(data)")
-            case .failure(let error):
-                print("player analytics video ended with an error : \(error)")
-            }
-        }
-        if(self.events?.didEnd != nil){
-            self.events?.didEnd!()
-        }
+        
     }
     
     deinit {

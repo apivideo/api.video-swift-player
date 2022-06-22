@@ -60,16 +60,16 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     }
     /// Mute the playing video
     public func mute(){
-        playerView?.mute()
+        playerView?.isMuted = true
     }
     /// Unmute the playing video
     public func unMute(){
-        playerView?.unMute()
+        playerView?.isMuted = false
     }
     /// Get audio state of the player
     /// - Returns: Boolean of the state of player's audio
     public func isMuted()->Bool{
-        return ((playerView?.isMuted()) != nil)
+        return playerView!.isMuted
     }
     /// Hide all the controls of the player
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
