@@ -12,6 +12,8 @@ class VodControls: UIView{
     private var isSubtitleViewDisplay = false
     private var subtitleView: SubtitleView!
     private var timeObserver: Any?
+    private var fromCMTime : CMTime!
+
     
     init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
         self.playerController = playerController
@@ -410,13 +412,44 @@ class VodControls: UIView{
     }
     
     
-    @objc func playbackSliderValueChanged(_ sender: UISlider) {
-        playerController.avPlayer.pause()
+    @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
+        
         guard let duration = playerController.avPlayer.currentItem?.duration else { return }
         let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
         let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
         playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
         playerController.avPlayer.play()
+        
+        guard let duration = playerController.avPlayer.currentItem?.duration else { return }
+        playerController.avPlayer.pause()
+        
+        if let touchEvent = event.allTouches?.first {
+            switch touchEvent.phase {
+            case .began:
+                // handle drag began
+                fromCMTime = CMTime(value: CMTimeValue(Float64(slider.value) * CMTimeGetSeconds(duration)), timescale: 1)
+            case .moved:
+                // handle drag moved
+                break
+            case .ended:
+                // handle drag ended
+                let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
+                let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
+                let currentTime = fromCMTime.seconds
+                playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
+                playerController.analytics?.seek(from:Float(currentTime), to: Float(seekTime.seconds)){(result) in
+                    switch result{
+                    case .success(_):
+                        print("success seek")
+                        self.playerController.avPlayer.play()
+                    case .failure(let error):
+                        print("error seek : \(error)")
+                    }
+                }
+            default:
+                break
+            }
+        }
     }
     
 }
