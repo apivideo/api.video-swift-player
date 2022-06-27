@@ -1,10 +1,3 @@
-//
-//  PlayerViewController.swift
-//  ExampleiOS
-//
-//  Created by Romain Petit on 21/04/2022.
-//
-
 import UIKit
 import ApiVideoPlayer
 import AVKit
@@ -42,7 +35,7 @@ class PlayerViewController: UIViewController {
         
         var player: ApiPlayerView? = nil
         do {
-            player = try ApiPlayerView(frame: .zero, videoId: "vi7j8cPsdTxHv26lqbCbaQZd", events: events)
+            player = try ApiPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", events: events)
         } catch {
             print("error during init, please check videoId")
         }
@@ -157,17 +150,11 @@ class PlayerViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(scrollView)
         scrollView.addSubview(customPlayer!)
-        
-        
-//        scrollView.addSubview(testView)
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTapMain(_:)))
-        customPlayer!.addGestureRecognizer(tap)
+       
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         customPlayer!.addGestureRecognizer(doubleTap)
 
-        tap.require(toFail: doubleTap)
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
         customPlayer!.addGestureRecognizer(swipeGestureRecognizerRight)
@@ -211,10 +198,7 @@ class PlayerViewController: UIViewController {
         hStackLast.addArrangedSubview(turnOffSubtitleButton)
         turnOffSubtitleButton.addTarget(self, action: #selector(turnOffSubtitleAction), for: .touchUpInside)
         
-        
-        
         constraints()
-        
     }
     
     private func replayVideo(){
@@ -223,7 +207,6 @@ class PlayerViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         customPlayer!.setViewController(vc: self)
-        //        constraintPlayer!.hideControls()
     }
     
     private func constraints(){
@@ -264,10 +247,10 @@ class PlayerViewController: UIViewController {
         customPlayer!.goFullScreen()
     }
     @objc func muteAction(sender: UIButton!) {
-        customPlayer!.mute()
+        customPlayer!.isMuted = true
     }
     @objc func unmuteAction(sender: UIButton!) {
-        customPlayer!.unMute()
+        customPlayer!.isMuted = false
     }
     @objc func forwardAction(sender: UIButton!) {
         customPlayer!.seek(time: 15)
@@ -283,14 +266,6 @@ class PlayerViewController: UIViewController {
     }
     @objc func turnOffSubtitleAction(sender: UIButton!) {
         customPlayer!.turnOffSubtitle()
-    }
-    
-    
-    
-    
-    @objc func handleTapMain(_ sender: UITapGestureRecognizer? = nil) {
-        print("main view tapped")
-        
     }
     
     @objc func handleDoubleTap(_ sender: UITapGestureRecognizer? = nil) {
