@@ -335,16 +335,17 @@ class VodControls: UIView{
     
     @available(iOS 14.0, *)
     @objc func displaySubtitle(){
-        let sliderviewheight = vodControlSliderView.frame.height - 24
         let posX = subtitleButton.frame.origin.x - 120
+        let posY = self.frame.height - vodControlSliderView.frame.height - 45
         
         if(isSubtitleViewDisplay){
             isSubtitleViewDisplay.toggle()
             subtitleView.dismissView()
         }else{
             isSubtitleViewDisplay.toggle()
-
-            subtitleView = SubtitleView(frame: CGRect(x: posX, y: sliderviewheight, width: 130, height: 3*45), self)
+            print("posX : \(posX)")
+            print("posY : \(posY)")
+            subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3*45), self)
             subtitleView.tag = 101
             pView.addSubview(subtitleView)
         }

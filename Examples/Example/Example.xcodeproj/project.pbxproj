@@ -7,26 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C72B1B5F2875CDED00A6EAEF /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */; };
 		C75C78F027E1E1FA001CA24D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */; };
 		C75C78F227E1E1FA001CA24D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */; };
 		C75C78F727E1E1FA001CA24D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F527E1E1FA001CA24D /* Main.storyboard */; };
 		C75C78F927E1E1FD001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F827E1E1FD001CA24D /* Assets.xcassets */; };
 		C75C78FC27E1E1FD001CA24D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */; };
 		C7922D942811685C00957116 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7922D932811685B00957116 /* PlayerViewController.swift */; };
-		C7D403EB285897E5004563EC /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7D403EA285897E5004563EC /* ApiVideoPlayer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C75C78EC27E1E1FA001CA24D /* ExampleiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
+		C75C78EC27E1E1FA001CA24D /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C75C78F627E1E1FA001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C75C78F827E1E1FD001CA24D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C75C78FB27E1E1FD001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C75C78FD27E1E1FD001CA24D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C75C795327E1E6AC001CA24D /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../../Package.swift; sourceTree = "<group>"; };
-		C75C795427E1E6CC001CA24D /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
-		C792283428587C6100F99A00 /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sources; path = ../../Sources; sourceTree = "<group>"; };
 		C7922D932811685B00957116 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -35,7 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7D403EB285897E5004563EC /* ApiVideoPlayer in Frameworks */,
+				C72B1B5F2875CDED00A6EAEF /* ApiVideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,7 +52,7 @@
 		C75C78ED27E1E1FA001CA24D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C75C78EC27E1E1FA001CA24D /* ExampleiOS.app */,
+				C75C78EC27E1E1FA001CA24D /* Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,9 +74,7 @@
 		C75C795227E1E6AB001CA24D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C792283428587C6100F99A00 /* Sources */,
-				C75C795427E1E6CC001CA24D /* ApiVideoPlayer */,
-				C75C795327E1E6AC001CA24D /* Package.swift */,
+				C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -86,9 +82,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C75C78EB27E1E1FA001CA24D /* ExampleiOS */ = {
+		C75C78EB27E1E1FA001CA24D /* Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "ExampleiOS" */;
+			buildConfigurationList = C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
 				C75C78E827E1E1FA001CA24D /* Sources */,
 				C75C78E927E1E1FA001CA24D /* Frameworks */,
@@ -98,12 +94,12 @@
 			);
 			dependencies = (
 			);
-			name = ExampleiOS;
+			name = Example;
 			packageProductDependencies = (
-				C7D403EA285897E5004563EC /* ApiVideoPlayer */,
+				C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */,
 			);
 			productName = ExampleiOS;
-			productReference = C75C78EC27E1E1FA001CA24D /* ExampleiOS.app */;
+			productReference = C75C78EC27E1E1FA001CA24D /* Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +117,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "ExampleiOS" */;
+			buildConfigurationList = C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "Example" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -131,13 +127,12 @@
 			);
 			mainGroup = C75C78E327E1E1FA001CA24D;
 			packageReferences = (
-				C7179FB3285390CE00F2279E /* XCRemoteSwiftPackageReference "api" */,
 			);
 			productRefGroup = C75C78ED27E1E1FA001CA24D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C75C78EB27E1E1FA001CA24D /* ExampleiOS */,
+				C75C78EB27E1E1FA001CA24D /* Example */,
 			);
 		};
 /* End PBXProject section */
@@ -365,7 +360,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "ExampleiOS" */ = {
+		C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75C78FE27E1E1FD001CA24D /* Debug */,
@@ -374,7 +369,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "ExampleiOS" */ = {
+		C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75C790127E1E1FD001CA24D /* Debug */,
@@ -385,19 +380,8 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		C7179FB3285390CE00F2279E /* XCRemoteSwiftPackageReference "api" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apivideo/api.video-ios-player-analytics";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		C7D403EA285897E5004563EC /* ApiVideoPlayer */ = {
+		C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ApiVideoPlayer;
 		};

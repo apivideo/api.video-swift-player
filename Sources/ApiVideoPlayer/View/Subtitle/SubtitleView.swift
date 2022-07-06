@@ -12,15 +12,28 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     public init(frame: CGRect,_ controls: VodControls) {
         self.vodControls = controls
+        
         super.init(frame: frame)
+        getSubtitlesFromVideo()
+        
         self.layer.cornerRadius = 15
         tableview.layer.cornerRadius = 15
-        tableview.frame = CGRectMake(0, 0, frame.width, frame.height)
+        if(subtitles.count < 3){
+            var posY = frame.origin.y
+            if(subtitles.count > 1){
+                posY = posY - 25 * CGFloat(subtitles.count)
+            }
+            self.frame = CGRectMake(frame.origin.x, posY, frame.width, 45 * CGFloat(subtitles.count))
+            tableview.frame = CGRectMake(0, 0, frame.width, 45 * CGFloat(subtitles.count))
+        }else{
+            self.frame = CGRectMake(frame.origin.x, frame.origin.y - 90, frame.width, frame.height)
+            tableview.frame = CGRectMake(0, 0, frame.width, frame.height)
+        }
         tableview.delegate = self
         tableview.dataSource = self
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         self.addSubview(tableview)
-        getSubtitlesFromVideo()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -60,12 +73,20 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         let current = getCurrentLocaleSubtitle()
         if let group = vodControls.playerController.avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
             for option in group.options {
-                var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag!)
-                if(current?.languageCode == sub.code){
-                    sub.isSelected = true
+                if(option.displayName != "CC"){
+                    var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag)
+                    if(current?.languageCode == sub.code){
+                        sub.isSelected = true
+                    }
+                    subtitles.append(sub)
                 }
-                subtitles.append(sub)
             }
+        }
+    }
+    
+    private func unselectPreviousLanguages(){
+        for var subtitle in subtitles{
+            subtitle.isSelected = false
         }
     }
     
@@ -94,6 +115,9 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as UITableViewCell
         var content = cell.defaultContentConfiguration()
         content.text = subtitles[indexPath.item].language
+        print(subtitles.count)
+        print("current row : \(indexPath.row)")
+        print("current subtitle : \(subtitles[indexPath.row].language), \(subtitles[indexPath.row].isSelected)")
         if(subtitles[indexPath.row].isSelected){
             cell.accessoryType = .checkmark
         }
