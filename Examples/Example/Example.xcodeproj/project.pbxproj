@@ -43,7 +43,7 @@
 		C75C78E327E1E1FA001CA24D = {
 			isa = PBXGroup;
 			children = (
-				C75C78EE27E1E1FA001CA24D /* ExampleiOS */,
+				C75C78EE27E1E1FA001CA24D /* Example */,
 				C75C78ED27E1E1FA001CA24D /* Products */,
 				C75C795227E1E6AB001CA24D /* Frameworks */,
 			);
@@ -57,7 +57,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C75C78EE27E1E1FA001CA24D /* ExampleiOS */ = {
+		C75C78EE27E1E1FA001CA24D /* Example */ = {
 			isa = PBXGroup;
 			children = (
 				C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */,
@@ -68,7 +68,7 @@
 				C75C78FD27E1E1FD001CA24D /* Info.plist */,
 				C7922D932811685B00957116 /* PlayerViewController.swift */,
 			);
-			path = ExampleiOS;
+			path = Example;
 			sourceTree = "<group>";
 		};
 		C75C795227E1E6AB001CA24D /* Frameworks */ = {
@@ -308,7 +308,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ExampleiOS/Info.plist;
+				INFOPLIST_FILE = Example/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -320,7 +320,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.ExampleiOS;
+				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -337,7 +337,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ExampleiOS/Info.plist;
+				INFOPLIST_FILE = Example/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -349,7 +349,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.ExampleiOS;
+				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
