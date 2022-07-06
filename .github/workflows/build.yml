@@ -1,0 +1,27 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Package
+        run: swift build -v
+      - name: Set Default Scheme
+        run: |
+          scheme_list=$(xcodebuild -list -json | tr -d "\n")
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['workspace']['schemes'][0]")
+          echo $default | cat >default
+          echo Using default scheme: $default
+      - name: Build
+        env:
+          scheme: ${{ 'default' }}
+          platform: ${{ 'iOS Simulator' }}
+        run: |
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          xcodebuild clean build -project Examples/Example/Example.xcodeproj -scheme $scheme -sdk iphoneos
