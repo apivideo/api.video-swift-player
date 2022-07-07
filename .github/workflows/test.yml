@@ -6,4 +6,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Running tests
-        run: swift test
+        run: xcodebuild -scheme ApiVideoPlayer  -destination 'platform=iOS Simulator,name=iPhone 13' test

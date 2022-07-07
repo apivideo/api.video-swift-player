@@ -17,7 +17,7 @@ jobs:
       - name: Get swift version
         run: swift --version
       - name: Build Package
-        run: swift build -v
+        run: xcodebuild -scheme ApiVideoPlayer  -destination 'platform=iOS Simulator,name=iPhone 13'
       - name: Set Default Scheme
         run: |
           scheme_list=$(xcodebuild -list -json | tr -d "\n")
