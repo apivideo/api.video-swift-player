@@ -1,8 +1,7 @@
 name: Update Docc documentation
 on:
-  push:
-    branches:
-      - uikit
+  release:
+    types: [published]
 jobs:
     update-api-documentation:
         runs-on: macos-12
