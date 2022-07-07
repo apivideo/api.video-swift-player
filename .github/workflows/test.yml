@@ -5,5 +5,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '13.4.1'
       - name: Running tests
         run: xcodebuild -scheme ApiVideoPlayer  -destination 'platform=iOS Simulator,name=iPhone 13' test
