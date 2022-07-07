@@ -23,11 +23,12 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
             if(subtitles.count > 1){
                 posY = posY - 25 * CGFloat(subtitles.count)
             }
-            self.frame = CGRectMake(frame.origin.x, posY, frame.width, 45 * CGFloat(subtitles.count))
-            tableview.frame = CGRectMake(0, 0, frame.width, 45 * CGFloat(subtitles.count))
+            self.frame = CGRect(x: frame.origin.x, y: posY, width: frame.width, height: 45 * CGFloat(subtitles.count))
+//            self.frame = CGRectMake(frame.origin.x, posY, frame.width, 45 * CGFloat(subtitles.count))
+            tableview.frame = CGRect(x: 0,y: 0,width: frame.width,height: 45 * CGFloat(subtitles.count))
         }else{
-            self.frame = CGRectMake(frame.origin.x, frame.origin.y - 90, frame.width, frame.height)
-            tableview.frame = CGRectMake(0, 0, frame.width, frame.height)
+            self.frame = CGRect(x: frame.origin.x,y: frame.origin.y - 90,width: frame.width,height: frame.height)
+            tableview.frame = CGRect(x: 0,y: 0,width: frame.width,height: frame.height)
         }
         tableview.delegate = self
         tableview.dataSource = self
