@@ -6,11 +6,11 @@ import AVFoundation
 class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     private var selectedRow = 0
     private var subtitles : [Subtitle] = []
-    private var vodControls: VodControls
+    private var vodControls: VodControlsView
     private var tableview = UITableView()
     private let cellReuseIdentifier = "cell"
     
-    public init(frame: CGRect,_ controls: VodControls) {
+    public init(frame: CGRect,_ controls: VodControlsView) {
         self.vodControls = controls
         
         super.init(frame: frame)

@@ -12,7 +12,7 @@ public class PlayerController: NSObject{
     private let videoType: VideoType = .vod
     private let videoId: String!
     private var basicPlayerItem: AVPlayerItem!
-    private var vodControlsView: VodControls?
+    private var vodControlsView: VodControlsView?
     private var isHiddenControls = false
     private var timeObserver: Any?
     private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
@@ -89,9 +89,9 @@ public class PlayerController: NSObject{
         playerLayer.player = avPlayer
         view.layer.addSublayer(playerLayer)
         if(!isHiddenControls){
-            self.vodControlsView = VodControls(frame: .zero, parentView: view, playerController: self)
+            self.vodControlsView = VodControlsView(frame: .zero, parentView: view, playerController: self)
             timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-                self.vodControlsView!.updatePlayerState(avPlayer: self.avPlayer)
+                self.updatePlayerState()
             })
         }
         avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)        
@@ -352,8 +352,45 @@ public class PlayerController: NSObject{
         
     }
     
+    public func updatePlayerState() {
+        let currentTime = avPlayer.currentTime()
+        let currentTimeInSeconds = CMTimeGetSeconds(currentTime)
+        vodControlsView?.vodControlSlider.value = Float(currentTimeInSeconds)
+        if let currentItem = avPlayer.currentItem {
+            let duration = currentItem.duration
+            if (CMTIME_IS_INVALID(duration)) {
+                return;
+            }
+            let currentTime = currentItem.currentTime()
+            vodControlsView?.vodControlSlider.value = Float(CMTimeGetSeconds(currentTime) / CMTimeGetSeconds(duration))
+            
+            // Update time remaining label
+            let totalTimeInSeconds = CMTimeGetSeconds(duration)
+            let remainingTimeInSeconds = totalTimeInSeconds - currentTimeInSeconds
+            
+            let mins = remainingTimeInSeconds / 60
+            let secs = remainingTimeInSeconds.truncatingRemainder(dividingBy: 60)
+            let timeformatter = NumberFormatter()
+            timeformatter.minimumIntegerDigits = 2
+            timeformatter.minimumFractionDigits = 0
+            timeformatter.roundingMode = .down
+            guard let minsStr = timeformatter.string(from: NSNumber(value: mins)), let secsStr = timeformatter.string(from: NSNumber(value: secs)) else {
+                return
+            }
+            vodControlsView?.vodControlTimerLabel.text = "\(minsStr):\(secsStr)"
+        }
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
         avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
     }
 }
+
+extension AVPlayer{
+    @available(iOS 10.0, *)
+    func isVideoPlaying()-> Bool{
+        return (self.rate != 0 && self.error == nil)
+    }
+}
+

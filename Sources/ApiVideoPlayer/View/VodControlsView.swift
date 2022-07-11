@@ -3,7 +3,7 @@ import UIKit
 import AVFoundation
 
 @available(iOS 14.0, *)
-class VodControls: UIView{
+class VodControlsView: UIView{
     
     private var timer: Timer?
     private(set) var playerController: PlayerController!
@@ -345,34 +345,6 @@ class VodControls: UIView{
         
     }
     
-    public func updatePlayerState(avPlayer: AVPlayer) {
-        let currentTime = avPlayer.currentTime()
-        let currentTimeInSeconds = CMTimeGetSeconds(currentTime)
-        vodControlSlider.value = Float(currentTimeInSeconds)
-        if let currentItem = avPlayer.currentItem {
-            let duration = currentItem.duration
-            if (CMTIME_IS_INVALID(duration)) {
-                return;
-            }
-            let currentTime = currentItem.currentTime()
-            vodControlSlider.value = Float(CMTimeGetSeconds(currentTime) / CMTimeGetSeconds(duration))
-            
-            // Update time remaining label
-            let totalTimeInSeconds = CMTimeGetSeconds(duration)
-            let remainingTimeInSeconds = totalTimeInSeconds - currentTimeInSeconds
-            
-            let mins = remainingTimeInSeconds / 60
-            let secs = remainingTimeInSeconds.truncatingRemainder(dividingBy: 60)
-            let timeformatter = NumberFormatter()
-            timeformatter.minimumIntegerDigits = 2
-            timeformatter.minimumFractionDigits = 0
-            timeformatter.roundingMode = .down
-            guard let minsStr = timeformatter.string(from: NSNumber(value: mins)), let secsStr = timeformatter.string(from: NSNumber(value: secs)) else {
-                return
-            }
-            vodControlTimerLabel.text = "\(minsStr):\(secsStr)"
-        }
-    }
     
     private func activateTimer(){
         guard timer == nil else { return }

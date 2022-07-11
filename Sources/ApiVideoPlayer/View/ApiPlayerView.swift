@@ -13,7 +13,7 @@ public class ApiPlayerView: UIView {
     private var timeObserver: Any?
     private let videoPlayerView = UIView()
     private var isLoop =  false
-    private var vodControlsView: VodControls?
+    private var vodControlsView: VodControlsView?
     private(set) var playerController: PlayerController?
     private var isHiddenControls = false
     private var isFirstPlay = true
@@ -222,10 +222,3 @@ public struct PlayerEvents{
         self.didEnd = didFinish
     }
 }
-extension AVPlayer{
-    @available(iOS 10.0, *)
-    func isVideoPlaying()-> Bool{
-        return (self.rate != 0 && self.error == nil)
-    }
-}
-
