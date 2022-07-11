@@ -338,8 +338,6 @@ class VodControls: UIView{
             subtitleView.dismissView()
         }else{
             isSubtitleViewDisplay.toggle()
-            print("posX : \(posX)")
-            print("posY : \(posY)")
             subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3*45), self)
             subtitleView.tag = 101
             pView.addSubview(subtitleView)
@@ -410,36 +408,21 @@ class VodControls: UIView{
     
     @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
         let duration = playerController.duration
-        let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
-        let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
         playerController.pause()
-        //playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
-        
         
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
             case .began:
                 // handle drag began
                 fromCMTime = CMTime(value: CMTimeValue(Float64(slider.value) * CMTimeGetSeconds(duration)), timescale: 1)
-                print("---- began cmtime \(fromCMTime.seconds)")
             case .moved:
                 // handle drag moved
                 break
             case .ended:
                 // handle drag ended
-                let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
-                print("===== slider value \(vodControlSlider.value) ")
-                print("===== slider duration \(CMTimeGetSeconds(duration)) ")
-                print("===== value \(value) ")
-                print("---- cmtime value \(CMTimeValue(value))")
-                
+                let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)                
                 let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
-                let currentTime = fromCMTime.seconds
-                if(currentTime > Double(CMTimeGetSeconds(seekTime))){
-                    playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
-                }else{
-                    playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
-                }
+                playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
                 playerController.play()
                 
             default:

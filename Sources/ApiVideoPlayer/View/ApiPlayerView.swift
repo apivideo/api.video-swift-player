@@ -41,7 +41,6 @@ public class ApiPlayerView: UIView {
             playerController = try PlayerController(videoId: videoId, events: events)
             
             playerController?.isReady = {() in
-                print("is ready")
                 DispatchQueue.main.async {
                     self.playerController?.setAvPlayerManifest(self,self.playerLayer)
                     self.setupView()
