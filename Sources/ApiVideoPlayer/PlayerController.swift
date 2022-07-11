@@ -4,20 +4,20 @@ import AVKit
 import ApiVideoPlayerAnalytics
 
 @available(iOS 14.0, *)
-public class PlayerController{
-    private(set) var avPlayer: AVPlayer!
-    private(set) var analytics: PlayerAnalytics?
+public class PlayerController: NSObject{
+    public var events: PlayerEvents? = nil
+    private var avPlayer: AVPlayer!
+    private var analytics: PlayerAnalytics?
     private var option : Options?
     private let videoType: VideoType = .vod
     private let videoId: String!
-    public var events: PlayerEvents? = nil
     private var basicPlayerItem: AVPlayerItem!
     private var vodControlsView: VodControls?
     private var isHiddenControls = false
     private var timeObserver: Any?
-    
-    
-    
+    private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
+    private var isFirstPlay = true
+
     public var isReady: (() -> ())? = nil
     
     public var playerManifest: PlayerManifest!{
@@ -28,18 +28,12 @@ public class PlayerController{
     
     public var viewController: UIViewController?
     
-    
     init(videoId: String, events: PlayerEvents? = nil) throws {
         self.events = events
         self.videoId = videoId
-        
+        super.init()
         getPlayerJSON(videoType: .vod){ (playerManifest, error) in}
-        
     }
-    
-    
-    
-    
     
     private func getVideoUrl(videoType: VideoType, privateToken: String? = nil) -> String{
         var baseUrl = ""
@@ -97,9 +91,10 @@ public class PlayerController{
         if(!isHiddenControls){
             self.vodControlsView = VodControls(frame: .zero, parentView: view, playerController: self)
             timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-                self.vodControlsView!.updatePlayerState()
+                self.vodControlsView!.updatePlayerState(avPlayer: self.avPlayer)
             })
         }
+        avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)        
     }
     
     
@@ -163,8 +158,19 @@ public class PlayerController{
     
     public func seek(time: Double){
         guard let currentTime = avPlayer?.currentTime() else { return }
-        var currentTimeInSeconds =  CMTimeGetSeconds(currentTime).advanced(by: time)
+        let currentTimeInSeconds =  CMTimeGetSeconds(currentTime).advanced(by: time)
         let seekTime = CMTime(value: CMTimeValue(currentTimeInSeconds), timescale: 1)
+        seek(seekTime: seekTime, currentTimeInSeconds: currentTimeInSeconds)
+    }
+    
+    public func seek(to: Double){
+        let seekTime = CMTime(seconds: to, preferredTimescale: 1)
+        seek(seekTime: seekTime, currentTimeInSeconds: CMTimeGetSeconds(seekTime))
+    }
+    
+    private func seek(seekTime: CMTime, currentTimeInSeconds: Float64){
+        guard let currentTime = avPlayer?.currentTime() else { return }
+        var cts = currentTimeInSeconds
         avPlayer?.seek(to: seekTime)
         analytics?.seek(from: Float(CMTimeGetSeconds(currentTime)), to: Float(CMTimeGetSeconds(seekTime))){(result) in
             switch result {
@@ -175,10 +181,10 @@ public class PlayerController{
             }
         }
         if(self.events?.didSeekTime != nil){
-            if currentTimeInSeconds < 0 {
-                currentTimeInSeconds = 0.0
+            if cts < 0 {
+                cts = 0.0
             }
-            self.events?.didSeekTime!(currentTime.seconds, currentTimeInSeconds)
+            self.events?.didSeekTime!(currentTime.seconds, cts)
         }
     }
     
@@ -229,10 +235,53 @@ public class PlayerController{
         }
     }
     
-    public func turnOffSubtitle(){
+    func selectSubtitle(_ language: String? = nil){
+        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
+            if(language == nil){
+                turnOffSubtitle()
+            }else{
+                let locale = Locale(identifier: language!)
+                let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
+                if let option = options.first {
+                    avPlayer.currentItem!.select(option, in: group)
+                }
+            }
+        }
+    }
+    
+    func turnOffSubtitle(){
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
             avPlayer.currentItem!.select(nil, in: group)
         }
+    }
+    
+    func getSubtitlesFromVideo() -> [Subtitle]{
+        let current = getCurrentLocaleSubtitle()
+        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
+            for option in group.options {
+                if(option.displayName != "CC"){
+                    var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag)
+                    if(current?.languageCode == sub.code){
+                        sub.isSelected = true
+                    }
+                    subtitles.append(sub)
+                }
+            }
+        }
+        return subtitles
+    }
+    
+    private func getCurrentLocaleSubtitle() -> Locale?{
+        var locale: Locale?
+        if let playerItem = avPlayer.currentItem,
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) {
+            let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
+            locale = selectedOption?.locale
+        }
+        if(locale == nil){
+            subtitles[0].isSelected = true
+        }
+        return locale
     }
     
     public func showSubtitle(language: String){
@@ -245,11 +294,66 @@ public class PlayerController{
         }
     }
     
-    @objc func donePlaying(sender: Notification) {
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "rate" {
+            let status = self.avPlayer.timeControlStatus
+            switch status{
+            case .paused:
+                //Paused mode
+                self.analytics?.pause(){(result) in
+                    switch result {
+                    case .success(_): break
+                    case .failure(let error):
+                        print("analytics error on pause event: \(error)")
+                    }
+                }
+                if(self.events?.didPause != nil){
+                    self.events?.didPause!()
+                }
+            case .waitingToPlayAtSpecifiedRate:
+                //Resumed
+                if(isFirstPlay){
+                    isFirstPlay = false
+                    self.analytics?.play(){(result) in
+                        switch result {
+                        case .success(_): break
+                        case .failure(let error):
+                            print("analytics error on play event: \(error)")
+                        }
+                    }
+                }else{
+                    self.analytics?.resume(){(result) in
+                        switch result {
+                        case .success(_): break
+                        case .failure(let error):
+                            print("analytics error on resume event: \(error)")
+                        }
+                    }
+                }
+                if(self.events?.didPlay != nil){
+                    self.events?.didPlay!()
+                }
+            case .playing:
+                //Video Ended
+                self.analytics?.end(){(result)in
+                    switch result {
+                    case .success(_):break
+                    case .failure(let error):
+                        print("analytics error on ended event: \(error)")
+                    }
+                }
+                if(self.events?.didEnd != nil){
+                    self.events?.didEnd!()
+                }
+            @unknown default:
+                break
+            }
+        }
         
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
+        avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
     }
 }

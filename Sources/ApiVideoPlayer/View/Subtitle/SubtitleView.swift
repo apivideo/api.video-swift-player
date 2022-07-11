@@ -5,7 +5,7 @@ import AVFoundation
 @available(iOS 14.0, *)
 class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     private var selectedRow = 0
-    private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
+    private var subtitles : [Subtitle] = []
     private var vodControls: VodControls
     private var tableview = UITableView()
     private let cellReuseIdentifier = "cell"
@@ -51,38 +51,11 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     private func selectSubtitle(_ language: String? = nil){
-        if let group = vodControls.playerController.avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
-            if(language == nil){
-                turnOffSubtitle()
-            }else{
-                let locale = Locale(identifier: language!)
-                let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
-                if let option = options.first {
-                    vodControls.playerController.avPlayer.currentItem!.select(option, in: group)
-                }
-            }
-        }
-    }
-    
-    private func turnOffSubtitle(){
-        if let group = vodControls.playerController.avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
-            vodControls.playerController.avPlayer.currentItem!.select(nil, in: group)
-        }
+        vodControls.playerController.selectSubtitle(language)
     }
     
     private func getSubtitlesFromVideo(){
-        let current = getCurrentLocaleSubtitle()
-        if let group = vodControls.playerController.avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            for option in group.options {
-                if(option.displayName != "CC"){
-                    var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag)
-                    if(current?.languageCode == sub.code){
-                        sub.isSelected = true
-                    }
-                    subtitles.append(sub)
-                }
-            }
-        }
+        subtitles = vodControls.playerController.getSubtitlesFromVideo()
     }
     
     private func unselectPreviousLanguages(){
@@ -90,21 +63,6 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
             subtitle.isSelected = false
         }
     }
-    
-    private func getCurrentLocaleSubtitle() -> Locale?{
-        var locale: Locale?
-        if let playerItem = vodControls.playerController.avPlayer.currentItem,
-           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) {
-            let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
-            locale = selectedOption?.locale
-        }
-        if(locale == nil){
-            subtitles[0].isSelected = true
-        }
-        return locale
-    }
-    
-    
     
     //MARK: TableView
     

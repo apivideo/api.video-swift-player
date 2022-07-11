@@ -107,7 +107,6 @@ public struct PlayerSwiftUIView: UIViewRepresentable {
     /// Display the player in fullscreen
     public func goFullScreen(){
         let controller = AVPlayerViewController()
-        controller.player = playerView!.playerController?.avPlayer
         
         self.fullScreen.toggle()
         print(fullScreen.description)

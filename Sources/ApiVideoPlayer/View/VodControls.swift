@@ -131,11 +131,6 @@ class VodControls: UIView{
         //Full Screen Button
         self.addSubview(fullScreenButton)
         fullScreenButton.addTarget(self, action: #selector(goFullScreenAction), for: .touchUpInside)
-        
-        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        timeObserver = playerController.avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
-            self.updatePlayerState()
-        })
                 
         setVodControlConstraints()
         activateTimer()
@@ -352,11 +347,11 @@ class VodControls: UIView{
         
     }
     
-    public func updatePlayerState() {
-        guard let currentTime = playerController.avPlayer?.currentTime() else { return }
+    public func updatePlayerState(avPlayer: AVPlayer) {
+        let currentTime = avPlayer.currentTime()
         let currentTimeInSeconds = CMTimeGetSeconds(currentTime)
         vodControlSlider.value = Float(currentTimeInSeconds)
-        if let currentItem = playerController.avPlayer?.currentItem {
+        if let currentItem = avPlayer.currentItem {
             let duration = currentItem.duration
             if (CMTIME_IS_INVALID(duration)) {
                 return;
@@ -414,39 +409,39 @@ class VodControls: UIView{
     
     
     @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
-        
-        guard let duration = playerController.avPlayer.currentItem?.duration else { return }
+        let duration = playerController.duration
         let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
         let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
-        playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
-        playerController.avPlayer.play()
+        playerController.pause()
+        //playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
         
-        guard let duration = playerController.avPlayer.currentItem?.duration else { return }
-        playerController.avPlayer.pause()
         
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
             case .began:
                 // handle drag began
                 fromCMTime = CMTime(value: CMTimeValue(Float64(slider.value) * CMTimeGetSeconds(duration)), timescale: 1)
+                print("---- began cmtime \(fromCMTime.seconds)")
             case .moved:
                 // handle drag moved
                 break
             case .ended:
                 // handle drag ended
                 let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
+                print("===== slider value \(vodControlSlider.value) ")
+                print("===== slider duration \(CMTimeGetSeconds(duration)) ")
+                print("===== value \(value) ")
+                print("---- cmtime value \(CMTimeValue(value))")
+                
                 let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
                 let currentTime = fromCMTime.seconds
-                playerController.seek(time: Double(CMTimeGetSeconds(seekTime)))
-                playerController.analytics?.seek(from:Float(currentTime), to: Float(seekTime.seconds)){(result) in
-                    switch result{
-                    case .success(_):
-                        print("success seek")
-                        self.playerController.avPlayer.play()
-                    case .failure(let error):
-                        print("error seek : \(error)")
-                    }
+                if(currentTime > Double(CMTimeGetSeconds(seekTime))){
+                    playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
+                }else{
+                    playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
                 }
+                playerController.play()
+                
             default:
                 break
             }
