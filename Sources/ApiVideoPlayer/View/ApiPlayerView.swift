@@ -136,6 +136,12 @@ public class ApiPlayerView: UIView {
     public func seek(time: Double){
         playerController!.seek(time: time)
     }
+    /// Go forward or backward in the video to a specific time
+    /// - Parameter to: go to a specific time (in second)
+    public func seek(to: Double){
+        playerController!.seek(to: to)
+    }
+    
     /// The video player volume is connected to the device audio volume
     /// - Parameter volume: Float between 0 to 1
     public func setVolume(volume: Float){
