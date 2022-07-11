@@ -6,9 +6,8 @@ import AVFoundation
 class VodControlsView: UIView{
     
     private var timer: Timer?
-    private(set) var playerController: PlayerController!
+    private let playerController: PlayerController
     private var pView: UIView!
-    private var isHiddenControls = false
     private var isSubtitleViewDisplay = false
     private var subtitleView: SubtitleView!
     private var timeObserver: Any?
@@ -20,6 +19,10 @@ class VodControlsView: UIView{
         self.pView = parentView
         super.init(frame: frame)
         setVodControls()
+        
+        playerController.setTimerObserver(callback: {() in
+            self.updateTiming()
+        })
         
         playerController.events?.didPlay! = {() in
             self.getIconPlayBtn()
@@ -90,11 +93,10 @@ class VodControlsView: UIView{
     private func setVodControls(){
         //Controls View
         pView.addSubview(self)
-        if !isHiddenControls {
-            let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-            self.addGestureRecognizer(tap)
-            self.isUserInteractionEnabled = true
-        }
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+        self.addGestureRecognizer(tap)
+        self.isUserInteractionEnabled = true
         
         //Play Pause Button
         self.addSubview(playPauseButton)
@@ -201,8 +203,7 @@ class VodControlsView: UIView{
         
     }
     
-    public func hideControls(){
-        isHiddenControls = true
+    private func hideControls(){
         playPauseButton.isHidden = true
         vodControlGoForward15Button.isHidden = true
         vodControlGoBackward15Button.isHidden = true
@@ -210,91 +211,21 @@ class VodControlsView: UIView{
         fullScreenButton.isHidden = true
     }
     
-    func toggleControlsDisplay(){
-        if isHiddenControls {
-            
-        }else{
-            if(!playPauseButton.isHidden){
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.playPauseButton.alpha = 0
-                }) { (finished) in
-                    self.playPauseButton.isHidden = finished
-                }
-            }else{
-                self.playPauseButton.alpha = 0
-                self.playPauseButton.isHidden = false
-                UIView.animate(withDuration: 0.2) {
-                    self.playPauseButton.alpha = 1
-                }
-                activateTimer()
-            }
-            
-            if(!vodControlGoForward15Button.isHidden){
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.vodControlGoForward15Button.alpha = 0
-                }) { (finished) in
-                    self.vodControlGoForward15Button.isHidden = finished
-                }
-            }else{
-                self.vodControlGoForward15Button.alpha = 0
-                self.vodControlGoForward15Button.isHidden = false
-                UIView.animate(withDuration: 0.2) {
-                    self.vodControlGoForward15Button.alpha = 1
-                }
-                activateTimer()
-            }
-            
-            if(!vodControlGoBackward15Button.isHidden){
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.vodControlGoBackward15Button.alpha = 0
-                }) { (finished) in
-                    self.vodControlGoBackward15Button.isHidden = finished
-                }
-            }else{
-                self.vodControlGoBackward15Button.alpha = 0
-                self.vodControlGoBackward15Button.isHidden = false
-                UIView.animate(withDuration: 0.2) {
-                    self.vodControlGoBackward15Button.alpha = 1
-                }
-                activateTimer()
-            }
-            
-            if(!vodControlSliderView.isHidden){
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.vodControlSliderView.alpha = 0
-                }) { (finished) in
-                    self.vodControlSliderView.isHidden = finished
-                }
-            }else{
-                self.vodControlSliderView.alpha = 0
-                self.vodControlSliderView.isHidden = false
-                UIView.animate(withDuration: 0.2) {
-                    self.vodControlSliderView.alpha = 1
-                }
-                activateTimer()
-            }
-            if(!fullScreenButton.isHidden){
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.fullScreenButton.alpha = 0
-                }) { (finished) in
-                    self.fullScreenButton.isHidden = finished
-                }
-            }else{
-                self.fullScreenButton.alpha = 0
-                self.fullScreenButton.isHidden = false
-                UIView.animate(withDuration: 0.2) {
-                    self.fullScreenButton.alpha = 1
-                }
-                activateTimer()
-            }
-        }
+    private func showControls(){
+        playPauseButton.isHidden = false
+        vodControlGoForward15Button.isHidden = false
+        vodControlGoBackward15Button.isHidden = false
+        vodControlSliderView.isHidden = false
+        fullScreenButton.isHidden = false
     }
     
+    
+    
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-        if(!isHiddenControls){
-            resetTimer()
-            toggleControlsDisplay()
-        }
+        resetTimer()
+        showControls()
+        activateTimer()
+        
         if(isSubtitleViewDisplay){
             isSubtitleViewDisplay.toggle()
             subtitleView?.dismissView()
@@ -338,7 +269,7 @@ class VodControlsView: UIView{
             subtitleView.dismissView()
         }else{
             isSubtitleViewDisplay.toggle()
-            subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3*45), self)
+            subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3*45), playerController: playerController)
             subtitleView.tag = 101
             pView.addSubview(subtitleView)
         }
@@ -348,7 +279,7 @@ class VodControlsView: UIView{
     
     private func activateTimer(){
         guard timer == nil else { return }
-        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(disableControls), userInfo: nil, repeats: false)
+        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(hideControlsHandler), userInfo: nil, repeats: false)
     }
     
     private func resetTimer(){
@@ -356,8 +287,8 @@ class VodControlsView: UIView{
         timer = nil
     }
     
-    @objc func disableControls() {
-        toggleControlsDisplay()
+    @objc func hideControlsHandler() {
+        hideControls()
     }
     
     private func getIconPlayBtn(){
@@ -401,6 +332,38 @@ class VodControlsView: UIView{
                 break
             }
         }
+    }
+    
+    private func updateTiming() {
+        let currentTime = playerController.currentTime
+
+        let currentTimeInSeconds = CMTimeGetSeconds(currentTime)
+
+        let duration = playerController.duration
+        if (CMTIME_IS_INVALID(duration)) {
+            return;
+        }
+        vodControlSlider.value = Float(CMTimeGetSeconds(currentTime) / CMTimeGetSeconds(duration))
+        
+        // Update time remaining label
+        let totalTimeInSeconds = CMTimeGetSeconds(duration)
+        let remainingTimeInSeconds = totalTimeInSeconds - currentTimeInSeconds
+        
+        let mins = remainingTimeInSeconds / 60
+        let secs = remainingTimeInSeconds.truncatingRemainder(dividingBy: 60)
+        let timeformatter = NumberFormatter()
+        timeformatter.minimumIntegerDigits = 2
+        timeformatter.minimumFractionDigits = 0
+        timeformatter.roundingMode = .down
+        guard let minsStr = timeformatter.string(from: NSNumber(value: mins)), let secsStr = timeformatter.string(from: NSNumber(value: secs)) else {
+            return
+        }
+        vodControlTimerLabel.text = "\(minsStr):\(secsStr)"
+    }
+    
+    
+    deinit{
+        playerController.removeTimeObserver()
     }
     
 }

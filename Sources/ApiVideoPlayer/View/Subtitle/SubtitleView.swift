@@ -6,13 +6,12 @@ import AVFoundation
 class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     private var selectedRow = 0
     private var subtitles : [Subtitle] = []
-    private var vodControls: VodControlsView
     private var tableview = UITableView()
     private let cellReuseIdentifier = "cell"
+    private let playerController : PlayerController
     
-    public init(frame: CGRect,_ controls: VodControlsView) {
-        self.vodControls = controls
-        
+    public init(frame: CGRect, playerController: PlayerController) {
+        self.playerController = playerController
         super.init(frame: frame)
         getSubtitlesFromVideo()
         
@@ -51,11 +50,11 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     private func selectSubtitle(_ language: String? = nil){
-        vodControls.playerController.selectSubtitle(language)
+        playerController.selectSubtitle(language)
     }
     
     private func getSubtitlesFromVideo(){
-        subtitles = vodControls.playerController.getSubtitlesFromVideo()
+        subtitles = playerController.getSubtitlesFromVideo()
     }
     
     private func unselectPreviousLanguages(){

@@ -15,9 +15,8 @@ public class ApiPlayerView: UIView {
     private var isLoop =  false
     private var vodControlsView: VodControlsView?
     private(set) var playerController: PlayerController?
-    private var isHiddenControls = false
     private var isFirstPlay = true
-    
+
     public var viewController: UIViewController? {
         didSet{
             playerController?.viewController = viewController
@@ -32,17 +31,19 @@ public class ApiPlayerView: UIView {
     ///   - videoId: Need videoid to display the video
     ///   - videoType: VideoType object to display vod or live controls
     ///   - events: Callback to get all the player events
-    public init(frame: CGRect, videoId: String, events: PlayerEvents? = nil) throws {
+    public init(frame: CGRect, videoId: String,hideControls: Bool = false, events: PlayerEvents? = nil) throws {
         self.videoId = videoId
         self.events = events
         super.init(frame: frame)
-        
         do{
             playerController = try PlayerController(videoId: videoId, events: events)
             
             playerController?.isReady = {() in
                 DispatchQueue.main.async {
                     self.playerController?.setAvPlayerManifest(self,self.playerLayer)
+                    if(!hideControls){
+                        self.vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: self.playerController!)
+                    }
                     self.setupView()
                 }
             }
@@ -51,6 +52,7 @@ public class ApiPlayerView: UIView {
         }
                 
     }
+        
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -106,8 +108,13 @@ public class ApiPlayerView: UIView {
     /// Hide all the controls of the player
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func hideControls(){
-        isHiddenControls = true
-        self.vodControlsView?.hideControls()
+        self.vodControlsView?.isHidden = true
+    }
+    
+    /// Show all the controls of the player
+    /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
+    public func showControls(){
+        self.vodControlsView?.isHidden = false
     }
     
     public func turnOffSubtitle(){
@@ -175,9 +182,6 @@ public class ApiPlayerView: UIView {
             self.events?.didEnd!()
         }
     }
-    
-    
-    
 }
 
 #else
