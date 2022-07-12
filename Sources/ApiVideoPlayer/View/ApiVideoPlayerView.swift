@@ -7,22 +7,19 @@ import AVKit
 public class ApiVideoPlayerView: UIView {
     
     public let videoId: String! //
-    public var events: PlayerEvents? = nil
     private var basicPlayerItem: AVPlayerItem! //
     private let playerLayer = AVPlayerLayer()
     private var timeObserver: Any? //
     private let videoPlayerView = UIView()
     private var vodControlsView: VodControlsView?
-    private(set) var playerController: PlayerController?
+    private var playerController: PlayerController!
     private var isFirstPlay = true
 
     public var viewController: UIViewController? {
         didSet{
-            playerController?.viewController = viewController
+            playerController.viewController = viewController
         }
     }
-    
-   
     
     /// Init method for PlayerView
     /// - Parameters:
@@ -32,7 +29,6 @@ public class ApiVideoPlayerView: UIView {
     ///   - events: Callback to get all the player events
     public init(frame: CGRect, videoId: String,hideControls: Bool = false, events: PlayerEvents? = nil) throws {
         self.videoId = videoId
-        self.events = events
         super.init(frame: frame)
         do{
             playerController = try PlayerController(videoId: videoId, events: events, isReady: {() in
@@ -75,9 +71,6 @@ public class ApiVideoPlayerView: UIView {
         playerLayer.frame = bounds
     }
     
-   
-
-    
     /// Get information if the video is playing
     /// - Returns: Boolean
     public func isPlaying() -> Bool{
@@ -103,6 +96,11 @@ public class ApiVideoPlayerView: UIView {
     public var isMuted: Bool {
         get{return playerController!.isMuted}
         set(newValue){ playerController!.isMuted = newValue}
+    }
+    
+    public var events: PlayerEvents?{
+        get{return playerController!.events}
+        set(newValue){ playerController!.events = newValue}
     }
     
     /// Hide all the controls of the player
@@ -142,7 +140,6 @@ public class ApiVideoPlayerView: UIView {
         playerController!.volume = volume
     }
     
-    // do setter getter
     var duration: CMTime{
         get{
             playerController!.duration
