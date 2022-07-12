@@ -181,33 +181,3 @@ public class ApiVideoPlayerView: NSView{
     }
 }
 #endif
-
-//TODO: mettre dans un fichier
-public struct PlayerEvents{
-    public var didPause: (() -> ())? = nil
-    public var didPlay: (() -> ())? = nil
-    public var didRePlay: (() -> ())? = nil
-    public var didMute: (() -> ())? = nil
-    public var didUnMute: (() -> ())? = nil
-    public var didShowSubtitle: (() -> ())? = nil
-    public var didHideSubtitle: (() -> ())? = nil
-    public var didLoop: (() -> ())? = nil
-    public var didSetVolume: ((_ volume: Float) -> ())? = nil
-    public var didSeekTime: ((_ from: Double, _ to: Double) -> ())? = nil
-    public var didEnd: (() -> ())? = nil
-    
-    
-    public init(didPause: (() -> ())? = nil, didPlay: (() -> ())? = nil, didRePlay: (() -> ())? = nil, didMute: (() -> ())? = nil, didUnMute:(() -> ())? = nil, didShowSubtitle: (() -> ())? = nil, didHideSubtitle: (() -> ())? = nil, didLoop: (() -> ())? = nil, didSetVolume: ((Float) -> ())? = nil, didSeekTime: ((Double,Double) -> ())? = nil, didFinish: (() -> ())? = nil) {
-        self.didPause = didPause
-        self.didPlay = didPlay
-        self.didRePlay = didRePlay
-        self.didMute = didMute
-        self.didUnMute = didUnMute
-        self.didLoop = didLoop
-        self.didShowSubtitle = didShowSubtitle
-        self.didHideSubtitle = didHideSubtitle
-        self.didSetVolume = didSetVolume
-        self.didSeekTime = didSeekTime
-        self.didEnd = didFinish
-    }
-}
