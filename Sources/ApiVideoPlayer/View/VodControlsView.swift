@@ -234,7 +234,7 @@ class VodControlsView: UIView{
     
     @objc func playPauseAction() {
         resetTimer()
-        if !playerController.isVideoPlaying(){
+        if !playerController.isPlaying(){
             playerController.play()
         }else{
             playerController.pause()
@@ -293,7 +293,7 @@ class VodControlsView: UIView{
     
     private func getIconPlayBtn(){
         playPauseButton.tintColor = .white
-        if !playerController.isVideoPlaying(){
+        if !playerController.isPlaying(){
             if #available(tvOS 13.0, *) {
                 playPauseButton.setImage(UIImage(named: "play-primary", in: Bundle.module, compatibleWith: nil), for: .normal)
             } else {

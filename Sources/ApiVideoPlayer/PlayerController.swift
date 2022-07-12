@@ -17,21 +17,22 @@ public class PlayerController: NSObject{
     private var isFirstPlay = true
     
 
-    public var isReady: (() -> ())? = nil
+    private let isReady: (() -> ())?
     
-    public var playerManifest: PlayerManifest!{
-        didSet{
-            self.isReady!()
-        }
-    }
+    
     
     public var viewController: UIViewController?
     
-    init(videoId: String, events: PlayerEvents? = nil) throws {
+    init(videoId: String, events: PlayerEvents? = nil, isReady: (() -> ())? = nil) throws {
         self.events = events
         self.videoId = videoId
+        self.isReady = isReady
         super.init()
-        getPlayerJSON(videoType: .vod){ (playerManifest, error) in}
+        getPlayerJSON(videoType: .vod){ (error) in
+            if error == nil {
+                self.isReady!()
+            }
+        }
     }
     
     private func getVideoUrl(videoType: VideoType, privateToken: String? = nil) -> String{
@@ -52,31 +53,39 @@ public class PlayerController: NSObject{
     }
     
     
-    public func getPlayerJSON(videoType: VideoType, completion: @escaping (PlayerManifest?, Error?) -> Void){
+    public func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void){
         let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data,response, error) in
             if data != nil {
+                let playerManifest: PlayerManifest
                 do{
-                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
+                    playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
                 }catch let decodeError{
-                    completion(nil, decodeError)
+                    completion(decodeError)
                     return
                 }
-                self.setUpAnalytics()
-                completion(self.playerManifest, nil)
+                
+                self.setUpAnalytics(url:playerManifest.video.src)
+                self.setUpPlayer(playerManifest: playerManifest)
+                completion(nil)
             } else {
-                completion(nil, error)
+                completion(error)
             }
         }
         
     }
     
-    private func setUpPlayer(_ view: UIView, _ playerLayer: AVPlayerLayer){
-        if let url = URL(string: (self.playerManifest.video.src)){
+    public func setView(_ view: UIView,_ playerLayer: AVPlayerLayer){
+        playerLayer.player = avPlayer
+        view.layer.addSublayer(playerLayer)
+    }
+    
+    private func setUpPlayer(playerManifest: PlayerManifest){
+        if let url = URL(string: (playerManifest.video.src)){
             basicPlayerItem = AVPlayerItem(url: url)
         }else{
-            if let urlMp4 = self.playerManifest.video.mp4 {
+            if let urlMp4 = playerManifest.video.mp4 {
                 basicPlayerItem = AVPlayerItem(url: URL(string: urlMp4)!)
             }else{
                 return
@@ -84,8 +93,7 @@ public class PlayerController: NSObject{
         }
         let item = basicPlayerItem
         avPlayer = AVPlayer(playerItem: item)
-        playerLayer.player = avPlayer
-        view.layer.addSublayer(playerLayer)
+        
         avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)        
     }
     
@@ -102,10 +110,10 @@ public class PlayerController: NSObject{
         }
     }
     
-    private func setUpAnalytics(){
+    private func setUpAnalytics(url: String){
         do {
             option = try Options(
-                mediaUrl: self.playerManifest.video.src, metadata: [],
+                mediaUrl: url, metadata: [],
                 onSessionIdReceived: { (id) in
                     print("session ID : \(id)")
                 })
@@ -115,16 +123,8 @@ public class PlayerController: NSObject{
         
         analytics = PlayerAnalytics(options: option!)
     }
-    
-    public func setAvPlayerManifest(_ view: UIView,_ playerLayer: AVPlayerLayer){
-        self.setUpPlayer(view, playerLayer)
-    }
-    
-    
-    
-    
-    public func isVideoPlaying()-> Bool{
-        return avPlayer.isVideoPlaying()
+    public func isPlaying()-> Bool{
+        return avPlayer?.isPlaying() ?? false
     }
     
     public func play(){
@@ -362,7 +362,7 @@ public class PlayerController: NSObject{
 
 extension AVPlayer{
     @available(iOS 10.0, *)
-    func isVideoPlaying()-> Bool{
+    func isPlaying()-> Bool{
         return (self.rate != 0 && self.error == nil)
     }
 }

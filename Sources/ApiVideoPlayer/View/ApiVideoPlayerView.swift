@@ -4,7 +4,7 @@ import AVKit
 
 @available(tvOS 10.0, *)
 @available(iOS 14.0, *)
-public class ApiPlayerView: UIView {
+public class ApiVideoPlayerView: UIView {
     
     public let videoId: String!
     public var events: PlayerEvents? = nil
@@ -12,7 +12,6 @@ public class ApiPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private var timeObserver: Any?
     private let videoPlayerView = UIView()
-    private var isLoop =  false
     private var vodControlsView: VodControlsView?
     private(set) var playerController: PlayerController?
     private var isFirstPlay = true
@@ -36,17 +35,16 @@ public class ApiPlayerView: UIView {
         self.events = events
         super.init(frame: frame)
         do{
-            playerController = try PlayerController(videoId: videoId, events: events)
-            
-            playerController?.isReady = {() in
+            playerController = try PlayerController(videoId: videoId, events: events, isReady: {() in
                 DispatchQueue.main.async {
-                    self.playerController?.setAvPlayerManifest(self,self.playerLayer)
+                    self.playerController?.setView(self,self.playerLayer)
                     if(!hideControls){
                         self.vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: self.playerController!)
                     }
                     self.setupView()
                 }
-            }
+            })
+            
         }catch{
             return
         }
@@ -77,11 +75,13 @@ public class ApiPlayerView: UIView {
         playerLayer.frame = bounds
     }
     
+    public var isLoop =  false
+
     
     /// Get information if the video is playing
     /// - Returns: Boolean
-    public func isVideoPlaying() -> Bool{
-        return playerController?.isVideoPlaying() ?? false
+    public func isPlaying() -> Bool{
+        return playerController?.isPlaying() ?? false
     }
     
     /// Play the video
@@ -124,10 +124,6 @@ public class ApiPlayerView: UIView {
     public func showSubtitle(language: String){
         playerController?.showSubtitle(language: language)
     }
-    
-    
-    public var isLooping: Bool = false
-    
     /// Video player is looping.
     /// (When the video play is finished, the player will start again the video)
     public func setLoop(){
@@ -186,7 +182,7 @@ public class ApiPlayerView: UIView {
 
 #else
 import Cocoa
-public class ApiPlayerView: NSView{
+public class ApiVideoPlayerView: NSView{
     override public init(frame: NSRect) {
         super.init(frame: frame)
     }
