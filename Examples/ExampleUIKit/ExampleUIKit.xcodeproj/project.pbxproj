@@ -18,7 +18,7 @@
 
 /* Begin PBXFileReference section */
 		C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
-		C75C78EC27E1E1FA001CA24D /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C75C78F627E1E1FA001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -43,7 +43,7 @@
 		C75C78E327E1E1FA001CA24D = {
 			isa = PBXGroup;
 			children = (
-				C75C78EE27E1E1FA001CA24D /* Example */,
+				C75C78EE27E1E1FA001CA24D /* ExampleUIkit */,
 				C75C78ED27E1E1FA001CA24D /* Products */,
 				C75C795227E1E6AB001CA24D /* Frameworks */,
 			);
@@ -52,12 +52,12 @@
 		C75C78ED27E1E1FA001CA24D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C75C78EC27E1E1FA001CA24D /* Example.app */,
+				C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C75C78EE27E1E1FA001CA24D /* Example */ = {
+		C75C78EE27E1E1FA001CA24D /* ExampleUIkit */ = {
 			isa = PBXGroup;
 			children = (
 				C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */,
@@ -68,7 +68,7 @@
 				C75C78FD27E1E1FD001CA24D /* Info.plist */,
 				C7922D932811685B00957116 /* PlayerViewController.swift */,
 			);
-			path = Example;
+			path = ExampleUIkit;
 			sourceTree = "<group>";
 		};
 		C75C795227E1E6AB001CA24D /* Frameworks */ = {
@@ -82,9 +82,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C75C78EB27E1E1FA001CA24D /* Example */ = {
+		C75C78EB27E1E1FA001CA24D /* ExampleUIKit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "Example" */;
+			buildConfigurationList = C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "ExampleUIKit" */;
 			buildPhases = (
 				C75C78E827E1E1FA001CA24D /* Sources */,
 				C75C78E927E1E1FA001CA24D /* Frameworks */,
@@ -94,12 +94,12 @@
 			);
 			dependencies = (
 			);
-			name = Example;
+			name = ExampleUIKit;
 			packageProductDependencies = (
 				C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */,
 			);
 			productName = ExampleiOS;
-			productReference = C75C78EC27E1E1FA001CA24D /* Example.app */;
+			productReference = C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -117,7 +117,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "Example" */;
+			buildConfigurationList = C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "ExampleUIKit" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -132,7 +132,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C75C78EB27E1E1FA001CA24D /* Example */,
+				C75C78EB27E1E1FA001CA24D /* ExampleUIKit */,
 			);
 		};
 /* End PBXProject section */
@@ -308,7 +308,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Example/Info.plist;
+				INFOPLIST_FILE = ExampleUIKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -320,7 +320,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.ExampleUIKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -337,7 +337,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Example/Info.plist;
+				INFOPLIST_FILE = ExampleUIKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -349,7 +349,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = ecosystem.demo.playerAnalytics.ExampleUIKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -360,7 +360,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "Example" */ = {
+		C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "ExampleUIKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75C78FE27E1E1FD001CA24D /* Debug */,
@@ -369,7 +369,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "Example" */ = {
+		C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "ExampleUIKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75C790127E1E1FD001CA24D /* Debug */,
