@@ -30,4 +30,4 @@ jobs:
           platform: ${{ 'iOS Simulator' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild clean build -project Examples/Example/Example.xcodeproj -scheme $scheme -sdk iphoneos
+          xcodebuild clean build -project Examples/ExampleUIKit/ExampleUIKit.xcodeproj -scheme $scheme -sdk iphoneos
