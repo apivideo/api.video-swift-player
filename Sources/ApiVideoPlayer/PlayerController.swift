@@ -81,6 +81,7 @@ public class PlayerController: NSObject{
         view.layer.addSublayer(playerLayer)
     }
     
+    //TODO: rework this event 
     private func setUpPlayer(playerManifest: PlayerManifest){
         if let url = URL(string: (playerManifest.video.src)){
             basicPlayerItem = AVPlayerItem(url: url)
@@ -192,7 +193,7 @@ public class PlayerController: NSObject{
     
     public var isMuted: Bool {
         get {
-            return self.isMuted
+            return avPlayer.isMuted
         }
         set(newValue) {
             avPlayer.isMuted = newValue
@@ -208,6 +209,7 @@ public class PlayerController: NSObject{
         }
     }
     
+    public var isLoop: Bool = false
     
     public var volume: Float{
         get{ return avPlayer.volume}
@@ -240,7 +242,7 @@ public class PlayerController: NSObject{
     func selectSubtitle(_ language: String? = nil){
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
             if(language == nil){
-                turnOffSubtitle()
+                hideSubtitle()
             }else{
                 let locale = Locale(identifier: language!)
                 let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
@@ -251,7 +253,7 @@ public class PlayerController: NSObject{
         }
     }
     
-    func turnOffSubtitle(){
+    func hideSubtitle(){
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible){
             avPlayer.currentItem!.select(nil, in: group)
         }
@@ -337,6 +339,12 @@ public class PlayerController: NSObject{
                 }
             case .playing:
                 //Video Ended
+                if isLoop {
+                    replay()
+                    if(self.events?.didLoop != nil){
+                        self.events?.didLoop!()
+                    }
+                }
                 self.analytics?.end(){(result)in
                     switch result {
                     case .success(_):break

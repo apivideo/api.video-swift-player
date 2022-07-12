@@ -6,11 +6,11 @@ import AVKit
 @available(iOS 14.0, *)
 public class ApiVideoPlayerView: UIView {
     
-    public let videoId: String!
+    public let videoId: String! //
     public var events: PlayerEvents? = nil
-    private var basicPlayerItem: AVPlayerItem!
+    private var basicPlayerItem: AVPlayerItem! //
     private let playerLayer = AVPlayerLayer()
-    private var timeObserver: Any?
+    private var timeObserver: Any? //
     private let videoPlayerView = UIView()
     private var vodControlsView: VodControlsView?
     private(set) var playerController: PlayerController?
@@ -75,7 +75,7 @@ public class ApiVideoPlayerView: UIView {
         playerLayer.frame = bounds
     }
     
-    public var isLoop =  false
+   
 
     
     /// Get information if the video is playing
@@ -117,22 +117,14 @@ public class ApiVideoPlayerView: UIView {
         self.vodControlsView?.isHidden = false
     }
     
-    public func turnOffSubtitle(){
-        playerController?.turnOffSubtitle()
+    public func hideSubtitle(){
+        playerController?.hideSubtitle()
     }
     
     public func showSubtitle(language: String){
         playerController?.showSubtitle(language: language)
     }
-    /// Video player is looping.
-    /// (When the video play is finished, the player will start again the video)
-    public func setLoop(){
-        isLoop = true
-    }
-    /// Stop video looping
-    public func stopLooping(){
-        isLoop = false
-    }
+    
     /// Go forward or backward in the video
     /// - Parameter time: time in seconds, (use minus to go backward)
     public func seek(time: Double){
@@ -167,17 +159,13 @@ public class ApiVideoPlayerView: UIView {
         playerController!.goFullScreen()
     }
     
-    @objc func donePlaying(sender: Notification) {
-        if isLoop {
-            replay()
-            if(self.events?.didLoop != nil){
-                self.events?.didLoop!()
-            }
-        }
-        if(self.events?.didEnd != nil){
-            self.events?.didEnd!()
+    public var isLoop: Bool {
+        get{
+            playerController!.isLoop
         }
     }
+    
+    
 }
 
 #else
@@ -194,6 +182,7 @@ public class ApiVideoPlayerView: NSView{
 }
 #endif
 
+//TODO: mettre dans un fichier
 public struct PlayerEvents{
     public var didPause: (() -> ())? = nil
     public var didPlay: (() -> ())? = nil

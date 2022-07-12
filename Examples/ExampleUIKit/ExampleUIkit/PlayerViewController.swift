@@ -265,7 +265,7 @@ class PlayerViewController: UIViewController {
         customPlayer!.showSubtitle(language: "fr")
     }
     @objc func turnOffSubtitleAction(sender: UIButton!) {
-        customPlayer!.turnOffSubtitle()
+        customPlayer!.hideSubtitle()
     }
     
     @objc func handleDoubleTap(_ sender: UITapGestureRecognizer? = nil) {
