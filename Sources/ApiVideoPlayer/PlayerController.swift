@@ -103,6 +103,9 @@ public class PlayerController: NSObject{
     
     private func setUpPlayer(_ url : URL){
         let item = AVPlayerItem(url: url)
+        if(avPlayer.currentItem != nil){
+            avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
+        }
         avPlayer.replaceCurrentItem(with: item)
         avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
         item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
