@@ -17,7 +17,6 @@ public class PlayerController: NSObject{
     private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
     private let isReady: (() -> ())?
-    public var viewController: UIViewController?
     
     init(videoId: String, events: PlayerEvents? = nil, isReady: (() -> ())? = nil) throws {
         self.events = events
@@ -146,7 +145,7 @@ public class PlayerController: NSObject{
     }
     
     public func replay(){
-        analytics?.seek(from: Float(CMTimeGetSeconds(avPlayer.currentTime())), to: Float(CMTimeGetSeconds(CMTime.zero))){ (result) in
+        analytics?.seek(from: Float(CMTimeGetSeconds(self.currentTime)), to: Float(CMTimeGetSeconds(CMTime.zero))){ (result) in
             switch result {
             case .success(_):break
             case .failure(let error):
@@ -154,7 +153,7 @@ public class PlayerController: NSObject{
             }
         }
         avPlayer.seek(to: CMTime.zero)
-        avPlayer.play()
+        self.play()
         analytics?.resume(){(result) in
             switch result {
             case .success(_):break
@@ -173,7 +172,7 @@ public class PlayerController: NSObject{
     }
     
     public func seek(time: Double){
-        let currentTimeInSeconds =  CMTimeGetSeconds(avPlayer.currentTime()).advanced(by: time)
+        let currentTimeInSeconds =  CMTimeGetSeconds(self.currentTime).advanced(by: time)
         let seekTime = CMTime(value: CMTimeValue(currentTimeInSeconds), timescale: 1)
         seek(seekTime: seekTime, currentTimeInSeconds: currentTimeInSeconds)
     }
@@ -186,7 +185,7 @@ public class PlayerController: NSObject{
     private func seek(seekTime: CMTime, currentTimeInSeconds: Float64){
         var cts = currentTimeInSeconds
         avPlayer.seek(to: seekTime)
-        analytics?.seek(from: Float(CMTimeGetSeconds(avPlayer.currentTime())), to: Float(CMTimeGetSeconds(seekTime))){(result) in
+        analytics?.seek(from: Float(CMTimeGetSeconds(self.currentTime)), to: Float(CMTimeGetSeconds(seekTime))){(result) in
             switch result {
             case .success(let data):
                 print("player analytics seek : \(data)")
@@ -242,11 +241,11 @@ public class PlayerController: NSObject{
         return avPlayer.currentTime()
     }
     
-    public func goFullScreen(){
+    public func goFullScreen(viewController: UIViewController){
         let playerViewController = AVPlayerViewController()
         playerViewController.player = avPlayer
-        viewController?.present(playerViewController, animated: true) {
-            self.avPlayer.play()
+        viewController.present(playerViewController, animated: true) {
+            self.play()
         }
     }
     
