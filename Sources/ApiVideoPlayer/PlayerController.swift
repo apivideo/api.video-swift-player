@@ -12,7 +12,6 @@ public class PlayerController: NSObject{
     private let videoType: VideoType = .vod
     private let videoId: String!
     private var playerManifest : PlayerManifest!
-    private var basicPlayerItem: AVPlayerItem?
     private var timeObserver: Any?
     private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
@@ -87,9 +86,11 @@ public class PlayerController: NSObject{
     }
     
     private func retrySetUpPlayerUrlWithMp4(){
-        basicPlayerItem = nil
         guard let mp4 = self.playerManifest.video.mp4 else {
             print("Error there is no mp4")
+            if(self.events?.didPlayerError != nil){
+                self.events?.didPlayerError!(PlayerError.mp4Error("There is no mp4"))
+            }
             return
         }
         if let url = URL(string: (mp4)){
@@ -102,9 +103,7 @@ public class PlayerController: NSObject{
     
     private func setUpPlayer(_ url : URL){
         let item = AVPlayerItem(url: url)
-        if(avPlayer.currentItem != nil){
-            avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
-        }
+        avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
         avPlayer.replaceCurrentItem(with: item)
         avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
         item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
@@ -316,6 +315,9 @@ public class PlayerController: NSObject{
                 }
                 if(url.absoluteString.contains(".mp4")){
                     print("Error with video mp4")
+                    if(self.events?.didPlayerError != nil){
+                        self.events?.didPlayerError!(PlayerError.mp4Error("Tryed mp4 but failed"))
+                    }
                     return
                 }else{
                     print("Error with video url, trying with mp4")
@@ -397,4 +399,8 @@ extension AVPlayer{
     func isPlaying()-> Bool{
         return (self.rate != 0 && self.error == nil)
     }
+}
+
+enum PlayerError: Error{
+    case mp4Error(String)
 }
