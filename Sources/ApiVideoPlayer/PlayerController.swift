@@ -11,7 +11,8 @@ public class PlayerController: NSObject{
     private var option : Options?
     private let videoType: VideoType = .vod
     private let videoId: String!
-    private var basicPlayerItem: AVPlayerItem!
+    private var playerManifest : PlayerManifest!
+    private var basicPlayerItem: AVPlayerItem?
     private var timeObserver: Any?
     private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
@@ -28,6 +29,7 @@ public class PlayerController: NSObject{
         self.videoId = videoId
         self.isReady = isReady
         super.init()
+        self.avPlayer = AVPlayer(playerItem: nil)
         getPlayerJSON(videoType: .vod){ (error) in
             if error == nil {
                 self.isReady!()
@@ -58,16 +60,15 @@ public class PlayerController: NSObject{
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data,response, error) in
             if data != nil {
-                let playerManifest: PlayerManifest
                 do{
-                    playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
+                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
                 }catch let decodeError{
                     completion(decodeError)
                     return
                 }
                 
-                self.setUpAnalytics(url:playerManifest.video.src)
-                self.setUpPlayer(playerManifest: playerManifest)
+                self.setUpAnalytics(url:self.playerManifest.video.src)
+                self.setUpPlayerUrl()
                 completion(nil)
             } else {
                 completion(error)
@@ -81,21 +82,40 @@ public class PlayerController: NSObject{
         view.layer.addSublayer(playerLayer)
     }
     
-    //TODO: rework this event 
-    private func setUpPlayer(playerManifest: PlayerManifest){
-        if let url = URL(string: (playerManifest.video.src)){
+    private func setUpPlayerUrl(){
+        if let url = URL(string: (self.playerManifest.video.src)){
             basicPlayerItem = AVPlayerItem(url: url)
+            setUpPlayer()
         }else{
-            if let urlMp4 = playerManifest.video.mp4 {
-                basicPlayerItem = AVPlayerItem(url: URL(string: urlMp4)!)
-            }else{
-                return
-            }
+            print("Error with video url, trying with mp4")
+            retrySetUpPlayerUrlWithMp4()
         }
-        let item = basicPlayerItem
-        avPlayer = AVPlayer(playerItem: item)
         
-        avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)        
+        
+    }
+    
+    private func retrySetUpPlayerUrlWithMp4(){
+        basicPlayerItem = nil
+        guard let mp4 = self.playerManifest.video.mp4 else {
+            print("Error there is no mp4")
+            return
+        }
+        if let url = URL(string: (mp4)){
+            basicPlayerItem = AVPlayerItem(url: url)
+            setUpPlayer()
+        }else{
+            print("error url trying mp4")
+            return
+        }
+    }
+    
+    private func setUpPlayer(){
+        guard let item = basicPlayerItem else{
+            return
+        }
+        avPlayer.replaceCurrentItem(with: item)
+        avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
+        item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
     }
     
     public func setTimerObserver(callback: @escaping (() -> ())){
@@ -299,6 +319,20 @@ public class PlayerController: NSObject{
     }
     
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "status"{
+            if avPlayer.currentItem?.status ==  .failed{
+                guard let url = (avPlayer.currentItem?.asset as? AVURLAsset)?.url else{
+                    return
+                }
+                if(url.absoluteString.contains(".mp4")){
+                    print("Error with video mp4")
+                    return
+                }else{
+                    print("Error with video url, trying with mp4")
+                    retrySetUpPlayerUrlWithMp4()
+                }
+            }
+        }
         if keyPath == "rate" {
             let status = self.avPlayer.timeControlStatus
             switch status{

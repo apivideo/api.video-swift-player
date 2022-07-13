@@ -23,7 +23,6 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
                 posY = posY - 25 * CGFloat(subtitles.count)
             }
             self.frame = CGRect(x: frame.origin.x, y: posY, width: frame.width, height: 45 * CGFloat(subtitles.count))
-//            self.frame = CGRectMake(frame.origin.x, posY, frame.width, 45 * CGFloat(subtitles.count))
             tableview.frame = CGRect(x: 0,y: 0,width: frame.width,height: 45 * CGFloat(subtitles.count))
         }else{
             self.frame = CGRect(x: frame.origin.x,y: frame.origin.y - 90,width: frame.width,height: frame.height)
@@ -73,9 +72,6 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as UITableViewCell
         var content = cell.defaultContentConfiguration()
         content.text = subtitles[indexPath.item].language
-        print(subtitles.count)
-        print("current row : \(indexPath.row)")
-        print("current subtitle : \(subtitles[indexPath.row].language), \(subtitles[indexPath.row].isSelected)")
         if(subtitles[indexPath.row].isSelected){
             cell.accessoryType = .checkmark
         }

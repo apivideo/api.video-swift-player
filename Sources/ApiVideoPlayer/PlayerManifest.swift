@@ -5,5 +5,4 @@ public struct PlayerManifest: Codable{
     var video: Video
     var panoramic : Bool?
     var live: Bool?
-    // var theme: [Any]
 }

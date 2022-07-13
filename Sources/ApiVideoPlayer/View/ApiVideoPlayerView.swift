@@ -5,11 +5,7 @@ import AVKit
 @available(tvOS 10.0, *)
 @available(iOS 14.0, *)
 public class ApiVideoPlayerView: UIView {
-    
-    public let videoId: String! //
-    private var basicPlayerItem: AVPlayerItem! //
     private let playerLayer = AVPlayerLayer()
-    private var timeObserver: Any? //
     private let videoPlayerView = UIView()
     private var vodControlsView: VodControlsView?
     private var playerController: PlayerController!
@@ -28,7 +24,6 @@ public class ApiVideoPlayerView: UIView {
     ///   - videoType: VideoType object to display vod or live controls
     ///   - events: Callback to get all the player events
     public init(frame: CGRect, videoId: String,hideControls: Bool = false, events: PlayerEvents? = nil) throws {
-        self.videoId = videoId
         super.init(frame: frame)
         do{
             playerController = try PlayerController(videoId: videoId, events: events, isReady: {() in
