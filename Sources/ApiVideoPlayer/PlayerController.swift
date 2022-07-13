@@ -6,7 +6,7 @@ import ApiVideoPlayerAnalytics
 @available(iOS 14.0, *)
 public class PlayerController: NSObject{
     public var events: PlayerEvents? = nil
-    private var avPlayer: AVPlayer!
+    private let avPlayer = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
     private var option : Options?
     private let videoType: VideoType = .vod
@@ -16,12 +16,7 @@ public class PlayerController: NSObject{
     private var timeObserver: Any?
     private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
-    
-
     private let isReady: (() -> ())?
-    
-    
-    
     public var viewController: UIViewController?
     
     init(videoId: String, events: PlayerEvents? = nil, isReady: (() -> ())? = nil) throws {
@@ -29,7 +24,6 @@ public class PlayerController: NSObject{
         self.videoId = videoId
         self.isReady = isReady
         super.init()
-        self.avPlayer = AVPlayer(playerItem: nil)
         getPlayerJSON(videoType: .vod){ (error) in
             if error == nil {
                 self.isReady!()
@@ -84,8 +78,7 @@ public class PlayerController: NSObject{
     
     private func setUpPlayerUrl(){
         if let url = URL(string: (self.playerManifest.video.src)){
-            basicPlayerItem = AVPlayerItem(url: url)
-            setUpPlayer()
+            setUpPlayer(url)
         }else{
             print("Error with video url, trying with mp4")
             retrySetUpPlayerUrlWithMp4()
@@ -101,18 +94,15 @@ public class PlayerController: NSObject{
             return
         }
         if let url = URL(string: (mp4)){
-            basicPlayerItem = AVPlayerItem(url: url)
-            setUpPlayer()
+            setUpPlayer(url)
         }else{
             print("error url trying mp4")
             return
         }
     }
     
-    private func setUpPlayer(){
-        guard let item = basicPlayerItem else{
-            return
-        }
+    private func setUpPlayer(_ url : URL){
+        let item = AVPlayerItem(url: url)
         avPlayer.replaceCurrentItem(with: item)
         avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
         item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
@@ -120,7 +110,7 @@ public class PlayerController: NSObject{
     
     public func setTimerObserver(callback: @escaping (() -> ())){
         let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        timeObserver = avPlayer?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
+        timeObserver = avPlayer.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { elapsedTime in
             callback()
         })
     }
@@ -145,7 +135,7 @@ public class PlayerController: NSObject{
         analytics = PlayerAnalytics(options: option!)
     }
     public func isPlaying()-> Bool{
-        return avPlayer?.isPlaying() ?? false
+        return avPlayer.isPlaying()
     }
     
     public func play(){
@@ -180,8 +170,7 @@ public class PlayerController: NSObject{
     }
     
     public func seek(time: Double){
-        guard let currentTime = avPlayer?.currentTime() else { return }
-        let currentTimeInSeconds =  CMTimeGetSeconds(currentTime).advanced(by: time)
+        let currentTimeInSeconds =  CMTimeGetSeconds(avPlayer.currentTime()).advanced(by: time)
         let seekTime = CMTime(value: CMTimeValue(currentTimeInSeconds), timescale: 1)
         seek(seekTime: seekTime, currentTimeInSeconds: currentTimeInSeconds)
     }
@@ -192,10 +181,9 @@ public class PlayerController: NSObject{
     }
     
     private func seek(seekTime: CMTime, currentTimeInSeconds: Float64){
-        guard let currentTime = avPlayer?.currentTime() else { return }
         var cts = currentTimeInSeconds
-        avPlayer?.seek(to: seekTime)
-        analytics?.seek(from: Float(CMTimeGetSeconds(currentTime)), to: Float(CMTimeGetSeconds(seekTime))){(result) in
+        avPlayer.seek(to: seekTime)
+        analytics?.seek(from: Float(CMTimeGetSeconds(avPlayer.currentTime())), to: Float(CMTimeGetSeconds(seekTime))){(result) in
             switch result {
             case .success(let data):
                 print("player analytics seek : \(data)")
@@ -397,8 +385,8 @@ public class PlayerController: NSObject{
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: basicPlayerItem)
         avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
+        avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
     }
 }
 
