@@ -49,7 +49,7 @@ public class PlayerController: NSObject{
     }
     
     
-    public func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void){
+    private func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void){
         let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data,response, error) in
