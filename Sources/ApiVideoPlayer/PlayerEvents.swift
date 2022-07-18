@@ -1,18 +1,17 @@
 import Foundation
-public struct PlayerEvents{
-    public var didPause: (() -> ())? = nil
-    public var didPlay: (() -> ())? = nil
-    public var didRePlay: (() -> ())? = nil
-    public var didMute: (() -> ())? = nil
-    public var didUnMute: (() -> ())? = nil
-    public var didLoop: (() -> ())? = nil
-    public var didSetVolume: ((_ volume: Float) -> ())? = nil
-    public var didSeekTime: ((_ from: Double, _ to: Double) -> ())? = nil
-    public var didEnd: (() -> ())? = nil
-    public var didError: ((_ error: Error) -> ())? = nil
-    
-    
-    public init(didPause: (() -> ())? = nil, didPlay: (() -> ())? = nil, didRePlay: (() -> ())? = nil, didMute: (() -> ())? = nil, didUnMute:(() -> ())? = nil, didLoop: (() -> ())? = nil, didSetVolume: ((Float) -> ())? = nil, didSeekTime: ((Double,Double) -> ())? = nil, didEnd: (() -> ())? = nil, didError: ((Error) -> ())? = nil) {
+public struct PlayerEvents {
+    public var didPause: (() -> Void)?
+    public var didPlay: (() -> Void)?
+    public var didRePlay: (() -> Void)?
+    public var didMute: (() -> Void)?
+    public var didUnMute: (() -> Void)?
+    public var didLoop: (() -> Void)?
+    public var didSetVolume: ((_ volume: Float) -> Void)?
+    public var didSeekTime: ((_ from: Double, _ to: Double) -> Void)?
+    public var didEnd: (() -> Void)?
+    public var didError: ((_ error: Error) -> Void)?
+
+    public init(didPause: (() -> Void)? = nil, didPlay: (() -> Void)? = nil, didRePlay: (() -> Void)? = nil, didMute: (() -> Void)? = nil, didUnMute: (() -> Void)? = nil, didLoop: (() -> Void)? = nil, didSetVolume: ((Float) -> Void)? = nil, didSeekTime: ((Double, Double) -> Void)? = nil, didEnd: (() -> Void)? = nil, didError: ((Error) -> Void)? = nil) {
         self.didPause = didPause
         self.didPlay = didPlay
         self.didRePlay = didRePlay
