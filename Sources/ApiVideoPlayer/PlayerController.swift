@@ -40,8 +40,9 @@ public class PlayerController: NSObject{
             baseUrl = "https://live.api.video/"
         }
         var url: String!
-        if privateToken != nil{
-            url = baseUrl + "\(self.videoId!)/token/\(privateToken!)/player.json"
+        
+        if let privateToken = privateToken {
+            url = baseUrl + "\(self.videoId!)/token/\(privateToken)/player.json"
         }else{
             url = baseUrl + "\(self.videoId!)/player.json"
         }
@@ -54,9 +55,9 @@ public class PlayerController: NSObject{
         let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
         let session = RequestsBuilder().buildUrlSession()
         TasksExecutor.execute(session: session, request: request) { (data, error) in
-            if data != nil {
+            if let data = data {
                 do{
-                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
+                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
                 }catch let decodeError{
                     completion(decodeError)
                     return
@@ -64,7 +65,7 @@ public class PlayerController: NSObject{
                 self.setUpAnalytics(url:self.playerManifest.video.src)
                 self.setUpPlayerUrl()
                 completion(nil)
-            } else {
+            }else{
                 completion(error)
             }
         }
