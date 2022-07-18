@@ -23,9 +23,7 @@ public class PlayerController: NSObject{
         super.init()
         getPlayerJSON(videoType: .vod){ (error) in
             if let error = error {
-                if(self.events?.didError != nil){
-                    self.events?.didError!(error)
-                }
+                self.events?.didError?(error)
             }else{
                 self.isReady!()
             }
@@ -58,13 +56,13 @@ public class PlayerController: NSObject{
             if let data = data {
                 do{
                     self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
-                }catch let decodeError{
-                    completion(decodeError)
+                    self.setUpAnalytics(url:self.playerManifest.video.src)
+                    try self.setUpPlayer(self.playerManifest.video.src)
+                    completion(nil)
+                }catch{
+                    completion(error)
                     return
                 }
-                self.setUpAnalytics(url:self.playerManifest.video.src)
-                self.setUpPlayerUrl()
-                completion(nil)
             }else{
                 completion(error)
             }
@@ -77,40 +75,31 @@ public class PlayerController: NSObject{
         view.layer.addSublayer(playerLayer)
     }
     
-    private func setUpPlayerUrl(){
-        if let url = URL(string: (self.playerManifest.video.src)){
-            setUpPlayer(url)
-        }else{
-            print("Error with video url, trying with mp4")
-            retrySetUpPlayerUrlWithMp4()
-        }
-        
-        
-    }
-    
     private func retrySetUpPlayerUrlWithMp4(){
         guard let mp4 = self.playerManifest.video.mp4 else {
             print("Error there is no mp4")
-            if(self.events?.didError != nil){
-                self.events?.didError!(PlayerError.mp4Error("There is no mp4"))
-            }
+            self.events?.didError?(PlayerError.mp4Error("There is no mp4"))
             return
         }
-        if let url = URL(string: (mp4)){
-            setUpPlayer(url)
-        }else{
-            print("error url trying mp4")
-            return
+        do{
+            try setUpPlayer(mp4)
+        }catch{
+            self.events?.didError?(error)
         }
     }
     
-    private func setUpPlayer(_ url : URL){
-        let item = AVPlayerItem(url: url)
-        avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
-        avPlayer.replaceCurrentItem(with: item)
-        avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
-        item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying),name: .AVPlayerItemDidPlayToEndTime, object: item)
+    private func setUpPlayer(_ url : String) throws{
+        if let url = URL(string: url){
+            let item = AVPlayerItem(url: url)
+            avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
+            avPlayer.replaceCurrentItem(with: item)
+            avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
+            item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying),name: .AVPlayerItemDidPlayToEndTime, object: item)
+        }else{
+            throw PlayerError.urlError("bad url")
+        }
+        
     }
     
     public func setTimerObserver(callback: @escaping (() -> ())){
@@ -162,10 +151,7 @@ public class PlayerController: NSObject{
                 print("analytics error on resume event: \(error)")
             }
         }
-        
-        if(self.events?.didRePlay != nil){
-            self.events?.didRePlay!()
-        }
+        self.events?.didRePlay?()
     }
     
     public func pause(){
@@ -209,13 +195,9 @@ public class PlayerController: NSObject{
         set(newValue) {
             avPlayer.isMuted = newValue
             if newValue{
-                if(self.events?.didMute != nil){
-                    self.events?.didMute!()
-                }
+                self.events?.didMute?()
             }else{
-                if(self.events?.didUnMute != nil){
-                    self.events?.didUnMute!()
-                }
+                self.events?.didUnMute?()
             }
         }
     }
@@ -226,9 +208,7 @@ public class PlayerController: NSObject{
         get{ return avPlayer.volume}
         set(newVolume){
             avPlayer.volume = newVolume
-            if(self.events?.didSetVolume != nil){
-                self.events?.didSetVolume!(volume)
-            }
+            self.events?.didSetVolume?(volume)
         }
     }
     
@@ -312,9 +292,7 @@ public class PlayerController: NSObject{
     @objc func playerDidFinishPlaying(){
         if isLoop {
             replay()
-            if(self.events?.didLoop != nil){
-                self.events?.didLoop!()
-            }
+            self.events?.didLoop?()
         }
         self.analytics?.end(){(result)in
             switch result {
@@ -323,9 +301,7 @@ public class PlayerController: NSObject{
                 print("analytics error on ended event: \(error)")
             }
         }
-        if(self.events?.didEnd != nil){
-            self.events?.didEnd!()
-        }
+        self.events?.didEnd?()
     }
     
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -336,9 +312,7 @@ public class PlayerController: NSObject{
                 }
                 if(url.absoluteString.contains(".mp4")){
                     print("Error with video mp4")
-                    if(self.events?.didError != nil){
-                        self.events?.didError!(PlayerError.mp4Error("Tryed mp4 but failed"))
-                    }
+                    self.events?.didError?(PlayerError.mp4Error("Tryed mp4 but failed"))
                     return
                 }else{
                     print("Error with video url, trying with mp4")
@@ -358,9 +332,7 @@ public class PlayerController: NSObject{
                         print("analytics error on pause event: \(error)")
                     }
                 }
-                if(self.events?.didPause != nil){
-                    self.events?.didPause!()
-                }
+                self.events?.didPause?()
             case .waitingToPlayAtSpecifiedRate:
                 //Resumed
                 if(isFirstPlay){
@@ -381,9 +353,7 @@ public class PlayerController: NSObject{
                         }
                     }
                 }
-                if(self.events?.didPlay != nil){
-                    self.events?.didPlay!()
-                }
+                self.events?.didPlay?()
             case .playing:
                 //Video Ended
                 break
@@ -411,4 +381,5 @@ extension AVPlayer{
 
 enum PlayerError: Error{
     case mp4Error(String)
+    case urlError(String)
 }
