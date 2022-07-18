@@ -21,8 +21,7 @@ class MockedTasksExecutor: TasksExecutorProtocol {
     session: URLSession, request: URLRequest, completion: @escaping (Data?, Error?) -> Void
   ) {
       let error = PlayerTestError.executeFailed("400")
-      let resp = URLResponse()
-    completion(nil, error)
+      completion(nil, error)
   }
 }
 
