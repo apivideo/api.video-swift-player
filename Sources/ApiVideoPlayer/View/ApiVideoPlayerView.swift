@@ -124,8 +124,13 @@ public class ApiVideoPlayerView: UIView {
     
     /// The video player volume is connected to the device audio volume
     /// - Parameter volume: Float between 0 to 1
-    public func setVolume(volume: Float){
-        playerController!.volume = volume
+    var volume: Float {
+        get{
+            playerController!.volume
+        }
+        set(newValue){
+            playerController!.volume = newValue
+        }
     }
     
     var duration: CMTime{
