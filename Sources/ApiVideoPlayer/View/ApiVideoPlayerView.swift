@@ -62,33 +62,33 @@ public class ApiVideoPlayerView: UIView {
     /// Get information if the video is playing
     /// - Returns: Boolean
     public func isPlaying() -> Bool{
-        return playerController?.isPlaying() ?? false
+        return playerController.isPlaying()
     }
     
     /// Play the video
     public func play(){
-        playerController!.play()
+        playerController.play()
     }
     
     /// Replay the video
     public func replay(){
-        playerController!.replay()
+        playerController.replay()
     }
     
     /// Pause the video
     public func pause(){
-        playerController!.pause()
+        playerController.pause()
     }
     
     /// Getter and Setter to mute or unmute video player
     public var isMuted: Bool {
-        get{return playerController!.isMuted}
-        set(newValue){ playerController!.isMuted = newValue}
+        get{return playerController.isMuted}
+        set(newValue){ playerController.isMuted = newValue}
     }
     
     public var events: PlayerEvents?{
-        get{return playerController!.events}
-        set(newValue){ playerController!.events = newValue}
+        get{return playerController.events}
+        set(newValue){ playerController.events = newValue}
     }
     
     /// Hide all the controls of the player
@@ -104,44 +104,44 @@ public class ApiVideoPlayerView: UIView {
     }
     
     public func hideSubtitle(){
-        playerController?.hideSubtitle()
+        playerController.hideSubtitle()
     }
     
     public func showSubtitle(language: String){
-        playerController?.showSubtitle(language: language)
+        playerController.showSubtitle(language: language)
     }
     
     /// Go forward or backward in the video
     /// - Parameter time: time in seconds, (use minus to go backward)
     public func seek(time: Double){
-        playerController!.seek(time: time)
+        playerController.seek(time: time)
     }
     /// Go forward or backward in the video to a specific time
     /// - Parameter to: go to a specific time (in second)
     public func seek(to: Double){
-        playerController!.seek(to: to)
+        playerController.seek(to: to)
     }
     
     /// The video player volume is connected to the device audio volume
     /// - Parameter volume: Float between 0 to 1
-    var volume: Float {
+    public var volume: Float {
         get{
-            playerController!.volume
+            playerController.volume
         }
         set(newValue){
-            playerController!.volume = newValue
+            playerController.volume = newValue
         }
     }
     
-    var duration: CMTime{
+    public var duration: CMTime{
         get{
-            playerController!.duration
+            playerController.duration
         }
     }
     
-    var currentTime: CMTime{
+    public var currentTime: CMTime{
         get{
-            playerController!.currentTime
+            playerController.currentTime
         }
     }
     
@@ -149,12 +149,15 @@ public class ApiVideoPlayerView: UIView {
         guard let vc = self.viewController else {
             return
         }
-        playerController!.goFullScreen(viewController: vc)
+        playerController.goFullScreen(viewController: vc)
     }
     
     public var isLoop: Bool {
         get{
-            playerController!.isLoop
+            playerController.isLoop
+        }
+        set(newValue){
+            playerController.isLoop = newValue
         }
     }
     
