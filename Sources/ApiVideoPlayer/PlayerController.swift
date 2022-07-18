@@ -128,10 +128,7 @@ public class PlayerController: NSObject{
     private func setUpAnalytics(url: String){
         do {
             option = try Options(
-                mediaUrl: url, metadata: [],
-                onSessionIdReceived: { (id) in
-                    print("session ID : \(id)")
-                })
+                mediaUrl: url, metadata: [])
         } catch {
             print("error with the url")
         }
