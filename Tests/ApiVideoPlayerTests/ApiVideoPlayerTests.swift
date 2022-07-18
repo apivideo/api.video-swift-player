@@ -9,9 +9,8 @@ final class ApiVideoPlayerTests: XCTestCase {
         }
         let request = RequestsBuilder().getPlayerData(path: "https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Mas59HT/hls/manifest.m3u8")
         let session = RequestsBuilder().buildUrlSession()
-        MockedTasksExecutor.execute(session: session, request: request){(data,response, error) in
+        MockedTasksExecutor.execute(session: session, request: request){(data, error) in
             XCTAssertEqual(returnData, data)
-            XCTAssertNil(response)
             XCTAssertNil(error)
         }
     }
@@ -21,7 +20,7 @@ final class ApiVideoPlayerTests: XCTestCase {
         let request = RequestsBuilder().getPlayerData(path: "https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Ma/hls/manifest.m3u8")
         let session = RequestsBuilder().buildUrlSession()
         
-        MockedTasksExecutor.executefailed(session: session, request: request) { (data, response, error) in
+        MockedTasksExecutor.executefailed(session: session, request: request) { (data, error) in
             XCTAssertNotNil(error)
         }
     }

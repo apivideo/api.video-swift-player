@@ -3,7 +3,7 @@ import ApiVideoPlayer
 
 class MockedTasksExecutor: TasksExecutorProtocol {
   static func execute(
-    session: URLSession, request: URLRequest, completion: @escaping (Data?,URLResponse?, Error?) -> Void
+    session: URLSession, request: URLRequest, completion: @escaping (Data?, Error?) -> Void
   ) {
     guard
       let url = Bundle(for: MockedTasksExecutor.self).url(
@@ -14,15 +14,15 @@ class MockedTasksExecutor: TasksExecutorProtocol {
     guard let data = try? Data(contentsOf: url) else {
       return
     }
-    completion(data,nil, nil)
+    completion(data, nil)
   }
 
   public static func executefailed(
-    session: URLSession, request: URLRequest, completion: @escaping (Data?, URLResponse?, Error?) -> Void
+    session: URLSession, request: URLRequest, completion: @escaping (Data?, Error?) -> Void
   ) {
       let error = PlayerTestError.executeFailed("400")
       let resp = URLResponse()
-    completion(nil,nil, error)
+    completion(nil, error)
   }
 }
 
