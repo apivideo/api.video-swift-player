@@ -8,7 +8,6 @@ public class PlayerController: NSObject{
     public var events: PlayerEvents? = nil
     private let avPlayer = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
-    private var option : Options?
     private let videoType: VideoType = .vod
     private let videoId: String!
     private var playerManifest : PlayerManifest!
@@ -110,6 +109,7 @@ public class PlayerController: NSObject{
         avPlayer.replaceCurrentItem(with: item)
         avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
         item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying),name: .AVPlayerItemDidPlayToEndTime, object: item)
     }
     
     public func setTimerObserver(callback: @escaping (() -> ())){
@@ -127,13 +127,14 @@ public class PlayerController: NSObject{
     
     private func setUpAnalytics(url: String){
         do {
-            option = try Options(
+            let option = try Options(
                 mediaUrl: url, metadata: [])
+            analytics = PlayerAnalytics(options: option)
         } catch {
             print("error with the url")
         }
         
-        analytics = PlayerAnalytics(options: option!)
+        
     }
     public func isPlaying()-> Bool{
         return avPlayer.isPlaying()
@@ -307,6 +308,25 @@ public class PlayerController: NSObject{
         }
     }
     
+    @objc func playerDidFinishPlaying(){
+        if isLoop {
+            replay()
+            if(self.events?.didLoop != nil){
+                self.events?.didLoop!()
+            }
+        }
+        self.analytics?.end(){(result)in
+            switch result {
+            case .success(_):break
+            case .failure(let error):
+                print("analytics error on ended event: \(error)")
+            }
+        }
+        if(self.events?.didEnd != nil){
+            self.events?.didEnd!()
+        }
+    }
+    
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "status"{
             if avPlayer.currentItem?.status ==  .failed{
@@ -365,22 +385,8 @@ public class PlayerController: NSObject{
                 }
             case .playing:
                 //Video Ended
-                if isLoop {
-                    replay()
-                    if(self.events?.didLoop != nil){
-                        self.events?.didLoop!()
-                    }
-                }
-                self.analytics?.end(){(result)in
-                    switch result {
-                    case .success(_):break
-                    case .failure(let error):
-                        print("analytics error on ended event: \(error)")
-                    }
-                }
-                if(self.events?.didEnd != nil){
-                    self.events?.didEnd!()
-                }
+                break
+                
             @unknown default:
                 break
             }
@@ -391,6 +397,7 @@ public class PlayerController: NSObject{
     deinit {
         avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
         avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
