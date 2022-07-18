@@ -14,18 +14,17 @@ public class PlayerController: NSObject{
     private var timeObserver: Any?
     private var subtitles : [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
-    private let isReady: (() -> ())?
-    
-    init(videoId: String, events: PlayerEvents? = nil, isReady: (() -> ())? = nil) throws {
+
+    init(videoId: String, events: PlayerEvents? = nil, view: UIView, playerLayer: AVPlayerLayer) throws {
         self.events = events
         self.videoId = videoId
-        self.isReady = isReady
+        playerLayer.player = avPlayer
+        view.layer.addSublayer(playerLayer)
+
         super.init()
         getPlayerJSON(videoType: .vod){ (error) in
             if let error = error {
                 self.events?.didError?(error)
-            }else{
-                self.isReady!()
             }
         }
     }
@@ -68,11 +67,6 @@ public class PlayerController: NSObject{
             }
         }
         
-    }
-    
-    public func setView(_ view: UIView,_ playerLayer: AVPlayerLayer){
-        playerLayer.player = avPlayer
-        view.layer.addSublayer(playerLayer)
     }
     
     private func retrySetUpPlayerUrlWithMp4(){

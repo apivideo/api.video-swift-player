@@ -25,15 +25,11 @@ public class ApiVideoPlayerView: UIView {
     public init(frame: CGRect, videoId: String,hideControls: Bool = false, events: PlayerEvents? = nil) throws {
         super.init(frame: frame)
         do{
-            playerController = try PlayerController(videoId: videoId, events: events, isReady: {() in
-                DispatchQueue.main.async {
-                    self.playerController?.setView(self,self.playerLayer)
-                    if(!hideControls){
-                        self.vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: self.playerController!)
-                    }
-                    self.setupView()
-                }
-            })
+            playerController = try PlayerController(videoId: videoId, events: events, view: self, playerLayer: self.playerLayer)
+            if(!hideControls){
+                self.vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: self.playerController!)
+            }
+            self.setupView()
             
         }catch{
             return
