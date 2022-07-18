@@ -10,10 +10,9 @@ public class ApiVideoPlayerView: UIView {
     private var vodControlsView: VodControlsView?
     private var playerController: PlayerController!
     private var isFirstPlay = true
-
-    public var viewController: UIViewController? {
+    public var viewController: UIViewController?{
         didSet{
-            playerController.viewController = viewController
+            self.vodControlsView?.viewController = viewController
         }
     }
     
@@ -53,12 +52,6 @@ public class ApiVideoPlayerView: UIView {
         }else{
             self.backgroundColor = .black
         }
-    }
-    
-    /// Set the UIViewController to be able to display the player in full screen
-    /// - Parameter vc: pass your UIViewController
-    public func setViewController(vc: UIViewController){
-        self.viewController = vc
     }
     
     public override func layoutSubviews() {
@@ -148,7 +141,10 @@ public class ApiVideoPlayerView: UIView {
     }
     
     public func goFullScreen(){
-        playerController!.goFullScreen()
+        guard let vc = self.viewController else {
+            return
+        }
+        playerController!.goFullScreen(viewController: vc)
     }
     
     public var isLoop: Bool {

@@ -23,7 +23,11 @@ public class PlayerController: NSObject{
         self.isReady = isReady
         super.init()
         getPlayerJSON(videoType: .vod){ (error) in
-            if error == nil {
+            if let error = error {
+                if(self.events?.didError != nil){
+                    self.events?.didError!(error)
+                }
+            }else{
                 self.isReady!()
             }
         }
@@ -50,7 +54,7 @@ public class PlayerController: NSObject{
     private func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void){
         let request = RequestsBuilder().getPlayerData(path: getVideoUrl(videoType: videoType))
         let session = RequestsBuilder().buildUrlSession()
-        TasksExecutor.execute(session: session, request: request) { (data,response, error) in
+        TasksExecutor.execute(session: session, request: request) { (data, error) in
             if data != nil {
                 do{
                     self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data!)
@@ -58,7 +62,6 @@ public class PlayerController: NSObject{
                     completion(decodeError)
                     return
                 }
-                
                 self.setUpAnalytics(url:self.playerManifest.video.src)
                 self.setUpPlayerUrl()
                 completion(nil)
@@ -88,8 +91,8 @@ public class PlayerController: NSObject{
     private func retrySetUpPlayerUrlWithMp4(){
         guard let mp4 = self.playerManifest.video.mp4 else {
             print("Error there is no mp4")
-            if(self.events?.didPlayerError != nil){
-                self.events?.didPlayerError!(PlayerError.mp4Error("There is no mp4"))
+            if(self.events?.didError != nil){
+                self.events?.didError!(PlayerError.mp4Error("There is no mp4"))
             }
             return
         }
@@ -315,8 +318,8 @@ public class PlayerController: NSObject{
                 }
                 if(url.absoluteString.contains(".mp4")){
                     print("Error with video mp4")
-                    if(self.events?.didPlayerError != nil){
-                        self.events?.didPlayerError!(PlayerError.mp4Error("Tryed mp4 but failed"))
+                    if(self.events?.didError != nil){
+                        self.events?.didError!(PlayerError.mp4Error("Tryed mp4 but failed"))
                     }
                     return
                 }else{

@@ -29,13 +29,16 @@ class PlayerViewController: UIViewController {
             },
             didSeekTime: {(from, to)in
                 print("seek from : \(from), to: \(to)")
+            },
+            didError: {(error)in
+                print("error \(error)")
             }
             
         )
         
         var player: ApiVideoPlayerView? = nil
         do {
-            player = try ApiVideoPlayerView(frame: .zero, videoId: "vi17y1ATpEDRhq0vKoTX5OOT", events: events)
+            player = try ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", events: events)
         } catch {
             print("error during init, please check videoId")
         }
@@ -206,7 +209,7 @@ class PlayerViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        customPlayer!.setViewController(vc: self)
+        customPlayer!.viewController = self
     }
     
     private func constraints(){

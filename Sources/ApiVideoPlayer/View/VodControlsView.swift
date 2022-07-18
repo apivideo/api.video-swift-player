@@ -12,6 +12,7 @@ class VodControlsView: UIView{
     private var subtitleView: SubtitleView!
     private var timeObserver: Any?
     private var fromCMTime : CMTime!
+    public var viewController: UIViewController!
 
     
     init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
@@ -256,7 +257,7 @@ class VodControlsView: UIView{
     }
     
     @objc func goFullScreenAction() {
-        playerController.goFullScreen()
+        playerController.goFullScreen(viewController: self.viewController)
     }
     
     @available(iOS 14.0, *)
