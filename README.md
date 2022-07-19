@@ -114,14 +114,14 @@ import ApiVideoPlayer
 ```swift
     override func viewDidLoad() {
     ...
-    self.addSubview(customPlayer!)
+    self.addSubview(customPlayer)
     ...
     }
 ```
 4. To use full screen and subtitle
 ```swift
     override func viewDidAppear(_ animated: Bool) {
-        customPlayer!.setViewController(vc: self)
+        customPlayer.setViewController(vc: self)
     }
 ```
 

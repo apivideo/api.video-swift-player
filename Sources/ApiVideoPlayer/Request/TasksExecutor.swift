@@ -22,6 +22,10 @@ extension URLSession {
         case serverSideError(Int)
     }
 
+    enum UrlError: Error {
+        case urlResponseError(String)
+    }
+
     typealias DataTaskResult = Result<(HTTPURLResponse, Data), Error>
 
     func dataTask(with request: URLRequest, completionHandler: @escaping (DataTaskResult) -> Void) -> URLSessionDataTask {
@@ -30,7 +34,10 @@ extension URLSession {
                 completionHandler(Result.failure(HTTPError.transportError(error)))
                 return
             }
-            let response = response as! HTTPURLResponse
+            guard let response = response as? HTTPURLResponse else {
+                completionHandler(.failure(UrlError.urlResponseError("Could not cast response to HTTPURLResponse")))
+                return
+            }
             let status = response.statusCode
             guard (200 ... 299).contains(status) else {
                 completionHandler(Result.failure(HTTPError.serverSideError(status)))

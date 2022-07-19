@@ -242,14 +242,12 @@ public class PlayerController: NSObject {
     func getSubtitlesFromVideo() -> [Subtitle] {
         let current = getCurrentLocaleSubtitle()
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            for option in group.options {
-                if option.displayName != "CC" {
-                    var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag)
-                    if current?.languageCode == sub.code {
-                        sub.isSelected = true
-                    }
-                    subtitles.append(sub)
+            for option in group.options where option.displayName != "CC" {
+                var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag)
+                if current?.languageCode == sub.code {
+                    sub.isSelected = true
                 }
+                subtitles.append(sub)
             }
         }
         return subtitles

@@ -11,7 +11,17 @@ public struct PlayerEvents {
     public var didEnd: (() -> Void)?
     public var didError: ((_ error: Error) -> Void)?
 
-    public init(didPause: (() -> Void)? = nil, didPlay: (() -> Void)? = nil, didRePlay: (() -> Void)? = nil, didMute: (() -> Void)? = nil, didUnMute: (() -> Void)? = nil, didLoop: (() -> Void)? = nil, didSetVolume: ((Float) -> Void)? = nil, didSeekTime: ((Double, Double) -> Void)? = nil, didEnd: (() -> Void)? = nil, didError: ((Error) -> Void)? = nil) {
+    public init(didPause: (() -> Void)? = nil,
+                didPlay: (() -> Void)? = nil,
+                didRePlay: (() -> Void)? = nil,
+                didMute: (() -> Void)? = nil,
+                didUnMute: (() -> Void)? = nil,
+                didLoop: (() -> Void)? = nil,
+                didSetVolume: ((Float) -> Void)? = nil,
+                didSeekTime: ((Double, Double) -> Void)? = nil,
+                didEnd: (() -> Void)? = nil,
+                didError: ((Error) -> Void)? = nil)
+    {
         self.didPause = didPause
         self.didPlay = didPlay
         self.didRePlay = didRePlay
