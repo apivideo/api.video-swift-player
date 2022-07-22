@@ -75,7 +75,7 @@ import ApiVideoPlayer
 2. Instantiate the Player view with the player events:
 
 ```swift
-    let customPlayer: ApiPlayerView? = {
+    let customPlayer: ApiVideoPlayerView? = {
         let events = PlayerEvents(
             didPause: {() in
                 print("paused")
@@ -100,7 +100,7 @@ import ApiVideoPlayer
         
         var player: ApiPlayerView? = nil
         do {
-            player = try ApiPlayerView(frame: .zero, videoId: "vi5VE7Rsduboxqkzi37qxXja", events: events)
+            player = try ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", events: events)
         } catch {
             print("error during init, please check videoId")
         }
