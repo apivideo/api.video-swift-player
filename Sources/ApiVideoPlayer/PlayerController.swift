@@ -15,12 +15,18 @@ public class PlayerController: NSObject {
     private var subtitles: [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
 
-    init(videoId: String, events: PlayerEvents? = nil, view: UIView, playerLayer: AVPlayerLayer) throws {
+    #if !os(macOS)
+        convenience init(videoId: String, events: PlayerEvents? = nil, view: UIView, playerLayer: AVPlayerLayer) throws {
+            try self.init(videoId: videoId, events: events)
+            playerLayer.player = avPlayer
+            view.layer.addSublayer(playerLayer)
+        }
+    #endif
+
+    init(videoId: String, events: PlayerEvents?) throws {
         self.events = events
         self.videoId = videoId
-        playerLayer.player = avPlayer
-        view.layer.addSublayer(playerLayer)
-
+        
         super.init()
         getPlayerJSON(videoType: .vod) { error in
             if let error = error {
@@ -211,13 +217,15 @@ public class PlayerController: NSObject {
         return avPlayer.currentTime()
     }
 
-    public func goFullScreen(viewController: UIViewController) {
-        let playerViewController = AVPlayerViewController()
-        playerViewController.player = avPlayer
-        viewController.present(playerViewController, animated: true) {
-            self.play()
+    #if !os(macOS)
+        public func goFullScreen(viewController: UIViewController) {
+            let playerViewController = AVPlayerViewController()
+            playerViewController.player = avPlayer
+            viewController.present(playerViewController, animated: true) {
+                self.play()
+            }
         }
-    }
+    #endif
 
     func selectSubtitle(_ language: String? = nil) {
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
