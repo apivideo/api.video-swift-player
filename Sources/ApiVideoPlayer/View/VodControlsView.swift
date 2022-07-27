@@ -19,7 +19,7 @@
             self.playerController = playerController
             pView = parentView
             super.init(frame: frame)
-            setVodControls()
+            setupVodControls()
 
             playerController.setTimerObserver(callback: { () in
                 self.updateTiming()
@@ -92,7 +92,7 @@
         }()
 
         @available(iOS 14.0, *)
-        private func setVodControls() {
+        private func setupVodControls() {
             // Controls View
             pView.addSubview(self)
 
@@ -135,11 +135,11 @@
             addSubview(fullScreenButton)
             fullScreenButton.addTarget(self, action: #selector(goToFullScreenAction), for: .touchUpInside)
 
-            setVodControlConstraints()
+            setupVodControlConstraints()
             activateTimer()
         }
 
-        private func setVodControlConstraints() {
+        private func setupVodControlConstraints() {
             // Controls View
             translatesAutoresizingMaskIntoConstraints = false
             topAnchor.constraint(equalTo: pView.topAnchor).isActive = true
@@ -173,8 +173,8 @@
             vodControlSliderView.centerXAnchor.constraint(equalTo: pView.centerXAnchor).isActive = true
             vodControlSliderView.trailingAnchor.constraint(equalTo: pView.trailingAnchor).isActive = true
             vodControlSliderView.leadingAnchor.constraint(equalTo: pView.leadingAnchor).isActive = true
-            vodControlSliderView.bottomAnchor.constraint(equalTo: pView.bottomAnchor, constant: -12).isActive = true
-            vodControlSliderView.heightAnchor.constraint(equalToConstant: pView.frame.height / 4).isActive = true
+            vodControlSliderView.bottomAnchor.constraint(equalTo: pView.bottomAnchor).isActive = true
+            vodControlSliderView.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
             // Slider
             vodControlSlider.translatesAutoresizingMaskIntoConstraints = false
