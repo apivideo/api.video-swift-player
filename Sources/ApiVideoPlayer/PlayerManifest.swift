@@ -6,3 +6,9 @@ public struct PlayerManifest: Codable {
     var panoramic: Bool?
     var live: Bool?
 }
+
+public struct Video: Codable {
+    var poster: String
+    var src: String
+    var mp4: String?
+}
