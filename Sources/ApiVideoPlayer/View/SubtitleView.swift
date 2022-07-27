@@ -9,9 +9,9 @@
         private var subtitles: [SubtitleLanguage] = []
         private var tableview = UITableView()
         private let cellReuseIdentifier = "cell"
-        private let playerController: PlayerController
+        private let playerController: ApiVideoPlayerController
 
-        public init(frame: CGRect, playerController: PlayerController) {
+        public init(frame: CGRect, playerController: ApiVideoPlayerController) {
             self.playerController = playerController
             super.init(frame: frame)
             subtitles = playerController.subtitles

@@ -6,7 +6,7 @@
     @available(iOS 14.0, *)
     class VodControlsView: UIView {
         private var timer: Timer?
-        private let playerController: PlayerController
+        private let playerController: ApiVideoPlayerController
         private var pView: UIView!
         private var isSubtitleViewDisplay = false
         private var subtitleView: SubtitleView!
@@ -15,7 +15,7 @@
         public var viewController: UIViewController!
         private let events = PlayerEvents()
 
-        init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
+        init(frame: CGRect, parentView: UIView, playerController: ApiVideoPlayerController) {
             self.playerController = playerController
             pView = parentView
             super.init(frame: frame)

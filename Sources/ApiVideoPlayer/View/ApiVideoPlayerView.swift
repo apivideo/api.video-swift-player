@@ -8,7 +8,7 @@
         private let playerLayer = AVPlayerLayer()
         private let videoPlayerView = UIView()
         private var vodControlsView: VodControlsView?
-        private var playerController: PlayerController!
+        private var playerController: ApiVideoPlayerController!
         private var userEvents: PlayerEvents?
         private var isFirstPlay = true
         private var isHidenControls: Bool
@@ -29,7 +29,7 @@
             isHidenControls = hideControls
             super.init(frame: frame)
             do {
-                playerController = try PlayerController(videoId: videoId, videoType: videoType, events: events, view: self, playerLayer: playerLayer)
+                playerController = try ApiVideoPlayerController(videoId: videoId, videoType: videoType, events: events, view: self, playerLayer: playerLayer)
                 if !hideControls {
                     vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: playerController!)
                 }
