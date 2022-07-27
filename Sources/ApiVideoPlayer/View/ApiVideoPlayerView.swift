@@ -9,6 +9,7 @@
         private let videoPlayerView = UIView()
         private var vodControlsView: VodControlsView?
         private var playerController: PlayerController!
+        private var userEvents: PlayerEvents?
         private var isFirstPlay = true
         private var isHidenControls: Bool
         public var viewController: UIViewController? {
@@ -24,6 +25,7 @@
         ///   - videoType: VideoType object to display vod or live controls.
         ///   - events: Callback to get all the player events.
         public init(frame: CGRect, videoId: String, hideControls: Bool = false, events: PlayerEvents? = nil) throws {
+            userEvents = events
             isHidenControls = hideControls
             super.init(frame: frame)
             do {
@@ -87,8 +89,16 @@
         /// Getter and Setter for player events callback.
         /// Use it if you want to get netified on player events.
         public var events: PlayerEvents? {
-            get { return playerController.events }
-            set(newValue) { playerController.events = newValue }
+            get { return userEvents }
+            set(newValue) {
+                if let events = userEvents {
+                    playerController.removeEvents(events: events)
+                }
+                if let events = events {
+                    playerController.addEvents(events: events)
+                }
+                userEvents = newValue
+            }
         }
 
         /// Hide all the controls of the player.
@@ -163,6 +173,12 @@
             }
             set(newValue) {
                 playerController.isLoop = newValue
+            }
+        }
+
+        deinit {
+            if let events = self.userEvents {
+                playerController.removeEvents(events: events)
             }
         }
     }

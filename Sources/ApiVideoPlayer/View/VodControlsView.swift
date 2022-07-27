@@ -13,6 +13,7 @@
         private var timeObserver: Any?
         private var fromCMTime: CMTime!
         public var viewController: UIViewController!
+        private let events = PlayerEvents()
 
         init(frame: CGRect, parentView: UIView, playerController: PlayerController) {
             self.playerController = playerController
@@ -24,12 +25,13 @@
                 self.updateTiming()
             })
 
-            playerController.events?.didPlay! = { () in
+            events.didPlay = { () in
                 self.getIconPlayBtn()
             }
-            playerController.events?.didPause! = { () in
+            events.didPause = { () in
                 self.getIconPlayBtn()
             }
+            playerController.addEvents(events: events)
         }
 
         @available(*, unavailable)
@@ -351,6 +353,7 @@
         }
 
         deinit {
+            playerController.removeEvents(events: events)
             playerController.removeTimeObserver()
         }
     }

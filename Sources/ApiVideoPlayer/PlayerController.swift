@@ -5,7 +5,7 @@ import Foundation
 
 @available(iOS 14.0, *)
 public class PlayerController: NSObject {
-    public var events: PlayerEvents?
+    private var events = [PlayerEvents]()
     private let avPlayer = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
     private let videoType: VideoType = .vod
@@ -24,13 +24,16 @@ public class PlayerController: NSObject {
     #endif
 
     init(videoId: String, events: PlayerEvents?) throws {
-        self.events = events
         self.videoId = videoId
-        
+
         super.init()
+        if let events = events {
+            addEvents(events: events)
+        }
+
         getPlayerJSON(videoType: .vod) { error in
             if let error = error {
-                self.events?.didError?(error)
+                self.notifyError(error: error)
             }
         }
     }
@@ -76,13 +79,13 @@ public class PlayerController: NSObject {
     private func retrySetUpPlayerUrlWithMp4() {
         guard let mp4 = playerManifest.video.mp4 else {
             print("Error there is no mp4")
-            events?.didError?(PlayerError.mp4Error("There is no mp4"))
+            notifyError(error: PlayerError.mp4Error("There is no mp4"))
             return
         }
         do {
             try setUpPlayer(mp4)
         } catch {
-            events?.didError?(error)
+            notifyError(error: error)
         }
     }
 
@@ -97,6 +100,20 @@ public class PlayerController: NSObject {
         } else {
             throw PlayerError.urlError("bad url")
         }
+    }
+
+    private func notifyError(error: Error) {
+        for events in events {
+            events.didError?(error)
+        }
+    }
+
+    public func addEvents(events: PlayerEvents) {
+        self.events.append(events)
+    }
+
+    public func removeEvents(events: PlayerEvents) {
+        self.events.removeAll { $0 === events }
     }
 
     public func setTimerObserver(callback: @escaping (() -> Void)) {
@@ -148,7 +165,9 @@ public class PlayerController: NSObject {
                 print("analytics error on resume event: \(error)")
             }
         }
-        events?.didRePlay?()
+        for events in events {
+            events.didRePlay?()
+        }
     }
 
     public func pause() {
@@ -167,7 +186,7 @@ public class PlayerController: NSObject {
     }
 
     private func seek(seekTime: CMTime, currentTimeInSeconds: Float64) {
-        var cts = currentTimeInSeconds
+        let cts = currentTimeInSeconds
         avPlayer.seek(to: seekTime)
         analytics?.seek(from: Float(CMTimeGetSeconds(currentTime)), to: Float(CMTimeGetSeconds(seekTime))) { result in
             switch result {
@@ -177,11 +196,9 @@ public class PlayerController: NSObject {
                 print("player analytics seek : \(error)")
             }
         }
-        if events?.didSeekTime != nil {
-            if cts < 0 {
-                cts = 0.0
-            }
-            events?.didSeekTime!(currentTime.seconds, cts)
+
+        for events in events {
+            events.didSeekTime?(currentTime.seconds, max(0.0, cts))
         }
     }
 
@@ -192,9 +209,13 @@ public class PlayerController: NSObject {
         set(newValue) {
             avPlayer.isMuted = newValue
             if newValue {
-                events?.didMute?()
+                for events in events {
+                    events.didMute?()
+                }
             } else {
-                events?.didUnMute?()
+                for events in events {
+                    events.didUnMute?()
+                }
             }
         }
     }
@@ -205,7 +226,9 @@ public class PlayerController: NSObject {
         get { return avPlayer.volume }
         set(newVolume) {
             avPlayer.volume = newVolume
-            events?.didSetVolume?(volume)
+            for events in events {
+                events.didSetVolume?(volume)
+            }
         }
     }
 
@@ -288,7 +311,9 @@ public class PlayerController: NSObject {
     @objc func playerDidFinishPlaying() {
         if isLoop {
             replay()
-            events?.didLoop?()
+            for events in events {
+                events.didLoop?()
+            }
         }
         analytics?.end { result in
             switch result {
@@ -297,7 +322,9 @@ public class PlayerController: NSObject {
                 print("analytics error on ended event: \(error)")
             }
         }
-        events?.didEnd?()
+        for events in events {
+            events.didEnd?()
+        }
     }
 
     override public func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
@@ -308,7 +335,7 @@ public class PlayerController: NSObject {
                 }
                 if url.absoluteString.contains(".mp4") {
                     print("Error with video mp4")
-                    events?.didError?(PlayerError.mp4Error("Tryed mp4 but failed"))
+                    notifyError(error: PlayerError.mp4Error("Tryed mp4 but failed"))
                     return
                 } else {
                     print("Error with video url, trying with mp4")
@@ -328,7 +355,9 @@ public class PlayerController: NSObject {
                         print("analytics error on pause event: \(error)")
                     }
                 }
-                events?.didPause?()
+                for events in events {
+                    events.didPause?()
+                }
             case .waitingToPlayAtSpecifiedRate:
                 // Resumed
                 if isFirstPlay {
@@ -349,7 +378,9 @@ public class PlayerController: NSObject {
                         }
                     }
                 }
-                events?.didPlay?()
+                for events in events {
+                    events.didPlay?()
+                }
             case .playing:
                 // Video Ended
                 break

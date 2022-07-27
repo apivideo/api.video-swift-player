@@ -1,5 +1,5 @@
 import Foundation
-public struct PlayerEvents {
+public class PlayerEvents {
     public var didPause: (() -> Void)?
     public var didPlay: (() -> Void)?
     public var didRePlay: (() -> Void)?
