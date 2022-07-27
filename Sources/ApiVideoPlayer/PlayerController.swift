@@ -250,16 +250,12 @@ public class PlayerController: NSObject {
         }
     #endif
 
-    func selectSubtitle(_ language: String? = nil) {
+    func selectSubtitle(_ language: String) {
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            if language == nil {
-                hideSubtitle()
-            } else {
-                let locale = Locale(identifier: language!)
-                let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
-                if let option = options.first {
-                    avPlayer.currentItem!.select(option, in: group)
-                }
+            let locale = Locale(identifier: language)
+            let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
+            if let option = options.first {
+                avPlayer.currentItem!.select(option, in: group)
             }
         }
     }

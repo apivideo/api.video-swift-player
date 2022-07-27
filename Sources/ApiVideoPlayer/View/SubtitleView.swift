@@ -14,7 +14,7 @@
         public init(frame: CGRect, playerController: PlayerController) {
             self.playerController = playerController
             super.init(frame: frame)
-            getSubtitlesFromVideo()
+            subtitles = playerController.getSubtitlesFromVideo()
 
             layer.cornerRadius = 15
             tableview.layer.cornerRadius = 15
@@ -47,14 +47,6 @@
                 print("something went wrong when removing the view")
                 return
             }
-        }
-
-        private func selectSubtitle(_ language: String? = nil) {
-            playerController.selectSubtitle(language)
-        }
-
-        private func getSubtitlesFromVideo() {
-            subtitles = playerController.getSubtitlesFromVideo()
         }
 
         private func unselectPreviousLanguages() {
@@ -98,7 +90,11 @@
             }
 
             selectedRow = indexPath.row
-            selectSubtitle(subtitles[indexPath.row].code)
+            if let language = subtitles[indexPath.row].code {
+                playerController.selectSubtitle(language)
+            } else {
+                playerController.hideSubtitle()
+            }
             dismissView()
         }
     }
