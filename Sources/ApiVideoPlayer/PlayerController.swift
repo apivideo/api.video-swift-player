@@ -220,7 +220,7 @@ public class PlayerController: NSObject {
         }
     }
 
-    public var isLoop: Bool = false
+    public var isLooping: Bool = false
 
     public var volume: Float {
         get { return avPlayer.volume }
@@ -297,7 +297,7 @@ public class PlayerController: NSObject {
     }
 
     @objc func playerDidFinishPlaying() {
-        if isLoop {
+        if isLooping {
             replay()
             for events in events {
                 events.didLoop?()

@@ -170,12 +170,12 @@
         }
 
         /// Getter and Setter to loop the video
-        public var isLoop: Bool {
+        public var isLooping: Bool {
             get {
-                playerController.isLoop
+                playerController.isLooping
             }
             set(newValue) {
-                playerController.isLoop = newValue
+                playerController.isLooping = newValue
             }
         }
 
