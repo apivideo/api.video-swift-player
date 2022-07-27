@@ -256,7 +256,7 @@ class PlayerViewController: UIViewController {
     }
 
     @objc func fullscreenAction(sender _: UIButton!) {
-        customPlayer!.goFullScreen()
+        customPlayer!.goToFullScreen()
     }
 
     @objc func muteAction(sender _: UIButton!) {
@@ -298,6 +298,6 @@ class PlayerViewController: UIViewController {
     }
 
     @objc private func didSwipe(_: UISwipeGestureRecognizer) {
-        customPlayer!.goFullScreen()
+        customPlayer!.goToFullScreen()
     }
 }

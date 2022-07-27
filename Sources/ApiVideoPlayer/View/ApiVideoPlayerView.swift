@@ -162,11 +162,11 @@
 
         /// Put the video in full screen.
         /// To be able tu use full screen viewController must be set before.
-        public func goFullScreen() {
+        public func goToFullScreen() {
             guard let vc = viewController else {
                 return
             }
-            playerController.goFullScreen(viewController: vc)
+            playerController.goToFullScreen(viewController: vc)
         }
 
         /// Getter and Setter to loop the video

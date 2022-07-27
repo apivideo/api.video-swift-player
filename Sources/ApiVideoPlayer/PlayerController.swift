@@ -281,7 +281,7 @@ public class PlayerController: NSObject {
     }
 
     #if !os(macOS)
-        public func goFullScreen(viewController: UIViewController) {
+        public func goToFullScreen(viewController: UIViewController) {
             let playerViewController = AVPlayerViewController()
             playerViewController.player = avPlayer
             viewController.present(playerViewController, animated: true) {

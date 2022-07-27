@@ -133,7 +133,7 @@
 
             // Full Screen Button
             addSubview(fullScreenButton)
-            fullScreenButton.addTarget(self, action: #selector(goFullScreenAction), for: .touchUpInside)
+            fullScreenButton.addTarget(self, action: #selector(goToFullScreenAction), for: .touchUpInside)
 
             setVodControlConstraints()
             activateTimer()
@@ -249,8 +249,8 @@
             activateTimer()
         }
 
-        @objc func goFullScreenAction() {
-            playerController.goFullScreen(viewController: viewController)
+        @objc func goToFullScreenAction() {
+            playerController.goToFullScreen(viewController: viewController)
         }
 
         @available(iOS 14.0, *)
