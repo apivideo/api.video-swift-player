@@ -9,7 +9,7 @@ class PlayerViewController: UIViewController {
         }
     }
 
-    let customPlayer: ApiVideoPlayerView? = {
+    let playerView: ApiVideoPlayerView = {
         let events = PlayerEvents(
             didPause: { () in
                 print("paused")
@@ -34,14 +34,7 @@ class PlayerViewController: UIViewController {
             }
         )
 
-        var player: ApiVideoPlayerView?
-        do {
-            player = try ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", videoType: VideoType.vod /* only .vod is supported */, events: events)
-        } catch {
-            print("error during init, please check videoId")
-        }
-
-        return player
+        return ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", videoType: VideoType.vod /* only .vod is supported */, events: events)
     }()
 
     let scrollView: UIScrollView = {
@@ -161,15 +154,15 @@ class PlayerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(scrollView)
-        scrollView.addSubview(customPlayer!)
+        scrollView.addSubview(playerView)
 
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
-        customPlayer!.addGestureRecognizer(doubleTap)
+        playerView.addGestureRecognizer(doubleTap)
 
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
-        customPlayer!.addGestureRecognizer(swipeGestureRecognizerRight)
+        playerView.addGestureRecognizer(swipeGestureRecognizerRight)
         scrollView.addSubview(vStack)
         vStack.addArrangedSubview(hStackFirst)
         vStack.addArrangedSubview(hStackSecond)
@@ -212,11 +205,11 @@ class PlayerViewController: UIViewController {
     }
 
     private func replayVideo() {
-        customPlayer!.replay()
+        playerView.replay()
     }
 
     override func viewDidAppear(_: Bool) {
-        customPlayer!.viewController = self
+        playerView.viewController = self
     }
 
     private func constraints() {
@@ -228,15 +221,15 @@ class PlayerViewController: UIViewController {
         scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
 
         // PlayerView
-        customPlayer!.translatesAutoresizingMaskIntoConstraints = false
-        customPlayer!.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        customPlayer!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16.0).isActive = true
-        customPlayer!.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16.0).isActive = true
-        customPlayer!.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height * 0.3).isActive = true
+        playerView.translatesAutoresizingMaskIntoConstraints = false
+        playerView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        playerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16.0).isActive = true
+        playerView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16.0).isActive = true
+        playerView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height * 0.3).isActive = true
 
         // Main VStack
         vStack.translatesAutoresizingMaskIntoConstraints = false
-        vStack.topAnchor.constraint(equalTo: customPlayer!.bottomAnchor, constant: 20).isActive = true
+        vStack.topAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 20).isActive = true
         vStack.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16.0).isActive = true
         vStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0).isActive = true
         vStack.heightAnchor.constraint(equalToConstant: 220).isActive = true
@@ -244,60 +237,60 @@ class PlayerViewController: UIViewController {
     }
 
     @objc func pauseAction(sender _: UIButton!) {
-        customPlayer!.pause()
+        playerView.pause()
     }
 
     @objc func playAction(sender _: UIButton!) {
-        customPlayer!.play()
+        playerView.play()
     }
 
     @objc func replayAction(sender _: UIButton!) {
-        customPlayer!.replay()
+        playerView.replay()
     }
 
     @objc func fullscreenAction(sender _: UIButton!) {
-        customPlayer!.goToFullScreen()
+        playerView.goToFullScreen()
     }
 
     @objc func muteAction(sender _: UIButton!) {
-        customPlayer!.isMuted = true
+        playerView.isMuted = true
     }
 
     @objc func unmuteAction(sender _: UIButton!) {
-        customPlayer!.isMuted = false
+        playerView.isMuted = false
     }
 
     @objc func forwardAction(sender _: UIButton!) {
-        customPlayer!.seek(time: 15)
+        playerView.seek(time: 15)
     }
 
     @objc func backwardAction(sender _: UIButton!) {
-        customPlayer!.seek(time: -15)
+        playerView.seek(time: -15)
     }
 
     @objc func hideControlsAction(sender _: UIButton!) {
-        customPlayer!.hideControls()
+        playerView.hideControls()
     }
 
     @objc func frSubtitleAction(sender _: UIButton!) {
-        customPlayer!.currentSubtitle = Locale(identifier: "fr")
+        playerView.currentSubtitle = Locale(identifier: "fr")
     }
 
     @objc func turnOffSubtitleAction(sender _: UIButton!) {
-        customPlayer!.hideSubtitle()
+        playerView.hideSubtitle()
     }
 
     @objc func handleDoubleTap(_ sender: UITapGestureRecognizer? = nil) {
         let viewCenterPosition = view.frame.width / 2
         let touchPoint = sender!.location(in: view)
         if touchPoint.x < viewCenterPosition {
-            customPlayer!.seek(time: -15)
+            playerView.seek(time: -15)
         } else {
-            customPlayer!.seek(time: 15)
+            playerView.seek(time: 15)
         }
     }
 
     @objc private func didSwipe(_: UISwipeGestureRecognizer) {
-        customPlayer!.goToFullScreen()
+        playerView.goToFullScreen()
     }
 }

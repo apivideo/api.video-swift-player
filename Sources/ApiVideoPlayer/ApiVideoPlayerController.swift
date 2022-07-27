@@ -16,14 +16,13 @@ public class ApiVideoPlayerController: NSObject {
     private var isFirstPlay = true
 
     #if !os(macOS)
-        convenience init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil, view: UIView, playerLayer: AVPlayerLayer) throws {
-            try self.init(videoId: videoId, videoType: videoType, events: events)
+        convenience init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil, playerLayer: AVPlayerLayer) {
+            self.init(videoId: videoId, videoType: videoType, events: events)
             playerLayer.player = avPlayer
-            view.layer.addSublayer(playerLayer)
         }
     #endif
 
-    init(videoId: String, videoType: VideoType, events: PlayerEvents?) throws {
+    init(videoId: String, videoType: VideoType, events: PlayerEvents?) {
         self.videoId = videoId
         self.videoType = videoType
 
