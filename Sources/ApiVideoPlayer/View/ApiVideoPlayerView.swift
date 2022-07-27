@@ -22,14 +22,14 @@
         /// - Parameters:
         ///   - frame: frame of theplayer view.
         ///   - videoId: Need videoid to display the video.
-        ///   - videoType: VideoType object to display vod or live controls.
+        ///   - videoType: VideoType object to display vod or live controls. Only vod is supported yet.
         ///   - events: Callback to get all the player events.
-        public init(frame: CGRect, videoId: String, hideControls: Bool = false, events: PlayerEvents? = nil) throws {
+        public init(frame: CGRect, videoId: String, videoType: VideoType, hideControls: Bool = false, events: PlayerEvents? = nil) throws {
             userEvents = events
             isHidenControls = hideControls
             super.init(frame: frame)
             do {
-                playerController = try PlayerController(videoId: videoId, events: events, view: self, playerLayer: playerLayer)
+                playerController = try PlayerController(videoId: videoId, videoType: videoType, events: events, view: self, playerLayer: playerLayer)
                 if !hideControls {
                     vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: playerController!)
                 }

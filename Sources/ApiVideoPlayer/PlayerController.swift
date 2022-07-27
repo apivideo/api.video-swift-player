@@ -9,29 +9,30 @@ public class PlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
-    private let videoType: VideoType = .vod
+    private let videoType: VideoType
     private let videoId: String!
     private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
     private var isFirstPlay = true
 
     #if !os(macOS)
-        convenience init(videoId: String, events: PlayerEvents? = nil, view: UIView, playerLayer: AVPlayerLayer) throws {
-            try self.init(videoId: videoId, events: events)
+        convenience init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil, view: UIView, playerLayer: AVPlayerLayer) throws {
+            try self.init(videoId: videoId, videoType: videoType, events: events)
             playerLayer.player = avPlayer
             view.layer.addSublayer(playerLayer)
         }
     #endif
 
-    init(videoId: String, events: PlayerEvents?) throws {
+    init(videoId: String, videoType: VideoType, events: PlayerEvents?) throws {
         self.videoId = videoId
+        self.videoType = videoType
 
         super.init()
         if let events = events {
             addEvents(events: events)
         }
 
-        getPlayerJSON(videoType: .vod) { error in
+        getPlayerJSON(videoType: videoType) { error in
             if let error = error {
                 self.notifyError(error: error)
             }
