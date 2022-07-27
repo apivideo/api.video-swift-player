@@ -6,7 +6,7 @@
     @available(iOS 14.0, *)
     class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         private var selectedRow = 0
-        private var subtitles: [Subtitle] = []
+        private var subtitles: [SubtitleLanguage] = []
         private var tableview = UITableView()
         private let cellReuseIdentifier = "cell"
         private let playerController: PlayerController
@@ -14,7 +14,7 @@
         public init(frame: CGRect, playerController: PlayerController) {
             self.playerController = playerController
             super.init(frame: frame)
-            subtitles = playerController.getSubtitlesFromVideo()
+            subtitles = playerController.subtitles
 
             layer.cornerRadius = 15
             tableview.layer.cornerRadius = 15
@@ -49,10 +49,8 @@
             }
         }
 
-        private func unselectPreviousLanguages() {
-            for var subtitle in subtitles {
-                subtitle.isSelected = false
-            }
+        private func isCurrentSubtitleLanguage(subtitleLanguage: SubtitleLanguage) -> Bool {
+            return playerController.currentSubtitle.code == subtitleLanguage.code
         }
 
         // MARK: TableView
@@ -63,9 +61,11 @@
 
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as UITableViewCell
+            let selectedSubtitleRow = subtitles[indexPath.row]
             var content = cell.defaultContentConfiguration()
-            content.text = subtitles[indexPath.item].language
-            if subtitles[indexPath.row].isSelected {
+
+            content.text = selectedSubtitleRow.language
+            if isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
                 cell.accessoryType = .checkmark
             }
             cell.contentConfiguration = content
@@ -77,24 +77,21 @@
 
             let selectedSubtitleRow = subtitles[indexPath.row]
 
-            if selectedSubtitleRow.isSelected {
+            if isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
                 return
             }
+
             if let previousCell = tableView.cellForRow(at: IndexPath(row: selectedRow, section: indexPath.section)) {
-                subtitles[selectedRow].isSelected.toggle()
                 previousCell.accessoryType = .none
             }
+
             if let cell = tableView.cellForRow(at: indexPath) {
-                subtitles[indexPath.row].isSelected.toggle()
                 cell.accessoryType = .checkmark
             }
 
             selectedRow = indexPath.row
-            if let language = subtitles[indexPath.row].code {
-                playerController.selectSubtitle(language)
-            } else {
-                playerController.hideSubtitle()
-            }
+            playerController.currentSubtitle = selectedSubtitleRow
+
             dismissView()
         }
     }

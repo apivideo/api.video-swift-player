@@ -280,7 +280,7 @@ class PlayerViewController: UIViewController {
     }
 
     @objc func frSubtitleAction(sender _: UIButton!) {
-        customPlayer!.showSubtitle(language: "fr")
+        customPlayer!.currentSubtitle = Locale(identifier: "fr")
     }
 
     @objc func turnOffSubtitleAction(sender _: UIButton!) {

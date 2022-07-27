@@ -7,12 +7,12 @@ import Foundation
 public class PlayerController: NSObject {
     private var events = [PlayerEvents]()
     private let avPlayer = AVPlayer(playerItem: nil)
+    private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
     private let videoType: VideoType = .vod
     private let videoId: String!
     private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
-    private var subtitles: [Subtitle] = [Subtitle(language: "Off", code: nil, isSelected: false)]
     private var isFirstPlay = true
 
     #if !os(macOS)
@@ -240,6 +240,46 @@ public class PlayerController: NSObject {
         return avPlayer.currentTime()
     }
 
+    var subtitles: [SubtitleLanguage] {
+        var subtitles: [SubtitleLanguage] = [offSubtitleLanguage]
+        if let playerItem = avPlayer.currentItem,
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
+        {
+            for option in group.options where option.displayName != "CC" {
+                subtitles.append(SubtitleLanguage(language: option.displayName, code: option.extendedLanguageTag))
+            }
+        }
+        return subtitles
+    }
+
+    var currentSubtitle: SubtitleLanguage {
+        get {
+            if let playerItem = avPlayer.currentItem,
+               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
+               let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group),
+               let locale = selectedOption.locale
+            {
+                return SubtitleLanguage(language: locale.identifier, code: locale.languageCode)
+            }
+            return offSubtitleLanguage
+        }
+        set(newSubtitle) {
+            if let playerItem = avPlayer.currentItem,
+               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
+            {
+                if newSubtitle.code == nil {
+                    hideSubtitle()
+                } else {
+                    let locale = Locale(identifier: newSubtitle.language)
+                    let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
+                    if let option = options.first {
+                        avPlayer.currentItem!.select(option, in: group)
+                    }
+                }
+            }
+        }
+    }
+
     #if !os(macOS)
         public func goFullScreen(viewController: UIViewController) {
             let playerViewController = AVPlayerViewController()
@@ -250,57 +290,9 @@ public class PlayerController: NSObject {
         }
     #endif
 
-    func selectSubtitle(_ language: String) {
-        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            let locale = Locale(identifier: language)
-            let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
-            if let option = options.first {
-                avPlayer.currentItem!.select(option, in: group)
-            }
-        }
-    }
-
     func hideSubtitle() {
         if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
             avPlayer.currentItem!.select(nil, in: group)
-        }
-    }
-
-    func getSubtitlesFromVideo() -> [Subtitle] {
-        let current = getCurrentLocaleSubtitle()
-        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            for option in group.options where option.displayName != "CC" {
-                var sub = Subtitle(language: option.displayName, code: option.extendedLanguageTag)
-                if current?.languageCode == sub.code {
-                    sub.isSelected = true
-                }
-                subtitles.append(sub)
-            }
-        }
-        return subtitles
-    }
-
-    private func getCurrentLocaleSubtitle() -> Locale? {
-        var locale: Locale?
-        if let playerItem = avPlayer.currentItem,
-           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible)
-        {
-            let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
-            locale = selectedOption?.locale
-        }
-        if locale == nil {
-            subtitles[0].isSelected = true
-        }
-        return locale
-    }
-
-    public func showSubtitle(language: String) {
-        if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            let locale = Locale(identifier: language)
-            let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
-            if let option = options.first {
-                avPlayer.currentItem!.select(option, in: group)
-            }
         }
     }
 

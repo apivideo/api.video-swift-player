@@ -120,8 +120,11 @@
 
         /// Show the selected subtitles.
         /// - Parameter language: use code language as String (example: "en" for english).
-        public func showSubtitle(language: String) {
-            playerController.showSubtitle(language: language)
+        public var currentSubtitle: Locale {
+            get { return Locale(identifier: playerController.currentSubtitle.language) }
+            set(newSubtitle) {
+                playerController.currentSubtitle = SubtitleLanguage(language: newSubtitle.identifier, code: newSubtitle.languageCode)
+            }
         }
 
         /// Go forward or backward in the video.
