@@ -7,9 +7,7 @@
     class VodControlsView: UIView, UIGestureRecognizerDelegate {
         private var timer: Timer?
         private let playerController: ApiVideoPlayerController
-
-        private var isSubtitleViewDisplay = false
-        private var subtitleView: SubtitleView!
+        private var subtitleView: SubtitleView?
         private var timeObserver: Any?
         public var viewController: UIViewController!
         private let events = PlayerEvents()
@@ -127,7 +125,7 @@
 
             // Subtitle
             vodControlSliderView.addSubview(subtitleButton)
-            subtitleButton.addTarget(self, action: #selector(displaySubtitle), for: .touchUpInside)
+            subtitleButton.addTarget(self, action: #selector(toggleSubtitleView), for: .touchUpInside)
 
             // Full Screen Button
             addSubview(fullScreenButton)
@@ -216,10 +214,7 @@
             showControls()
             activateTimer()
 
-            if isSubtitleViewDisplay {
-                isSubtitleViewDisplay.toggle()
-                subtitleView?.dismissView()
-            }
+            subtitleView?.dismissView()
         }
 
         @objc func playPauseAction() {
@@ -250,18 +245,21 @@
         }
 
         @available(iOS 14.0, *)
-        @objc func displaySubtitle() {
+        @objc func toggleSubtitleView() {
             let posX = subtitleButton.frame.origin.x - 120
             let posY = frame.height - vodControlSliderView.frame.height - 45
 
-            if isSubtitleViewDisplay {
-                isSubtitleViewDisplay.toggle()
+            if let subtitleView = subtitleView,
+               subtitleView.isDescendant(of: self)
+            {
                 subtitleView.dismissView()
             } else {
-                isSubtitleViewDisplay.toggle()
-                subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), playerController: playerController)
-                addSubview(subtitleView)
-                bringSubviewToFront(subtitleView)
+                subtitleView = {
+                    let subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), playerController: playerController)
+                    addSubview(subtitleView)
+                    bringSubviewToFront(subtitleView)
+                    return subtitleView
+                }()
             }
         }
 
