@@ -260,7 +260,6 @@
             } else {
                 isSubtitleViewDisplay.toggle()
                 subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), playerController: playerController)
-                subtitleView.tag = 101
                 addSubview(subtitleView)
                 bringSubviewToFront(subtitleView)
             }

@@ -41,12 +41,7 @@
         }
 
         public func dismissView() {
-            if let viewWithTag = viewWithTag(101) {
-                viewWithTag.removeFromSuperview()
-            } else {
-                print("something went wrong when removing the view")
-                return
-            }
+            removeFromSuperview()
         }
 
         private func isCurrentSubtitleLanguage(subtitleLanguage: SubtitleLanguage) -> Bool {
