@@ -33,7 +33,7 @@
 
             playerController = ApiVideoPlayerController(videoId: videoId, videoType: videoType, events: events, playerLayer: playerLayer)
             if !hideControls {
-                vodControlsView = VodControlsView(frame: .zero, parentView: self, playerController: playerController!)
+                vodControlsView = VodControlsView(frame: frame, playerController: playerController!)
             }
             setupView()
         }
@@ -48,6 +48,17 @@
                 backgroundColor = .lightGray
             } else {
                 backgroundColor = .black
+            }
+
+            // Controls View
+            if let vodControlsView = vodControlsView {
+                addSubview(vodControlsView)
+
+                vodControlsView.translatesAutoresizingMaskIntoConstraints = false
+                vodControlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+                vodControlsView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+                vodControlsView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+                vodControlsView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
             }
         }
 

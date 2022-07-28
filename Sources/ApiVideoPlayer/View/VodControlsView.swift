@@ -4,10 +4,10 @@
     import UIKit
 
     @available(iOS 14.0, *)
-    class VodControlsView: UIView {
+    class VodControlsView: UIView, UIGestureRecognizerDelegate {
         private var timer: Timer?
         private let playerController: ApiVideoPlayerController
-        private var pView: UIView!
+
         private var isSubtitleViewDisplay = false
         private var subtitleView: SubtitleView!
         private var timeObserver: Any?
@@ -15,9 +15,9 @@
         public var viewController: UIViewController!
         private let events = PlayerEvents()
 
-        init(frame: CGRect, parentView: UIView, playerController: ApiVideoPlayerController) {
+        init(frame: CGRect, playerController: ApiVideoPlayerController) {
             self.playerController = playerController
-            pView = parentView
+
             super.init(frame: frame)
             setupVodControls()
 
@@ -94,10 +94,9 @@
         @available(iOS 14.0, *)
         private func setupVodControls() {
             // Controls View
-            pView.addSubview(self)
-
-            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-            addGestureRecognizer(tap)
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            tapGestureRecognizer.delegate = self
+            addGestureRecognizer(tapGestureRecognizer)
             isUserInteractionEnabled = true
 
             // Play Pause Button
@@ -140,40 +139,33 @@
         }
 
         private func setupVodControlConstraints() {
-            // Controls View
-            translatesAutoresizingMaskIntoConstraints = false
-            topAnchor.constraint(equalTo: pView.topAnchor).isActive = true
-            leadingAnchor.constraint(equalTo: pView.leadingAnchor).isActive = true
-            trailingAnchor.constraint(equalTo: pView.trailingAnchor).isActive = true
-            bottomAnchor.constraint(equalTo: pView.bottomAnchor).isActive = true
-
             // Play Pause Button
             playPauseButton.translatesAutoresizingMaskIntoConstraints = false
-            playPauseButton.centerXAnchor.constraint(equalTo: pView.centerXAnchor).isActive = true
-            playPauseButton.centerYAnchor.constraint(equalTo: pView.centerYAnchor).isActive = true
+            playPauseButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+            playPauseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             playPauseButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
             playPauseButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
 
             // Go Forward Button
             vodControlGoForward15Button.translatesAutoresizingMaskIntoConstraints = false
-            vodControlGoForward15Button.centerYAnchor.constraint(equalTo: pView.centerYAnchor).isActive = true
+            vodControlGoForward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             vodControlGoForward15Button.leadingAnchor.constraint(equalTo: playPauseButton.trailingAnchor, constant: frame.width / 16).isActive = true
             vodControlGoForward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
             vodControlGoForward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
 
             // Go Backward Button
             vodControlGoBackward15Button.translatesAutoresizingMaskIntoConstraints = false
-            vodControlGoBackward15Button.centerYAnchor.constraint(equalTo: pView.centerYAnchor).isActive = true
+            vodControlGoBackward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             vodControlGoBackward15Button.trailingAnchor.constraint(equalTo: playPauseButton.leadingAnchor, constant: -(frame.width / 16)).isActive = true
             vodControlGoBackward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
             vodControlGoBackward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
 
             // Slider View
             vodControlSliderView.translatesAutoresizingMaskIntoConstraints = false
-            vodControlSliderView.centerXAnchor.constraint(equalTo: pView.centerXAnchor).isActive = true
-            vodControlSliderView.trailingAnchor.constraint(equalTo: pView.trailingAnchor).isActive = true
-            vodControlSliderView.leadingAnchor.constraint(equalTo: pView.leadingAnchor).isActive = true
-            vodControlSliderView.bottomAnchor.constraint(equalTo: pView.bottomAnchor).isActive = true
+            vodControlSliderView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+            vodControlSliderView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+            vodControlSliderView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+            vodControlSliderView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
             vodControlSliderView.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
             // Slider
@@ -215,7 +207,12 @@
             fullScreenButton.isHidden = false
         }
 
-        @objc func handleTap(_: UITapGestureRecognizer? = nil) {
+        func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+            // Prevent subviews of a specific view to send touch events to the view's gesture recognizers.
+            return touch.view == gestureRecognizer.view
+        }
+
+        @objc func handleTap(_: UIGestureRecognizer) {
             resetTimer()
             showControls()
             activateTimer()
@@ -265,7 +262,8 @@
                 isSubtitleViewDisplay.toggle()
                 subtitleView = SubtitleView(frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), playerController: playerController)
                 subtitleView.tag = 101
-                pView.addSubview(subtitleView)
+                addSubview(subtitleView)
+                bringSubviewToFront(subtitleView)
             }
         }
 
