@@ -11,7 +11,6 @@
         private var isSubtitleViewDisplay = false
         private var subtitleView: SubtitleView!
         private var timeObserver: Any?
-        private var fromCMTime: CMTime!
         public var viewController: UIViewController!
         private let events = PlayerEvents()
 
@@ -299,24 +298,20 @@
         }
 
         @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
-            let duration = playerController.duration
-
             if let touchEvent = event.allTouches?.first {
                 switch touchEvent.phase {
                 case .began:
                     // handle drag began
                     playerController.pause()
-                    fromCMTime = CMTime(value: CMTimeValue(Float64(slider.value) * CMTimeGetSeconds(duration)), timescale: 1)
                 case .moved:
                     // handle drag moved
                     break
                 case .ended:
                     // handle drag ended
-                    let value = Float64(vodControlSlider.value) * CMTimeGetSeconds(duration)
+                    let value = Float64(slider.value) * CMTimeGetSeconds(playerController.duration)
                     let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
                     playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
                     playerController.play()
-
                 default:
                     break
                 }
