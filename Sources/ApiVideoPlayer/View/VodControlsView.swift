@@ -300,12 +300,12 @@
 
         @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
             let duration = playerController.duration
-            playerController.pause()
 
             if let touchEvent = event.allTouches?.first {
                 switch touchEvent.phase {
                 case .began:
                     // handle drag began
+                    playerController.pause()
                     fromCMTime = CMTime(value: CMTimeValue(Float64(slider.value) * CMTimeGetSeconds(duration)), timescale: 1)
                 case .moved:
                     // handle drag moved
