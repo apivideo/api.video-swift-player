@@ -75,7 +75,7 @@ import ApiVideoPlayer
 2. Instantiate the Player view with the player events:
 
 ```swift
-    let customPlayer: ApiVideoPlayerView? = {
+    let playerView: ApiVideoPlayerView = {
         let events = PlayerEvents(
             didPause: {() in
                 print("paused")
@@ -98,14 +98,7 @@ import ApiVideoPlayer
             
         )
         
-        var player: ApiPlayerView? = nil
-        do {
-            player = try ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", events: events)
-        } catch {
-            print("error during init, please check videoId")
-        }
-        
-        return player
+        return ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", videoType: VideoType.vod /* only .vod is supported */, events: events)
     }()
 ```
 
@@ -113,15 +106,17 @@ import ApiVideoPlayer
 
 ```swift
     override func viewDidLoad() {
-    ...
-    self.addSubview(customPlayer)
-    ...
+        ...
+        self.addSubview(playerView)
+        ...
     }
 ```
 4. To use full screen and subtitle
 ```swift
     override func viewDidAppear(_ animated: Bool) {
-        customPlayer.setViewController(vc: self)
+        ...
+        playerView.viewController = self
+        ...
     }
 ```
 
