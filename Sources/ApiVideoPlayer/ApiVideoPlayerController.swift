@@ -240,6 +240,10 @@ public class ApiVideoPlayerController: NSObject {
         return avPlayer.currentTime()
     }
 
+    public var isAtEnd: Bool {
+        return duration.roundedSeconds == currentTime.roundedSeconds
+    }
+
     var subtitles: [SubtitleLanguage] {
         var subtitles: [SubtitleLanguage] = [offSubtitleLanguage]
         if let playerItem = avPlayer.currentItem,

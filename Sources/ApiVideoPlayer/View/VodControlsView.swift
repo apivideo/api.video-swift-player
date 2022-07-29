@@ -23,11 +23,15 @@
             })
 
             events.didPlay = { () in
-                self.getIconPlayBtn()
+                self.setPlayBtnIcon(iconName: "pause-primary")
             }
             events.didPause = { () in
-                self.getIconPlayBtn()
+                self.setPlayBtnIcon(iconName: "play-primary")
             }
+            events.didEnd = { () in
+                self.setPlayBtnIcon(iconName: "replay-primary")
+            }
+
             playerController.addEvents(events: events)
         }
 
@@ -99,7 +103,7 @@
             // Play Pause Button
             addSubview(playPauseButton)
             playPauseButton.addTarget(self, action: #selector(playPauseAction), for: .touchUpInside)
-            getIconPlayBtn()
+            setPlayBtnIcon(iconName: "play-primary")
 
             // Go Forward Button
             addSubview(vodControlGoForward15Button)
@@ -220,11 +224,15 @@
         @objc func playPauseAction() {
             resetTimer()
             if !playerController.isPlaying() {
-                playerController.play()
+                // Detects end of playing
+                if playerController.isAtEnd {
+                    playerController.replay()
+                } else {
+                    playerController.play()
+                }
             } else {
                 playerController.pause()
             }
-            getIconPlayBtn()
             activateTimer()
         }
 
@@ -236,6 +244,9 @@
 
         @objc func goBackward15Action() {
             resetTimer()
+            if playerController.isAtEnd {
+                setPlayBtnIcon(iconName: "play-primary")
+            }
             playerController.seek(time: -15)
             activateTimer()
         }
@@ -277,20 +288,11 @@
             hideControls()
         }
 
-        private func getIconPlayBtn() {
-            playPauseButton.tintColor = .white
-            if !playerController.isPlaying() {
-                if #available(tvOS 13.0, *) {
-                    playPauseButton.setImage(UIImage(named: "play-primary", in: Bundle.module, compatibleWith: nil), for: .normal)
-                } else {
-                    // Fallback on earlier versions
-                }
+        private func setPlayBtnIcon(iconName: String) {
+            if #available(tvOS 13.0, *) {
+                playPauseButton.setImage(UIImage(named: iconName, in: Bundle.module, compatibleWith: nil), for: .normal)
             } else {
-                if #available(tvOS 13.0, *) {
-                    playPauseButton.setImage(UIImage(named: "pause-primary", in: Bundle.module, compatibleWith: nil), for: .normal)
-                } else {
-                    // Fallback on earlier versions
-                }
+                // Fallback on earlier versions
             }
         }
 
