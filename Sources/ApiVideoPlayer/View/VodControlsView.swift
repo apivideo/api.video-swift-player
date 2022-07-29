@@ -317,29 +317,12 @@
 
         private func updateTiming() {
             let currentTime = playerController.currentTime
-
-            let currentTimeInSeconds = CMTimeGetSeconds(currentTime)
-
             let duration = playerController.duration
-            if CMTIME_IS_INVALID(duration) {
-                return
-            }
-            vodControlSlider.value = Float(CMTimeGetSeconds(currentTime) / CMTimeGetSeconds(duration))
+            let remainingTime = duration - currentTime
 
-            // Update time remaining label
-            let totalTimeInSeconds = CMTimeGetSeconds(duration)
-            let remainingTimeInSeconds = totalTimeInSeconds - currentTimeInSeconds
+            vodControlSlider.value = Float(currentTime.roundedSeconds / duration.roundedSeconds)
 
-            let mins = remainingTimeInSeconds / 60
-            let secs = remainingTimeInSeconds.truncatingRemainder(dividingBy: 60)
-            let timeformatter = NumberFormatter()
-            timeformatter.minimumIntegerDigits = 2
-            timeformatter.minimumFractionDigits = 0
-            timeformatter.roundingMode = .down
-            guard let minsStr = timeformatter.string(from: NSNumber(value: mins)), let secsStr = timeformatter.string(from: NSNumber(value: secs)) else {
-                return
-            }
-            vodControlTimerLabel.text = "\(minsStr):\(secsStr)"
+            vodControlTimerLabel.text = remainingTime.prettyTime
         }
 
         deinit {
