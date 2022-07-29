@@ -14,9 +14,9 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '13.4.1'
-      - name: Get swift version
-        run: swift --version
-      - name: Build Package
+      - name: Build Package with swift
+        run: swift build
+      - name: Build Package with xcodebuild
         run: xcodebuild -scheme ApiVideoPlayer  -destination 'platform=iOS Simulator,name=iPhone 13'
       - name: Set Default Scheme
         run: |
@@ -24,7 +24,9 @@ jobs:
           default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['workspace']['schemes'][0]")
           echo $default | cat >default
           echo Using default scheme: $default
-      - name: Build
+      - name: Verify cocoapods
+        run: pod lib lint --allow-warnings
+      - name: Build Examples
         env:
           scheme: ${{ 'default' }}
           platform: ${{ 'iOS Simulator' }}
