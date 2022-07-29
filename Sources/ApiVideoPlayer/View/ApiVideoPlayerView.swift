@@ -29,11 +29,14 @@
             isHidenControls = hideControls
             super.init(frame: frame)
 
+            setupView()
+
             playerController = ApiVideoPlayerController(videoId: videoId, videoType: videoType, events: events, playerLayer: playerLayer)
             if !hideControls {
                 vodControlsView = VodControlsView(frame: frame, playerController: playerController!)
             }
-            setupView()
+
+            setupSubviews()
         }
 
         @available(*, unavailable)
@@ -45,7 +48,10 @@
             backgroundColor = .clear
 
             layer.addSublayer(playerLayer)
+            playerLayer.videoGravity = .resizeAspectFill
+        }
 
+        private func setupSubviews() {
             // Controls View
             if let vodControlsView = vodControlsView {
                 addSubview(vodControlsView)
