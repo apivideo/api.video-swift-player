@@ -253,7 +253,7 @@
 
         @objc func goForward15Action() {
             resetTimer()
-            playerController.seek(time: 15)
+            playerController.seek(offset: 15)
             activateTimer()
         }
 
@@ -262,7 +262,7 @@
             if playerController.isAtEnd {
                 setPlayBtnIcon(iconName: "play-primary")
             }
-            playerController.seek(time: -15)
+            playerController.seek(offset: -15)
             activateTimer()
         }
 

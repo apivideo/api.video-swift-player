@@ -8,7 +8,7 @@ public class PlayerEvents {
     public var didUnMute: (() -> Void)?
     public var didLoop: (() -> Void)?
     public var didSetVolume: ((_ volume: Float) -> Void)?
-    public var didSeekTime: ((_ from: Double, _ to: Double) -> Void)?
+    public var didSeek: ((_ from: Double, _ to: Double) -> Void)?
     public var didEnd: (() -> Void)?
     public var didError: ((_ error: Error) -> Void)?
 
@@ -20,7 +20,7 @@ public class PlayerEvents {
                 didUnMute: (() -> Void)? = nil,
                 didLoop: (() -> Void)? = nil,
                 didSetVolume: ((Float) -> Void)? = nil,
-                didSeekTime: ((Double, Double) -> Void)? = nil,
+                didSeek: ((Double, Double) -> Void)? = nil,
                 didEnd: (() -> Void)? = nil,
                 didError: ((Error) -> Void)? = nil)
     {
@@ -32,7 +32,7 @@ public class PlayerEvents {
         self.didUnMute = didUnMute
         self.didLoop = didLoop
         self.didSetVolume = didSetVolume
-        self.didSeekTime = didSeekTime
+        self.didSeek = didSeek
         self.didEnd = didEnd
         self.didError = didError
     }

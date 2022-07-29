@@ -92,7 +92,7 @@ import ApiVideoPlayer
             didSetVolume: {(volume) in
                 print("volume set to : \(volume)")
             },
-            didSeekTime: {(from, to)in
+            didSeek: {(from, to)in
                 print("seek from : \(from), to: \(to)")
             }
             

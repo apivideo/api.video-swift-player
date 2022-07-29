@@ -180,31 +180,27 @@ public class ApiVideoPlayerController: NSObject {
         avPlayer.pause()
     }
 
-    public func seek(time: Double) {
-        let currentTimeInSeconds = CMTimeGetSeconds(currentTime).advanced(by: time)
-        let seekTime = CMTime(value: CMTimeValue(currentTimeInSeconds), timescale: 1)
-        seek(seekTime: seekTime, currentTimeInSeconds: currentTimeInSeconds)
+    public func seek(offset: Double) {
+        seek(to: currentTime + CMTime(seconds: offset, preferredTimescale: 1))
     }
 
     public func seek(to: Double) {
-        let seekTime = CMTime(seconds: to, preferredTimescale: 1)
-        seek(seekTime: seekTime, currentTimeInSeconds: CMTimeGetSeconds(seekTime))
+        seek(to: CMTime(seconds: to, preferredTimescale: 1))
     }
 
-    private func seek(seekTime: CMTime, currentTimeInSeconds: Float64) {
-        let cts = currentTimeInSeconds
-        avPlayer.seek(to: seekTime)
-        analytics?.seek(from: Float(CMTimeGetSeconds(currentTime)), to: Float(CMTimeGetSeconds(seekTime))) { result in
+    private func seek(to: CMTime) {
+        let from = currentTime
+        avPlayer.seek(to: to)
+        analytics?.seek(from: Float(CMTimeGetSeconds(from)), to: Float(CMTimeGetSeconds(to))) { result in
             switch result {
-            case let .success(data):
-                print("player analytics seek : \(data)")
+            case .success: break
             case let .failure(error):
-                print("player analytics seek : \(error)")
+                print("analytics error seek: \(error)")
             }
         }
 
         for events in events {
-            events.didSeekTime?(currentTime.seconds, max(0.0, cts))
+            events.didSeek?(CMTimeGetSeconds(from), max(0.0, CMTimeGetSeconds(to)))
         }
     }
 

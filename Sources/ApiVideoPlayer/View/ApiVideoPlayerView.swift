@@ -143,9 +143,9 @@
         }
 
         /// Go forward or backward in the video.
-        /// - Parameter time: time in seconds, (use minus to go backward).
-        public func seek(time: Double) {
-            playerController.seek(time: time)
+        /// - Parameter offset: offset in seconds, (use minus to go backward).
+        public func seek(offset: Double) {
+            playerController.seek(offset: offset)
         }
 
         /// Go forward or backward in the video to a specific time.

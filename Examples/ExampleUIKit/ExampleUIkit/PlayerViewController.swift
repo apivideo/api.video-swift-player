@@ -26,7 +26,7 @@ class PlayerViewController: UIViewController {
             didSetVolume: { volume in
                 print("volume set to : \(volume)")
             },
-            didSeekTime: { from, to in
+            didSeek: { from, to in
                 print("seek from : \(from), to: \(to)")
             },
             didError: { error in
@@ -261,11 +261,11 @@ class PlayerViewController: UIViewController {
     }
 
     @objc func forwardAction(sender _: UIButton!) {
-        playerView.seek(time: 15)
+        playerView.seek(offset: 15)
     }
 
     @objc func backwardAction(sender _: UIButton!) {
-        playerView.seek(time: -15)
+        playerView.seek(offset: -15)
     }
 
     @objc func hideControlsAction(sender _: UIButton!) {
@@ -284,9 +284,9 @@ class PlayerViewController: UIViewController {
         let viewCenterPosition = view.frame.width / 2
         let touchPoint = sender!.location(in: view)
         if touchPoint.x < viewCenterPosition {
-            playerView.seek(time: -15)
+            playerView.seek(offset: -15)
         } else {
-            playerView.seek(time: 15)
+            playerView.seek(offset: 15)
         }
     }
 
