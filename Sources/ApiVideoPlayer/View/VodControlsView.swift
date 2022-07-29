@@ -257,6 +257,7 @@
 
         @available(iOS 14.0, *)
         @objc func toggleSubtitleView() {
+            resetTimer()
             let posX = subtitleButton.frame.origin.x - 120
             let posY = frame.height - vodControlSliderView.frame.height - 45
 
@@ -272,6 +273,7 @@
                     return subtitleView
                 }()
             }
+            activateTimer()
         }
 
         private func activateTimer() {
@@ -297,6 +299,7 @@
         }
 
         @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
+            resetTimer()
             if let touchEvent = event.allTouches?.first {
                 switch touchEvent.phase {
                 case .began:
@@ -315,6 +318,7 @@
                     break
                 }
             }
+            activateTimer()
         }
 
         private func updateTiming() {
