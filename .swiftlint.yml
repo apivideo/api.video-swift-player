@@ -1,0 +1,5 @@
+line_length: 250
+identifier_name:
+  allowed_symbols: "_"
+  min_length:
+    warning: 2

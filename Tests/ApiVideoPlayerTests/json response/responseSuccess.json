@@ -1,0 +1,10 @@
+{
+    "id":"vi18RL1kvZlDRdzk7Mas59HT",
+    "title":"IMG_2226.MOV",
+    "video":{
+        "poster":"https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Mas59HT/thumbnail.jpg",
+        "src":"https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Mas59HT/hls/manifest.m3u8"
+    },
+    "panoramic":false,
+    "theme":[]
+}

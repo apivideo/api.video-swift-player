@@ -1,0 +1,27 @@
+name: Update Docc documentation
+on:
+  release:
+    types: [published]
+jobs:
+    update-api-documentation:
+        runs-on: macos-12
+        steps:
+            - uses: actions/checkout@v2 
+            - uses: maxim-lobanov/setup-xcode@v1
+              with:
+                xcode-version: '13.3'       
+            - name: generate doc files
+              run: xcodebuild docbuild -scheme ApiVideoPlayer -derivedDataPath ../api.video-swift-player-build -destination 'platform=iOS Simulator,name=iPhone 12'
+            - name: create docs folder
+              run: mkdir ../Docs
+            - name: process docarchive
+              run: $(xcrun --find docc) process-archive \transform-for-static-hosting ../api.video-swift-player-build/Build/Products/Debug-iphonesimulator/ApiVideoPlayer.doccarchive \--output-path ../Docs \--hosting-base-path /api.video-swift-player
+            - name: Deploy documentation to Github Pages
+              uses: JamesIves/github-pages-deploy-action@3.7.1
+              with:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                BRANCH: gh-pages
+                FOLDER: ../Docs
+        
+    
+
