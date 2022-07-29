@@ -29,8 +29,6 @@
             isHidenControls = hideControls
             super.init(frame: frame)
 
-            layer.addSublayer(playerLayer)
-
             playerController = ApiVideoPlayerController(videoId: videoId, videoType: videoType, events: events, playerLayer: playerLayer)
             if !hideControls {
                 vodControlsView = VodControlsView(frame: frame, playerController: playerController!)
@@ -44,11 +42,9 @@
         }
 
         private func setupView() {
-            if traitCollection.userInterfaceStyle == .dark {
-                backgroundColor = .lightGray
-            } else {
-                backgroundColor = .black
-            }
+            backgroundColor = .clear
+
+            layer.addSublayer(playerLayer)
 
             // Controls View
             if let vodControlsView = vodControlsView {
@@ -64,8 +60,12 @@
 
         override public func layoutSubviews() {
             super.layoutSubviews()
-            playerLayer.frame = bounds
             vodControlsView?.frame = bounds
+        }
+
+        override public func layoutSublayers(of layer: CALayer) {
+            super.layoutSublayers(of: layer)
+            playerLayer.frame = bounds
         }
 
         /// Get information if the video is playing.
