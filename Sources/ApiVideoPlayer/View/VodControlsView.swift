@@ -11,12 +11,14 @@
         private var timeObserver: Any?
         public var viewController: UIViewController!
         private let events = PlayerEvents()
+        private var timerLeadingConstraintWithSubtitleButton: NSLayoutConstraint?
+        private var timerLeadingConstraintWithoutSubtitleButton: NSLayoutConstraint?
 
         init(frame: CGRect, playerController: ApiVideoPlayerController) {
             self.playerController = playerController
 
             super.init(frame: frame)
-            setupVodControls()
+            setup()
 
             playerController.setTimerObserver(callback: { () in
                 self.updateTiming()
@@ -30,6 +32,16 @@
             }
             events.didEnd = { () in
                 self.setPlayBtnIcon(iconName: "replay-primary")
+            }
+
+            events.didPrepare = { () in
+                if playerController.hasSubtitles {
+                    DispatchQueue.main.async {
+                        self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
+                        self.timerLeadingConstraintWithSubtitleButton?.isActive = true
+                        self.subtitleButton.isHidden = false
+                    }
+                }
             }
 
             playerController.addEvents(events: events)
@@ -89,11 +101,12 @@
             let btn = UIButton(type: .system)
             btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
             btn.tintColor = .white
+            btn.isHidden = true
             return btn
         }()
 
         @available(iOS 14.0, *)
-        private func setupVodControls() {
+        private func setup() {
             // Controls View
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
             tapGestureRecognizer.delegate = self
@@ -135,11 +148,11 @@
             addSubview(fullScreenButton)
             fullScreenButton.addTarget(self, action: #selector(goToFullScreenAction), for: .touchUpInside)
 
-            setupVodControlConstraints()
+            setupConstraints()
             activateTimer()
         }
 
-        private func setupVodControlConstraints() {
+        private func setupConstraints() {
             // Play Pause Button
             playPauseButton.translatesAutoresizingMaskIntoConstraints = false
             playPauseButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
@@ -178,7 +191,9 @@
             // Timer Label
             vodControlTimerLabel.translatesAutoresizingMaskIntoConstraints = false
             vodControlTimerLabel.centerYAnchor.constraint(equalTo: vodControlSliderView.centerYAnchor).isActive = true
-            vodControlTimerLabel.trailingAnchor.constraint(equalTo: subtitleButton.leadingAnchor, constant: -10).isActive = true
+            timerLeadingConstraintWithSubtitleButton = vodControlTimerLabel.trailingAnchor.constraint(equalTo: subtitleButton.leadingAnchor, constant: -10)
+            timerLeadingConstraintWithoutSubtitleButton = vodControlTimerLabel.trailingAnchor.constraint(equalTo: vodControlSliderView.trailingAnchor, constant: -10)
+            timerLeadingConstraintWithoutSubtitleButton?.isActive = true
 
             subtitleButton.translatesAutoresizingMaskIntoConstraints = false
             subtitleButton.centerYAnchor.constraint(equalTo: vodControlSliderView.centerYAnchor).isActive = true

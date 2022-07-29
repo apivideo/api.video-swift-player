@@ -1,5 +1,6 @@
 import Foundation
 public class PlayerEvents {
+    public var didPrepare: (() -> Void)?
     public var didPause: (() -> Void)?
     public var didPlay: (() -> Void)?
     public var didRePlay: (() -> Void)?
@@ -11,7 +12,8 @@ public class PlayerEvents {
     public var didEnd: (() -> Void)?
     public var didError: ((_ error: Error) -> Void)?
 
-    public init(didPause: (() -> Void)? = nil,
+    public init(didPrepare: (() -> Void)? = nil,
+                didPause: (() -> Void)? = nil,
                 didPlay: (() -> Void)? = nil,
                 didRePlay: (() -> Void)? = nil,
                 didMute: (() -> Void)? = nil,
@@ -22,6 +24,7 @@ public class PlayerEvents {
                 didEnd: (() -> Void)? = nil,
                 didError: ((Error) -> Void)? = nil)
     {
+        self.didPrepare = didPrepare
         self.didPause = didPause
         self.didPlay = didPlay
         self.didRePlay = didRePlay

@@ -65,6 +65,9 @@ public class ApiVideoPlayerController: NSObject {
                     self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
                     self.setUpAnalytics(url: self.playerManifest.video.src)
                     try self.setUpPlayer(self.playerManifest.video.src)
+                    for event in self.events {
+                        event.didPrepare?()
+                    }
                     completion(nil)
                 } catch {
                     completion(error)
@@ -84,6 +87,9 @@ public class ApiVideoPlayerController: NSObject {
         }
         do {
             try setUpPlayer(mp4)
+            for event in events {
+                event.didPrepare?()
+            }
         } catch {
             notifyError(error: error)
         }
@@ -242,6 +248,10 @@ public class ApiVideoPlayerController: NSObject {
 
     public var isAtEnd: Bool {
         return duration.roundedSeconds == currentTime.roundedSeconds
+    }
+
+    var hasSubtitles: Bool {
+        return subtitles.count > 1
     }
 
     var subtitles: [SubtitleLanguage] {
