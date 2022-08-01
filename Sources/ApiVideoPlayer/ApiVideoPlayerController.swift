@@ -172,7 +172,7 @@ public class ApiVideoPlayerController: NSObject {
             }
         }
         for events in events {
-            events.didRePlay?()
+            events.didReplay?()
         }
     }
 

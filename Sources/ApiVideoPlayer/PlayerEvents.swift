@@ -3,7 +3,7 @@ public class PlayerEvents {
     public var didPrepare: (() -> Void)?
     public var didPause: (() -> Void)?
     public var didPlay: (() -> Void)?
-    public var didRePlay: (() -> Void)?
+    public var didReplay: (() -> Void)?
     public var didMute: (() -> Void)?
     public var didUnMute: (() -> Void)?
     public var didLoop: (() -> Void)?
@@ -15,7 +15,7 @@ public class PlayerEvents {
     public init(didPrepare: (() -> Void)? = nil,
                 didPause: (() -> Void)? = nil,
                 didPlay: (() -> Void)? = nil,
-                didRePlay: (() -> Void)? = nil,
+                didReplay: (() -> Void)? = nil,
                 didMute: (() -> Void)? = nil,
                 didUnMute: (() -> Void)? = nil,
                 didLoop: (() -> Void)? = nil,
@@ -27,7 +27,7 @@ public class PlayerEvents {
         self.didPrepare = didPrepare
         self.didPause = didPause
         self.didPlay = didPlay
-        self.didRePlay = didRePlay
+        self.didReplay = didReplay
         self.didMute = didMute
         self.didUnMute = didUnMute
         self.didLoop = didLoop

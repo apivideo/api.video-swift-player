@@ -83,7 +83,7 @@ import ApiVideoPlayer
             didPlay: {() in
                 print("play")
             },
-            didRePlay: {() in
+            didReplay: {() in
                 print("video replayed")
             },
             didLoop: {() in
