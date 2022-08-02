@@ -236,7 +236,11 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public var duration: CMTime {
-        return avPlayer.currentItem!.asset.duration
+        if let duration = avPlayer.currentItem?.asset.duration{
+            return duration
+        }else{
+            return CMTime(seconds: 0.0, preferredTimescale: 1000)
+        }
     }
 
     public var currentTime: CMTime {
