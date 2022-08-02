@@ -100,7 +100,7 @@ public class ApiVideoPlayerController: NSObject {
             let item = AVPlayerItem(url: url)
             avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
             avPlayer.replaceCurrentItem(with: item)
-            avPlayer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
+            avPlayer.addObserver(self, forKeyPath: "timeControlStatus", options: NSKeyValueObservingOptions.new, context: nil)
             item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: item)
         } else {
@@ -325,6 +325,12 @@ public class ApiVideoPlayerController: NSObject {
             events.didEnd?()
         }
     }
+    
+    func synced(_ lock: Any, closure: () -> ()) {
+        objc_sync_enter(lock)
+        closure()
+        objc_sync_exit(lock)
+    }
 
     override public func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "status" {
@@ -342,56 +348,60 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         }
-        if keyPath == "rate" {
-            let status = avPlayer.timeControlStatus
-            switch status {
-            case .paused:
-                // Paused mode
-                analytics?.pause { result in
-                    switch result {
-                    case .success: break
-                    case let .failure(error):
-                        print("analytics error on pause event: \(error)")
+        synced(self) {
+            if keyPath == "timeControlStatus" {
+                let status = avPlayer.timeControlStatus
+                switch status {
+                case .paused:
+                    // Paused mode
+                    if(currentTime.second >= duration.second){
+                        break
                     }
-                }
-                for events in events {
-                    events.didPause?()
-                }
-            case .waitingToPlayAtSpecifiedRate:
-                // Resumed
-                if isFirstPlay {
-                    isFirstPlay = false
-                    analytics?.play { result in
+                    analytics?.pause { result in
                         switch result {
                         case .success: break
                         case let .failure(error):
-                            print("analytics error on play event: \(error)")
+                            print("analytics error on pause event: \(error)")
                         }
                     }
-                } else {
-                    analytics?.resume { result in
-                        switch result {
-                        case .success: break
-                        case let .failure(error):
-                            print("analytics error on resume event: \(error)")
+                    for events in events {
+                        events.didPause?()
+                    }
+                case .waitingToPlayAtSpecifiedRate:
+                    // Resumed
+                    break
+                case .playing:
+                    // Video Ended
+                    if isFirstPlay {
+                        isFirstPlay = false
+                        analytics?.play { result in
+                            switch result {
+                            case .success: break
+                            case let .failure(error):
+                                print("analytics error on play event: \(error)")
+                            }
+                        }
+                    } else {
+                        analytics?.resume { result in
+                            switch result {
+                            case .success: break
+                            case let .failure(error):
+                                print("analytics error on resume event: \(error)")
+                            }
                         }
                     }
+                    for events in events {
+                        events.didPlay?()
+                    }
+                @unknown default:
+                    break
                 }
-                for events in events {
-                    events.didPlay?()
-                }
-            case .playing:
-                // Video Ended
-                break
-
-            @unknown default:
-                break
             }
         }
     }
 
     deinit {
-        avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
+        avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
         avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
         NotificationCenter.default.removeObserver(self)
     }
