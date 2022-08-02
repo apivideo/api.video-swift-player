@@ -25,10 +25,14 @@
             })
 
             events.didPlay = { () in
-                self.setPlayBtnIcon(iconName: "pause-primary")
+                if playerController.isPlaying(){
+                    self.setPlayBtnIcon(iconName: "pause-primary")
+                }
             }
             events.didPause = { () in
-                self.setPlayBtnIcon(iconName: "play-primary")
+                if !playerController.isPlaying(){
+                    self.setPlayBtnIcon(iconName: "play-primary")
+                }
             }
             events.didEnd = { () in
                 self.setPlayBtnIcon(iconName: "replay-primary")
@@ -312,6 +316,8 @@
                 // Fallback on earlier versions
             }
         }
+        
+        private var sliderDidPauseVideo = false
 
         @objc func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
             resetTimer()
@@ -319,16 +325,21 @@
                 switch touchEvent.phase {
                 case .began:
                     // handle drag began
-                    playerController.pause()
+                    if playerController.isPlaying() {
+                        playerController.pause()
+                        sliderDidPauseVideo = true
+                    }
                 case .moved:
                     // handle drag moved
                     break
                 case .ended:
                     // handle drag ended
                     let value = Float64(slider.value) * CMTimeGetSeconds(playerController.duration)
-                    let seekTime = CMTime(value: CMTimeValue(value), timescale: 1)
-                    playerController.seek(to: Double(CMTimeGetSeconds(seekTime)))
-                    playerController.play()
+                    playerController.seek(to: value)
+                    if sliderDidPauseVideo {
+                        playerController.play()
+                    }
+                    sliderDidPauseVideo = false
                 default:
                     break
                 }
