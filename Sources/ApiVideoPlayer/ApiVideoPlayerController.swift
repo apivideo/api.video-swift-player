@@ -181,16 +181,17 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public func seek(offset: Double) {
-        seek(to: currentTime + CMTime(seconds: offset, preferredTimescale: 1))
+        let current = currentTime
+        seek(to: current + CMTime(seconds: offset, preferredTimescale: 600), from: current)
     }
 
     public func seek(to: Double) {
-        seek(to: CMTime(seconds: to, preferredTimescale: 1))
+        seek(to: CMTime(seconds: to, preferredTimescale: 1), from: currentTime)
     }
 
-    private func seek(to: CMTime) {
+    private func seek(to: CMTime, from: CMTime) {
         let from = currentTime
-        avPlayer.seek(to: to)
+        avPlayer.seek(to: to, toleranceBefore: .zero, toleranceAfter: .zero)
         analytics?.seek(from: Float(CMTimeGetSeconds(from)), to: Float(CMTimeGetSeconds(to))) { result in
             switch result {
             case .success: break
