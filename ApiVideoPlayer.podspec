@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
   s.swift_version = '5.0'
 
   s.source_files = 'Sources/**/*'
+  s.resources = 'Sources/*.xcassets/*'
 
   s.dependency "ApiVideoPlayerAnalytics", "1.0.4"
 end
