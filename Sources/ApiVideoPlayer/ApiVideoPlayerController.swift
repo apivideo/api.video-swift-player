@@ -181,18 +181,18 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public func seek(offset: Double) {
-        let current = currentTime
-        seek(to: current + CMTime(seconds: offset, preferredTimescale: 600), from: current)
+        seek(to: currentTime + CMTime(seconds: offset, preferredTimescale: 1000))
     }
 
     public func seek(to: Double) {
-        seek(to: CMTime(seconds: to, preferredTimescale: 1), from: currentTime)
+        seek(to: CMTime(seconds: to, preferredTimescale: 1000))
     }
 
-    private func seek(to: CMTime, from: CMTime) {
+    private func seek(to: CMTime) {
         let from = currentTime
         avPlayer.seek(to: to, toleranceBefore: .zero, toleranceAfter: .zero)
-        analytics?.seek(from: Float(CMTimeGetSeconds(from)), to: Float(CMTimeGetSeconds(to))) { result in
+        let calculatedTo = min(max(0.0, CMTimeGetSeconds(to)), CMTimeGetSeconds(duration))
+        analytics?.seek(from: Float(CMTimeGetSeconds(from)), to: Float(calculatedTo)) { result in
             switch result {
             case .success: break
             case let .failure(error):
@@ -201,7 +201,7 @@ public class ApiVideoPlayerController: NSObject {
         }
 
         for events in events {
-            events.didSeek?(CMTimeGetSeconds(from), max(0.0, CMTimeGetSeconds(to)))
+            events.didSeek?(CMTimeGetSeconds(from), calculatedTo)
         }
     }
 
@@ -329,12 +329,6 @@ public class ApiVideoPlayerController: NSObject {
             events.didEnd?()
         }
     }
-    
-    func synced(_ lock: Any, closure: () -> ()) {
-        objc_sync_enter(lock)
-        closure()
-        objc_sync_exit(lock)
-    }
 
     override public func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "status" {
@@ -352,7 +346,6 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         }
-        synced(self) {
             if keyPath == "timeControlStatus" {
                 let status = avPlayer.timeControlStatus
                 switch status {
@@ -401,7 +394,6 @@ public class ApiVideoPlayerController: NSObject {
                     break
                 }
             }
-        }
     }
 
     deinit {
