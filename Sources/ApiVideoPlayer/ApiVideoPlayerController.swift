@@ -197,7 +197,7 @@ public class ApiVideoPlayerController: NSObject {
         }
 
         for events in events {
-            events.didSeek?(CMTimeGetSeconds(from), calculatedTo)
+            events.didSeek?(from, CMTime(seconds: calculatedTo, preferredTimescale: 1000))
         }
     }
 

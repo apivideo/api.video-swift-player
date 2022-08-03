@@ -1,4 +1,5 @@
 import Foundation
+import AVFoundation
 public class PlayerEvents {
     public var didPrepare: (() -> Void)?
     public var didPause: (() -> Void)?
@@ -8,7 +9,7 @@ public class PlayerEvents {
     public var didUnMute: (() -> Void)?
     public var didLoop: (() -> Void)?
     public var didSetVolume: ((_ volume: Float) -> Void)?
-    public var didSeek: ((_ from: Double, _ to: Double) -> Void)?
+    public var didSeek: ((_ from: CMTime, _ to: CMTime) -> Void)?
     public var didEnd: (() -> Void)?
     public var didError: ((_ error: Error) -> Void)?
 
@@ -20,7 +21,7 @@ public class PlayerEvents {
                 didUnMute: (() -> Void)? = nil,
                 didLoop: (() -> Void)? = nil,
                 didSetVolume: ((Float) -> Void)? = nil,
-                didSeek: ((Double, Double) -> Void)? = nil,
+                didSeek: ((CMTime, CMTime) -> Void)? = nil,
                 didEnd: (() -> Void)? = nil,
                 didError: ((Error) -> Void)? = nil)
     {
