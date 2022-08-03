@@ -25,14 +25,10 @@
             })
 
             events.didPlay = { () in
-                if playerController.isPlaying(){
-                    self.setPlayBtnIcon(iconName: "pause-primary")
-                }
+                self.setPlayBtnIcon(iconName: "pause-primary")
             }
             events.didPause = { () in
-                if !playerController.isPlaying(){
-                    self.setPlayBtnIcon(iconName: "play-primary")
-                }
+                self.setPlayBtnIcon(iconName: "play-primary")
             }
             events.didEnd = { () in
                 self.setPlayBtnIcon(iconName: "replay-primary")
