@@ -15,6 +15,7 @@ your app.
 - [Getting started](#getting-started)
     - [Installation](#installation)
         - [Swift Package Manager](#swift-package-manager)
+        - [Cocoapods](#cocoapods)
     - [Retrieve your video Id](#retrieve-your-video-id)
 - [Sample application](#sample-application)
 - [Documentation](#documentation)
@@ -42,6 +43,11 @@ Or add this in your Package.swift
         .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.0.0"),
     ],
 ```
+
+### Cocoapods
+Add `pod 'ApiVideoPlayer', '1.0.0'` in your `Podfile`
+
+Run `pod install`
 
 
 ## Retrieve your video Id
