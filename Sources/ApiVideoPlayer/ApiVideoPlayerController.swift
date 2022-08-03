@@ -180,15 +180,11 @@ public class ApiVideoPlayerController: NSObject {
         avPlayer.pause()
     }
 
-    public func seek(offset: Double) {
-        seek(to: currentTime + CMTime(seconds: offset, preferredTimescale: 1000))
+    public func seek(offset: CMTime) {
+        seek(to: currentTime + offset)
     }
 
-    public func seek(to: Double) {
-        seek(to: CMTime(seconds: to, preferredTimescale: 1000))
-    }
-
-    private func seek(to: CMTime) {
+    public func seek(to: CMTime) {
         let from = currentTime
         avPlayer.seek(to: to, toleranceBefore: .zero, toleranceAfter: .zero)
         let calculatedTo = min(max(0.0, CMTimeGetSeconds(to)), CMTimeGetSeconds(duration))

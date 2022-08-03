@@ -253,7 +253,7 @@
 
         @objc func goForward15Action() {
             resetTimer()
-            playerController.seek(offset: 15)
+            playerController.seek(offset: CMTime(seconds: 15, preferredTimescale: 1000))
             activateTimer()
         }
 
@@ -262,7 +262,7 @@
             if playerController.isAtEnd {
                 setPlayBtnIcon(iconName: "play-primary")
             }
-            playerController.seek(offset: -15)
+            playerController.seek(offset: CMTime(seconds: -15, preferredTimescale: 1000))
             activateTimer()
         }
 
@@ -331,7 +331,7 @@
                 case .ended:
                     // handle drag ended
                     let value = Float64(slider.value) * CMTimeGetSeconds(playerController.duration)
-                    playerController.seek(to: value)
+                    playerController.seek(to: CMTime(seconds: value, preferredTimescale: 1000))
                     if sliderDidPauseVideo {
                         playerController.play()
                     }
