@@ -13,5 +13,5 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Sources/**/*'
 
-  s.dependency "ApiVideoPlayerAnalytics", "1.0.3"
+  s.dependency "ApiVideoPlayerAnalytics", "1.0.4"
 end
