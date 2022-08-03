@@ -187,8 +187,8 @@ public class ApiVideoPlayerController: NSObject {
     public func seek(to: CMTime) {
         let from = currentTime
         avPlayer.seek(to: to, toleranceBefore: .zero, toleranceAfter: .zero)
-        let calculatedTo = min(max(0.0, CMTimeGetSeconds(to)), CMTimeGetSeconds(duration))
-        analytics?.seek(from: Float(CMTimeGetSeconds(from)), to: Float(calculatedTo)) { result in
+        let calculatedTo = CMTime(seconds: min(max(0.0, CMTimeGetSeconds(to)), CMTimeGetSeconds(duration)), preferredTimescale: 1000)
+        analytics?.seek(from: from, to: calculatedTo) { result in
             switch result {
             case .success: break
             case let .failure(error):
@@ -197,7 +197,7 @@ public class ApiVideoPlayerController: NSObject {
         }
 
         for events in events {
-            events.didSeek?(from, CMTime(seconds: calculatedTo, preferredTimescale: 1000))
+            events.didSeek?(from, calculatedTo)
         }
     }
 

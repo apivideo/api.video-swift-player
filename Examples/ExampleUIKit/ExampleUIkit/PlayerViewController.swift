@@ -261,11 +261,11 @@ class PlayerViewController: UIViewController {
     }
 
     @objc func forwardAction(sender _: UIButton!) {
-        playerView.seek(offset: 15)
+        playerView.seek(offset: CMTime(seconds: 15, preferredTimescale: 1000))
     }
 
     @objc func backwardAction(sender _: UIButton!) {
-        playerView.seek(offset: -15)
+        playerView.seek(offset: CMTime(seconds: -15, preferredTimescale: 1000))
     }
 
     @objc func hideControlsAction(sender _: UIButton!) {
@@ -284,9 +284,9 @@ class PlayerViewController: UIViewController {
         let viewCenterPosition = view.frame.width / 2
         let touchPoint = sender!.location(in: view)
         if touchPoint.x < viewCenterPosition {
-            playerView.seek(offset: -15)
+            playerView.seek(offset: CMTime(seconds: -15, preferredTimescale: 1000))
         } else {
-            playerView.seek(offset: 15)
+            playerView.seek(offset: CMTime(seconds: 15, preferredTimescale: 1000))
         }
     }
 
