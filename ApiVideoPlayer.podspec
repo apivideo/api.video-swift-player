@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '11.0'
   s.swift_version = '5.0'
 
-  s.source_files = 'Sources/**/*'
-  s.resources = 'Sources/*.xcassets/*'
+  s.source_files = 'Sources/**/*.{swift, plist}'
+  s.resources = 'Sources/**/*.{storyboard,xib,xcassets,json,png}'
 
   s.dependency "ApiVideoPlayerAnalytics", "1.0.4"
 end

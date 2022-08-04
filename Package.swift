@@ -25,7 +25,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "ApiVideoPlayer",
-            dependencies: [.product(name: "ApiVideoPlayerAnalytics", package: "api.video-ios-player-analytics")]
+            dependencies: [.product(name: "ApiVideoPlayerAnalytics", package: "api.video-ios-player-analytics")],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "ApiVideoPlayerTests",

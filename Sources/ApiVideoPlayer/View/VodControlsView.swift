@@ -307,7 +307,7 @@
 
         private func setPlayBtnIcon(iconName: String) {
             if #available(tvOS 13.0, *) {
-                playPauseButton.setImage(UIImage(named: iconName, in: Bundle.module, compatibleWith: nil), for: .normal)
+                playPauseButton.setImage(UIImage(named: iconName, in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil), for: .normal)
             } else {
                 // Fallback on earlier versions
             }
