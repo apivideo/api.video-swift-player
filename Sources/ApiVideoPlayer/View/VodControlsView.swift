@@ -321,6 +321,7 @@
                 switch touchEvent.phase {
                 case .began:
                     // handle drag began
+                    playerController.isSeekSlider = true
                     if playerController.isPlaying() {
                         playerController.pause()
                         sliderDidPauseVideo = true
