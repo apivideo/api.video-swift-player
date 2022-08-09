@@ -1,93 +1,106 @@
 #if !os(macOS)
-    import AVFoundation
-    import Foundation
-    import UIKit
+import AVFoundation
+import Foundation
+import UIKit
 
-    @available(iOS 14.0, *)
-    class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
-        private var selectedRow = 0
-        private var subtitles: [SubtitleLanguage] = []
-        private var tableview = UITableView()
-        private let cellReuseIdentifier = "cell"
-        private let playerController: ApiVideoPlayerController
+@available(iOS 14.0, *)
+class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
+  private var selectedRow = 0
+  private var subtitles: [SubtitleLanguage] = []
+  private var tableview = UITableView()
+  private let cellReuseIdentifier = "cell"
+  private let playerController: ApiVideoPlayerController
 
-        public init(frame: CGRect, playerController: ApiVideoPlayerController) {
-            self.playerController = playerController
-            super.init(frame: frame)
-            subtitles = playerController.subtitles
+  public init(frame: CGRect, playerController: ApiVideoPlayerController) {
+    self.playerController = playerController
+    super.init(frame: frame)
+    self.subtitles = playerController.subtitles
 
-            layer.cornerRadius = 15
-            tableview.layer.cornerRadius = 15
-            if subtitles.count < 3 {
-                var posY = frame.origin.y
-                if subtitles.count > 1 {
-                    posY = posY - 25 * CGFloat(subtitles.count)
-                }
-                self.frame = CGRect(x: frame.origin.x, y: posY, width: frame.width, height: 45 * CGFloat(subtitles.count))
-                tableview.frame = CGRect(x: 0, y: 0, width: frame.width, height: 45 * CGFloat(subtitles.count))
-            } else {
-                self.frame = CGRect(x: frame.origin.x, y: frame.origin.y - 90, width: frame.width, height: frame.height)
-                tableview.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
-            }
-            tableview.delegate = self
-            tableview.dataSource = self
-            tableview.register(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
-            addSubview(tableview)
-        }
-
-        @available(*, unavailable)
-        required init?(coder _: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        public func dismissView() {
-            removeFromSuperview()
-        }
-
-        private func isCurrentSubtitleLanguage(subtitleLanguage: SubtitleLanguage) -> Bool {
-            return playerController.currentSubtitle.code == subtitleLanguage.code
-        }
-
-        // MARK: TableView
-
-        func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-            subtitles.count
-        }
-
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as UITableViewCell
-            let selectedSubtitleRow = subtitles[indexPath.row]
-            var content = cell.defaultContentConfiguration()
-
-            content.text = selectedSubtitleRow.language
-            if isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
-                cell.accessoryType = .checkmark
-            }
-            cell.contentConfiguration = content
-            return cell
-        }
-
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            tableView.deselectRow(at: indexPath, animated: false)
-
-            let selectedSubtitleRow = subtitles[indexPath.row]
-
-            if isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
-                return
-            }
-
-            if let previousCell = tableView.cellForRow(at: IndexPath(row: selectedRow, section: indexPath.section)) {
-                previousCell.accessoryType = .none
-            }
-
-            if let cell = tableView.cellForRow(at: indexPath) {
-                cell.accessoryType = .checkmark
-            }
-
-            selectedRow = indexPath.row
-            playerController.currentSubtitle = selectedSubtitleRow
-
-            dismissView()
-        }
+    layer.cornerRadius = 15
+    self.tableview.layer.cornerRadius = 15
+    if self.subtitles.count < 3 {
+      var posY = frame.origin.y
+      if self.subtitles.count > 1 {
+        posY = posY - 25 * CGFloat(self.subtitles.count)
+      }
+      self.frame = CGRect(
+        x: frame.origin.x,
+        y: posY,
+        width: frame.width,
+        height: 45 * CGFloat(self.subtitles.count)
+      )
+      self.tableview.frame = CGRect(
+        x: 0,
+        y: 0,
+        width: frame.width,
+        height: 45 * CGFloat(self.subtitles.count)
+      )
+    } else {
+      self.frame = CGRect(x: frame.origin.x, y: frame.origin.y - 90, width: frame.width, height: frame.height)
+      self.tableview.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
     }
+    self.tableview.delegate = self
+    self.tableview.dataSource = self
+    self.tableview.register(UITableViewCell.self, forCellReuseIdentifier: self.cellReuseIdentifier)
+    addSubview(self.tableview)
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  public func dismissView() {
+    removeFromSuperview()
+  }
+
+  private func isCurrentSubtitleLanguage(subtitleLanguage: SubtitleLanguage) -> Bool {
+    return self.playerController.currentSubtitle.code == subtitleLanguage.code
+  }
+
+  // MARK: TableView
+
+  func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+    self.subtitles.count
+  }
+
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell: UITableViewCell = tableView.dequeueReusableCell(
+      withIdentifier: self.cellReuseIdentifier,
+      for: indexPath
+    ) as UITableViewCell
+    let selectedSubtitleRow = self.subtitles[indexPath.row]
+    var content = cell.defaultContentConfiguration()
+
+    content.text = selectedSubtitleRow.language
+    if self.isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
+      cell.accessoryType = .checkmark
+    }
+    cell.contentConfiguration = content
+    return cell
+  }
+
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    tableView.deselectRow(at: indexPath, animated: false)
+
+    let selectedSubtitleRow = self.subtitles[indexPath.row]
+
+    if self.isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
+      return
+    }
+
+    if let previousCell = tableView.cellForRow(at: IndexPath(row: selectedRow, section: indexPath.section)) {
+      previousCell.accessoryType = .none
+    }
+
+    if let cell = tableView.cellForRow(at: indexPath) {
+      cell.accessoryType = .checkmark
+    }
+
+    self.selectedRow = indexPath.row
+    self.playerController.currentSubtitle = selectedSubtitleRow
+
+    self.dismissView()
+  }
+}
 #endif
