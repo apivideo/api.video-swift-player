@@ -36,7 +36,7 @@ class PlayerViewController: UIViewController {
 
     return ApiVideoPlayerView(
       frame: .zero,
-      videoId: "vi6P9Rj0DY49ax7deKFSTeSA",
+      videoId: "YOUR_VIDEO_ID",
       videoType: VideoType.vod /* only .vod is supported */,
       events: events
     )
