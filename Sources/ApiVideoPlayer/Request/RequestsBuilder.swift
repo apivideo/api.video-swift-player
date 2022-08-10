@@ -5,8 +5,8 @@ public class RequestsBuilder {
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
   }
 
-  public func getPlayerData(path: String) -> URLRequest {
-    var request = URLRequest(url: URL(string: path)!)
+  public func getPlayerData(path: URL) -> URLRequest {
+    var request = URLRequest(url: path)
     self.setContentType(request: &request)
     request.httpMethod = "GET"
     return request

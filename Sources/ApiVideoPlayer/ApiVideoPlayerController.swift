@@ -20,8 +20,8 @@ public class ApiVideoPlayerController: NSObject {
   convenience init(
     videoId: String,
     videoType: VideoType,
-    events: PlayerEvents? = nil,
-    playerLayer: AVPlayerLayer
+    playerLayer: AVPlayerLayer,
+    events: PlayerEvents? = nil
   ) {
     self.init(videoId: videoId, videoType: videoType, events: events)
     playerLayer.player = self.avPlayer
@@ -44,7 +44,7 @@ public class ApiVideoPlayerController: NSObject {
     }
   }
 
-    private func getVideoUrl(videoType: VideoType, privateToken: String? = nil, videoId: String) -> String {
+    private func getVideoUrl(videoType: VideoType, videoId: String, privateToken: String? = nil) -> String {
     var baseUrl = ""
     if videoType == .vod {
       baseUrl = "https://cdn.api.video/vod/"
@@ -63,7 +63,12 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   private func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void) {
-    let request = RequestsBuilder().getPlayerData(path: self.getVideoUrl(videoType: videoType, videoId: self.videoId))
+    let url = self.getVideoUrl(videoType: videoType, videoId: self.videoId)
+    guard let path = URL(string: url) else {
+      completion(PlayerError.urlError("Couldn't set up url from this videoId"))
+      return
+    }
+    let request = RequestsBuilder().getPlayerData(path: path)
     let session = RequestsBuilder().buildUrlSession()
     TasksExecutor.execute(session: session, request: request) { data, error in
       if let data = data {
@@ -316,7 +321,8 @@ public class ApiVideoPlayerController: NSObject {
           let locale = Locale(identifier: newSubtitle.language)
           let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
           if let option = options.first {
-            self.avPlayer.currentItem!.select(option, in: group)
+            guard let currentItem = self.avPlayer.currentItem else { return }
+            currentItem.select(option, in: group)
           }
         }
       }
@@ -334,8 +340,9 @@ public class ApiVideoPlayerController: NSObject {
   #endif
 
   func hideSubtitle() {
-    if let group = avPlayer.currentItem!.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-      self.avPlayer.currentItem!.select(nil, in: group)
+    guard let currentItem = self.avPlayer.currentItem else { return }
+    if let group = currentItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
+      currentItem.select(nil, in: group)
     }
   }
 

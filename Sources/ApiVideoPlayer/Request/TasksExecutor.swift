@@ -47,7 +47,8 @@ extension URLSession {
         completionHandler(Result.failure(HTTPError.serverSideError(status)))
         return
       }
-      completionHandler(Result.success((response, data!)))
+      guard let myData = data else { return }
+      completionHandler(Result.success((response, myData)))
     }
   }
 }

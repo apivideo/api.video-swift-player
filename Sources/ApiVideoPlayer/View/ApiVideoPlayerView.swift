@@ -8,7 +8,7 @@ public class ApiVideoPlayerView: UIView {
   private let playerLayer = AVPlayerLayer()
   private let videoPlayerView = UIView()
   private var vodControlsView: VodControlsView?
-  private var playerController: ApiVideoPlayerController!
+  private var playerController: ApiVideoPlayerController
   private var userEvents: PlayerEvents?
   private var isFirstPlay = true
   private var isHidenControls: Bool
@@ -33,18 +33,16 @@ public class ApiVideoPlayerView: UIView {
   ) {
     self.userEvents = events
     self.isHidenControls = hideControls
-    super.init(frame: frame)
-
-    self.setupView()
-
     self.playerController = ApiVideoPlayerController(
       videoId: videoId,
       videoType: videoType,
-      events: events,
-      playerLayer: self.playerLayer
+      playerLayer: self.playerLayer,
+      events: events
     )
+    super.init(frame: frame)
+    self.setupView()
     if !hideControls {
-      self.vodControlsView = VodControlsView(frame: frame, playerController: self.playerController!)
+      self.vodControlsView = VodControlsView(frame: frame, playerController: self.playerController)
     }
 
     self.setupSubviews()
