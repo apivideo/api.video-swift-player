@@ -21,7 +21,7 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     if self.subtitles.count < 3 {
       var posY = frame.origin.y
       if self.subtitles.count > 1 {
-        posY = posY - 25 * CGFloat(self.subtitles.count)
+        posY -= 25 * CGFloat(self.subtitles.count)
       }
       self.frame = CGRect(
         x: frame.origin.x,

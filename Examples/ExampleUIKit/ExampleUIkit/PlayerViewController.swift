@@ -3,7 +3,7 @@ import AVKit
 import UIKit
 
 class PlayerViewController: UIViewController {
-  private var didFinish: Bool = false {
+  private var didFinish = false {
     didSet {
       self.replayVideo()
     }
@@ -213,7 +213,9 @@ class PlayerViewController: UIViewController {
     self.playerView.replay()
   }
 
-  override func viewDidAppear(_: Bool) {
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
     self.playerView.viewController = self
   }
 
@@ -304,7 +306,7 @@ class PlayerViewController: UIViewController {
 
   @objc
   func handleDoubleTap(_ sender: UITapGestureRecognizer? = nil) {
-    guard let validSender = sender else {return}
+    guard let validSender = sender else { return }
     let viewCenterPosition = view.frame.width / 2
     let touchPoint = validSender.location(in: view)
     if touchPoint.x < viewCenterPosition {

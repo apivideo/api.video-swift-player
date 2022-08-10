@@ -10,7 +10,7 @@ public class ApiVideoPlayerController: NSObject {
   private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
   private var analytics: PlayerAnalytics?
   private let videoType: VideoType
-  private let videoId: String!
+  private let videoId: String
   private var playerManifest: PlayerManifest!
   private var timeObserver: Any?
   private var isFirstPlay = true
@@ -44,7 +44,7 @@ public class ApiVideoPlayerController: NSObject {
     }
   }
 
-  private func getVideoUrl(videoType: VideoType, privateToken: String? = nil) -> String {
+    private func getVideoUrl(videoType: VideoType, privateToken: String? = nil, videoId: String) -> String {
     var baseUrl = ""
     if videoType == .vod {
       baseUrl = "https://cdn.api.video/vod/"
@@ -54,16 +54,16 @@ public class ApiVideoPlayerController: NSObject {
     var url: String!
 
     if let privateToken = privateToken {
-      url = baseUrl + "\(self.videoId!)/token/\(privateToken)/player.json"
+      url = baseUrl + "\(videoId)/token/\(privateToken)/player.json"
     } else {
-      url = baseUrl + "\(self.videoId!)/player.json"
+      url = baseUrl + "\(videoId)/player.json"
     }
 
     return url
   }
 
   private func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void) {
-    let request = RequestsBuilder().getPlayerData(path: self.getVideoUrl(videoType: videoType))
+    let request = RequestsBuilder().getPlayerData(path: self.getVideoUrl(videoType: videoType, videoId: self.videoId))
     let session = RequestsBuilder().buildUrlSession()
     TasksExecutor.execute(session: session, request: request) { data, error in
       if let data = data {
@@ -454,4 +454,5 @@ extension AVPlayer {
 enum PlayerError: Error {
   case mp4Error(String)
   case urlError(String)
+  case videoIdError(String)
 }
