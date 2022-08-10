@@ -108,14 +108,14 @@ public class ApiVideoPlayerView: UIView {
 
   /// Getter and Setter to mute or unmute video player.
   public var isMuted: Bool {
-    get { return self.playerController.isMuted }
+    get { self.playerController.isMuted }
     set(newValue) { self.playerController.isMuted = newValue }
   }
 
   /// Getter and Setter for player events callback.
   /// Use it if you want to get netified on player events.
   public var events: PlayerEvents? {
-    get { return self.userEvents }
+    get { self.userEvents }
     set(newValue) {
       if let events = userEvents {
         self.playerController.removeEvents(events: events)
@@ -147,7 +147,7 @@ public class ApiVideoPlayerView: UIView {
   /// Show the selected subtitles.
   /// - Parameter language: use code language as String (example: "en" for english).
   public var currentSubtitle: Locale {
-    get { return Locale(identifier: self.playerController.currentSubtitle.language) }
+    get { Locale(identifier: self.playerController.currentSubtitle.language) }
     set(newSubtitle) {
       self.playerController.currentSubtitle = SubtitleLanguage(
         language: newSubtitle.identifier,

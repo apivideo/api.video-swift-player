@@ -8,6 +8,7 @@ public class TasksExecutor: TasksExecutorProtocol {
       switch result {
       case let .success((_, data)):
         completion(data, nil)
+
       case let .failure(error):
         completion(nil, error)
       }

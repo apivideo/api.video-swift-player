@@ -36,7 +36,7 @@ class PlayerViewController: UIViewController {
 
     return ApiVideoPlayerView(
       frame: .zero,
-      videoId: "YOUR_VIDEO_ID",
+      videoId: "vi6P9Rj0DY49ax7deKFSTeSA",
       videoType: VideoType.vod /* only .vod is supported */,
       events: events
     )
@@ -212,7 +212,6 @@ class PlayerViewController: UIViewController {
   private func replayVideo() {
     self.playerView.replay()
   }
-
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)

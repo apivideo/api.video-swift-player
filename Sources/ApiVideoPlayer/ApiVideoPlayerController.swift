@@ -179,6 +179,7 @@ public class ApiVideoPlayerController: NSObject {
       .seek(from: Float(CMTimeGetSeconds(self.currentTime)), to: Float(CMTimeGetSeconds(CMTime.zero))) { result in
         switch result {
         case .success: break
+
         case let .failure(error):
           print("analytics error on seek event: \(error)")
         }
@@ -188,6 +189,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.resume { result in
       switch result {
       case .success: break
+
       case let .failure(error):
         print("analytics error on resume event: \(error)")
       }
@@ -220,6 +222,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.seek(from: from, to: calculatedTo) { result in
       switch result {
       case .success: break
+
       case let .failure(error):
         print("analytics error seek: \(error)")
       }
@@ -232,7 +235,7 @@ public class ApiVideoPlayerController: NSObject {
 
   public var isMuted: Bool {
     get {
-      return self.avPlayer.isMuted
+      self.avPlayer.isMuted
     }
     set(newValue) {
       self.avPlayer.isMuted = newValue
@@ -248,10 +251,10 @@ public class ApiVideoPlayerController: NSObject {
     }
   }
 
-  public var isLooping: Bool = false
+  public var isLooping = false
 
   public var volume: Float {
-    get { return self.avPlayer.volume }
+    get { self.avPlayer.volume }
     set(newVolume) {
       self.avPlayer.volume = newVolume
       for events in self.events {
@@ -269,15 +272,15 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   public var currentTime: CMTime {
-    return self.avPlayer.currentTime()
+    self.avPlayer.currentTime()
   }
 
   public var isAtEnd: Bool {
-    return self.duration.roundedSeconds == self.currentTime.roundedSeconds
+    self.duration.roundedSeconds == self.currentTime.roundedSeconds
   }
 
   var hasSubtitles: Bool {
-    return self.subtitles.count > 1
+    self.subtitles.count > 1
   }
 
   var subtitles: [SubtitleLanguage] {
@@ -347,6 +350,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.end { result in
       switch result {
       case .success: break
+
       case let .failure(error):
         print("analytics error on ended event: \(error)")
       }
@@ -393,6 +397,7 @@ public class ApiVideoPlayerController: NSObject {
         self.analytics?.pause { result in
           switch result {
           case .success: break
+
           case let .failure(error):
             print("analytics error on pause event: \(error)")
           }
@@ -400,9 +405,11 @@ public class ApiVideoPlayerController: NSObject {
         for events in self.events {
           events.didPause?()
         }
+
       case .waitingToPlayAtSpecifiedRate:
         // Resumed
         break
+
       case .playing:
         // Video Ended
         if self.isSeeking {
@@ -415,6 +422,7 @@ public class ApiVideoPlayerController: NSObject {
           self.analytics?.play { result in
             switch result {
             case .success: break
+
             case let .failure(error):
               print("analytics error on play event: \(error)")
             }
@@ -423,6 +431,7 @@ public class ApiVideoPlayerController: NSObject {
           self.analytics?.resume { result in
             switch result {
             case .success: break
+
             case let .failure(error):
               print("analytics error on resume event: \(error)")
             }

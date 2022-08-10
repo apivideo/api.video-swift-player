@@ -381,11 +381,12 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
            */
           self.playerController.pauseBeforeSeek()
           self.sliderDidPauseVideo = true
-        }          
+        }
+
       case .moved:
         // handle drag moved
         break
-          
+
       case .ended:
         // handle drag ended
         let value = Float64(slider.value) * CMTimeGetSeconds(self.playerController.duration)
@@ -394,6 +395,7 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
           self.playerController.play()
         }
         self.sliderDidPauseVideo = false
+
       default:
         break
       }
