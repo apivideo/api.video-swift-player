@@ -54,6 +54,8 @@ opt_in_rules:
 excluded:
   - Pods
   - "*/Pods"
+  - R.generated.swift
+  - .build
 
 # We exclude function (which is present by default)
 implicit_return:

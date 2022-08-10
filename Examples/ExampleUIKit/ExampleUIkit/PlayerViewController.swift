@@ -304,8 +304,9 @@ class PlayerViewController: UIViewController {
 
   @objc
   func handleDoubleTap(_ sender: UITapGestureRecognizer? = nil) {
+    guard let validSender = sender else {return}
     let viewCenterPosition = view.frame.width / 2
-    let touchPoint = sender!.location(in: view)
+    let touchPoint = validSender.location(in: view)
     if touchPoint.x < viewCenterPosition {
       self.playerView.seek(offset: CMTime(seconds: -15, preferredTimescale: 1_000))
     } else {
