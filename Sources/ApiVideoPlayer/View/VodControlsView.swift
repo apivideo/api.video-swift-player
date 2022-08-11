@@ -322,7 +322,10 @@
                 case .began:
                     // handle drag began
                     if playerController.isPlaying() {
-                        playerController.pause()
+                        /**
+                         * Avoid to trigger callbacks and analytics when the user uses the seek slider
+                         */
+                        playerController.pauseBeforeSeek()
                         sliderDidPauseVideo = true
                     }
                 case .moved:
