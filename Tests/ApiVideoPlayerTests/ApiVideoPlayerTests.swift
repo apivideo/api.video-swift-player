@@ -9,8 +9,11 @@ final class ApiVideoPlayerTests: XCTestCase {
     {
       return
     }
+    guard let path = URL(string: "https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Mas59HT/hls/manifest.m3u8") else {
+      return
+    }
     let request = RequestsBuilder()
-      .getPlayerData(path: "https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Mas59HT/hls/manifest.m3u8")
+      .getPlayerData(path: path)
     let session = RequestsBuilder().buildUrlSession()
     MockedTasksExecutor.execute(session: session, request: request) { data, error in
       XCTAssertEqual(returnData, data)
@@ -19,8 +22,11 @@ final class ApiVideoPlayerTests: XCTestCase {
   }
 
   func testErrorTask() throws {
+    guard let path = URL(string: "https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Ma/hls/manifest.m3u8") else {
+      return
+    }
     let request = RequestsBuilder()
-      .getPlayerData(path: "https://cdn.api.video/vod/vi18RL1kvZlDRdzk7Ma/hls/manifest.m3u8")
+      .getPlayerData(path: path)
     let session = RequestsBuilder().buildUrlSession()
 
     MockedTasksExecutor.executefailed(session: session, request: request) { _, error in
