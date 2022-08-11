@@ -1,7 +1,9 @@
 import Foundation
 
-public final class ApiVideoPlayerResources {
-  public static let resourceBundle: Bundle = {
+// add to avoid warning with swiftlint
+@objc
+final class ApiVideoPlayerResources: NSObject {
+  static let resourceBundle: Bundle = {
     let candidates = [
       // Bundle should be present here when the package is linked into an App.
       Bundle.main.resourceURL,

@@ -2,6 +2,8 @@ disabled_rules:
   - opening_brace
   - todo
   - notification_center_detachment
+  - block_based_kvo
+  - identifier_name
 
 opt_in_rules:
   - anyobject_protocol

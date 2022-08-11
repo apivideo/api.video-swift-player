@@ -44,7 +44,7 @@ public class ApiVideoPlayerController: NSObject {
     }
   }
 
-    private func getVideoUrl(videoType: VideoType, videoId: String, privateToken: String? = nil) -> String {
+  private func getVideoUrl(videoType: VideoType, videoId: String, privateToken: String? = nil) -> String {
     var baseUrl = ""
     if videoType == .vod {
       baseUrl = "https://cdn.api.video/vod/"
@@ -367,6 +367,93 @@ public class ApiVideoPlayerController: NSObject {
     }
   }
 
+  private func doStatus() {
+    if self.avPlayer.currentItem?.status == .failed {
+      guard let url = (avPlayer.currentItem?.asset as? AVURLAsset)?.url else {
+        return
+      }
+      if url.absoluteString.contains(".mp4") {
+        print("Error with video mp4")
+        self.notifyError(error: PlayerError.mp4Error("Tryed mp4 but failed"))
+        return
+      } else {
+        print("Error with video url, trying with mp4")
+        self.retrySetUpPlayerUrlWithMp4()
+      }
+    }
+  }
+
+  private func doPauseAction() {
+    if self.currentTime.second >= self.duration.second {
+      return
+    }
+
+    if self.isSeeking {
+      return
+    }
+
+    self.analytics?.pause { result in
+      switch result {
+      case .success: break
+
+      case let .failure(error):
+        print("analytics error on pause event: \(error)")
+      }
+    }
+    for events in self.events {
+      events.didPause?()
+    }
+  }
+
+  private func doPlayAction() {
+    if self.isSeeking {
+      self.isSeeking = false
+      return
+    }
+    if self.isFirstPlay {
+      self.isFirstPlay = false
+      self.analytics?.play { result in
+        switch result {
+        case .success: return
+
+        case let .failure(error):
+          print("analytics error on play event: \(error)")
+        }
+      }
+    } else {
+      self.analytics?.resume { result in
+        switch result {
+        case .success: return
+
+        case let .failure(error):
+          print("analytics error on resume event: \(error)")
+        }
+      }
+    }
+    for events in self.events {
+      events.didPlay?()
+    }
+  }
+
+  private func doTimeControlStatus() {
+    let status = self.avPlayer.timeControlStatus
+    switch status {
+    case .paused:
+      // Paused mode
+      self.doPauseAction()
+
+    case .waitingToPlayAtSpecifiedRate:
+      // Resumed
+      break
+
+    case .playing:
+      // Video Ended
+      self.doPlayAction()
+    @unknown default:
+      break
+    }
+  }
+
   override public func observeValue(
     forKeyPath keyPath: String?,
     of _: Any?,
@@ -374,82 +461,10 @@ public class ApiVideoPlayerController: NSObject {
     context _: UnsafeMutableRawPointer?
   ) {
     if keyPath == "status" {
-      if self.avPlayer.currentItem?.status == .failed {
-        guard let url = (avPlayer.currentItem?.asset as? AVURLAsset)?.url else {
-          return
-        }
-        if url.absoluteString.contains(".mp4") {
-          print("Error with video mp4")
-          self.notifyError(error: PlayerError.mp4Error("Tryed mp4 but failed"))
-          return
-        } else {
-          print("Error with video url, trying with mp4")
-          self.retrySetUpPlayerUrlWithMp4()
-        }
-      }
+      self.doStatus()
     }
     if keyPath == "timeControlStatus" {
-      let status = self.avPlayer.timeControlStatus
-      switch status {
-      case .paused:
-        // Paused mode
-        if self.currentTime.second >= self.duration.second {
-          break
-        }
-
-        if self.isSeeking {
-          break
-        }
-
-        self.analytics?.pause { result in
-          switch result {
-          case .success: break
-
-          case let .failure(error):
-            print("analytics error on pause event: \(error)")
-          }
-        }
-        for events in self.events {
-          events.didPause?()
-        }
-
-      case .waitingToPlayAtSpecifiedRate:
-        // Resumed
-        break
-
-      case .playing:
-        // Video Ended
-        if self.isSeeking {
-          self.isSeeking = false
-          break
-        }
-
-        if self.isFirstPlay {
-          self.isFirstPlay = false
-          self.analytics?.play { result in
-            switch result {
-            case .success: break
-
-            case let .failure(error):
-              print("analytics error on play event: \(error)")
-            }
-          }
-        } else {
-          self.analytics?.resume { result in
-            switch result {
-            case .success: break
-
-            case let .failure(error):
-              print("analytics error on resume event: \(error)")
-            }
-          }
-        }
-        for events in self.events {
-          events.didPlay?()
-        }
-      @unknown default:
-        break
-      }
+      self.doTimeControlStatus()
     }
   }
 
