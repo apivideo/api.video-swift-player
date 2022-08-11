@@ -14,6 +14,7 @@ public class ApiVideoPlayerController: NSObject {
     private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
     private var isFirstPlay = true
+    private var isSeeking = false
 
     #if !os(macOS)
         convenience init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil, playerLayer: AVPlayerLayer) {
@@ -180,11 +181,14 @@ public class ApiVideoPlayerController: NSObject {
         avPlayer.pause()
     }
 
+    public func pauseBeforeSeek() {
+        isSeeking = true
+        avPlayer.pause()
+    }
+
     public func seek(offset: CMTime) {
         seek(to: currentTime + offset)
     }
-    
-    public var isSeekSlider = false
 
     public func seek(to: CMTime) {
         let from = currentTime
@@ -352,9 +356,11 @@ public class ApiVideoPlayerController: NSObject {
                     if(currentTime.second >= duration.second){
                         break
                     }
-                    if isSeekSlider{
+
+                    if isSeeking {
                         break
                     }
+
                     analytics?.pause { result in
                         switch result {
                         case .success: break
@@ -370,10 +376,11 @@ public class ApiVideoPlayerController: NSObject {
                     break
                 case .playing:
                     // Video Ended
-                    if isSeekSlider {
-                        isSeekSlider = false
+                    if isSeeking {
+                        isSeeking = false
                         break
                     }
+
                     if isFirstPlay {
                         isFirstPlay = false
                         analytics?.play { result in
