@@ -137,7 +137,7 @@ On the first run, you will have to set your video Id:
 
 # Documentation
 
-* [API documentation](https://apivideo.github.io/api.video-swift-player/)
+* [API documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
 * [api.video documentation](https://docs.api.video)
 
 # Dependencies
