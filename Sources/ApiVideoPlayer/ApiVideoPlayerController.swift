@@ -15,6 +15,7 @@ public class ApiVideoPlayerController: NSObject {
   private var timeObserver: Any?
   private var isFirstPlay = true
   private var isSeeking = false
+  private var didAddTimeControlStatusObserver = false
 
   #if !os(macOS)
   convenience init(
@@ -117,6 +118,7 @@ public class ApiVideoPlayerController: NSObject {
         options: NSKeyValueObservingOptions.new,
         context: nil
       )
+      didAddTimeControlStatusObserver = true
       item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
       NotificationCenter.default.addObserver(
         self,
@@ -469,7 +471,9 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   deinit {
-    avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
+    if(didAddTimeControlStatusObserver){
+      avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
+    }
     avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
     NotificationCenter.default.removeObserver(self)
   }
