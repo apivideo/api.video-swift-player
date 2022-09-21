@@ -376,9 +376,7 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
       case .began:
         // handle drag began
         if self.playerController.isPlaying() {
-          /**
-           * Avoid to trigger callbacks and analytics when the user uses the seek slider
-           */
+          // Avoid to trigger callbacks and analytics when the user uses the seek slider
           self.playerController.pauseBeforeSeek()
           self.sliderDidPauseVideo = true
         }
