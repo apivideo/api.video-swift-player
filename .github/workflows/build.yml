@@ -26,6 +26,9 @@ jobs:
           echo Using default scheme: $default
       - name: Verify cocoapods
         run: pod lib lint --allow-warnings
+      - name: Execute swiftlint
+        run: |
+          swiftlint
       - name: Build Examples
         env:
           scheme: ${{ 'default' }}
