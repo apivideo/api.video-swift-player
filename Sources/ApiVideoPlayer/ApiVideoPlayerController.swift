@@ -29,7 +29,7 @@ public class ApiVideoPlayerController: NSObject {
   }
   #endif
 
-  init(videoId: String, videoType: VideoType, events: PlayerEvents?) {
+  public init(videoId: String, videoType: VideoType, events: PlayerEvents?, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
     self.videoId = videoId
     self.videoType = videoType
 
@@ -386,7 +386,7 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   private func doPauseAction() {
-    if self.currentTime.second >= self.duration.second {
+    if round(currentTime.seconds) >= round(duration.seconds) {
       return
     }
 

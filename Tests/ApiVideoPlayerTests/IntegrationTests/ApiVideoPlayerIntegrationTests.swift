@@ -10,75 +10,60 @@ final class ApiVideoPlayerIntegrationTests: XCTestCase {
     private let invalidVideoId = "unknownVideoId"
 
     /// Assert that a valid video id is correctly played
-    /// Check that the PlayerEvents are correctly called: didPrepare, didPlay, didEnd,...
-    func testValidVideoId() throws {
+    /// Check that the PlayerEvents are correctly called: didPrepare, didPlay
+    func testValidVideoIdPlay() throws {
         let completedExpectationPrepare = expectation(description: "Completed Prepare")
         let completedExpectationPlay = expectation(description: "Completed Play")
-        let completedExpectationPause = expectation(description: "Completed Pause")
-        let completedExpectationSeek = expectation(description: "Completed Seek")
-        let completedExpectationEnd = expectation(description: "Completed End")
-        var didPrepare = false
         var didPlay = false
-        var didPause = false
-        var didSeek = false
-        var didEnd = false
         let events = PlayerEvents(
             didPrepare: {() in
                 print("ready")
-                didPrepare = true
                 completedExpectationPrepare.fulfill()
-            },
-            didPause: {() in
-                print("paused test")
-                if(!didPause){
-                    didPause = true
-                    completedExpectationPause.fulfill()
-                }
             },
             didPlay: {() in
                 print("play")
-                if(!didPlay){
-                    didPlay = true
-                    completedExpectationPlay.fulfill()
-                }
-            },
-            didReplay: {() in
-                print("video replayed")
-            },
-            didLoop: {() in
-                print("video replayed from loop")
-            },
-            didSetVolume: {(volume) in
-                print("volume set to : \(volume)")
-            },
-            didSeek: {(from, to)in
-                print("seek from : \(from), to: \(to)")
-                didSeek = true
-                completedExpectationSeek.fulfill()
-            },
-            didEnd: {() in
-                print("Ended")
-                didEnd = true
-                completedExpectationEnd.fulfill()
+                didPlay = true
+                completedExpectationPlay.fulfill()
             }
         )
         let playerView = ApiVideoPlayerView(frame: .zero, videoId: validVideoId, videoType: VideoType.vod /* only .vod is supported */, events: events)
         wait(for: [completedExpectationPrepare], timeout: 10)
+        print(playerView.duration.seconds)
+        playerView.play()
+        wait(for: [completedExpectationPlay], timeout: 3)
+        XCTAssertTrue(didPlay, "The video must be played")
+    }
+    
+    /// Assert that a valid video id is correctly played
+    /// Check that the PlayerEvents are correctly called: didPrepare, didPlay
+    func testValidVideoIdPause() throws {
+        let completedExpectationPrepare = expectation(description: "Completed Prepare")
+        let completedExpectationPlay = expectation(description: "Completed Play")
+        let completedExpectationPause = expectation(description: "Completed Pause")
+        var didPause = false
+        let events = PlayerEvents(
+            didPrepare: {() in
+                print("ready")
+                completedExpectationPrepare.fulfill()
+            },
+            didPause: {() in
+                print("paused test")
+                didPause = true
+                completedExpectationPause.fulfill()
+            },
+            didPlay: {() in
+                print("play")
+                completedExpectationPlay.fulfill()
+            }
+        )
+        let playerView = ApiVideoPlayerView(frame: .zero, videoId: validVideoId, videoType: VideoType.vod /* only .vod is supported */, events: events)
+        wait(for: [completedExpectationPrepare], timeout: 10)
+        print(playerView.duration.seconds)
         playerView.play()
         wait(for: [completedExpectationPlay], timeout: 3)
         playerView.pause()
         wait(for: [completedExpectationPause], timeout: 3)
-        playerView.seek(to: CMTime(seconds: 59.0, preferredTimescale: 100))
-        wait(for: [completedExpectationSeek], timeout: 3)
-        playerView.play()
-        wait(for: [completedExpectationEnd], timeout: 9)
-        
-        XCTAssertTrue(didEnd)
-        XCTAssertTrue(didSeek)
-        XCTAssertTrue(didPause)
-        XCTAssertTrue(didPlay)
-        XCTAssertTrue(didPrepare)
-
+        XCTAssertTrue(didPause, "The video must be paused")
     }
 
     /// Assert that the duration of the video is the expected duration
@@ -93,7 +78,7 @@ final class ApiVideoPlayerIntegrationTests: XCTestCase {
             didError: {(error) in
                 print("error : \(error)")
                 completedExpectation.fulfill()
-                XCTFail("should work")
+                XCTFail("\(error)")
             }
         )
         var duration: Double = 0
@@ -115,7 +100,7 @@ final class ApiVideoPlayerIntegrationTests: XCTestCase {
             didError: {(error) in
                 print("error : \(error)")
                 completedExpectation.fulfill()
-                XCTAssertNotNil(error, "error should not be nil")
+                XCTAssertNotNil(error, "\(error)")
             }
         )
         let playerView = ApiVideoPlayerView(frame: .zero, videoId: invalidVideoId, videoType: VideoType.vod /* only .vod is supported */, events: events)
