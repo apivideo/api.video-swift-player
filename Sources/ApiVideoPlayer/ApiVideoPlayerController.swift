@@ -29,7 +29,12 @@ public class ApiVideoPlayerController: NSObject {
   }
   #endif
 
-  public init(videoId: String, videoType: VideoType, events: PlayerEvents?, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
+  public init(
+    videoId: String,
+    videoType: VideoType,
+    events: PlayerEvents?,
+    taskExecutor _: TasksExecutorProtocol.Type = TasksExecutor.self
+  ) {
     self.videoId = videoId
     self.videoType = videoType
 
@@ -118,7 +123,7 @@ public class ApiVideoPlayerController: NSObject {
         options: NSKeyValueObservingOptions.new,
         context: nil
       )
-      didAddTimeControlStatusObserver = true
+      self.didAddTimeControlStatusObserver = true
       item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
       NotificationCenter.default.addObserver(
         self,
@@ -386,7 +391,7 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   private func doPauseAction() {
-    if round(currentTime.seconds) >= round(duration.seconds) {
+    if round(self.currentTime.seconds) >= round(self.duration.seconds) {
       return
     }
 
@@ -471,7 +476,7 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   deinit {
-    if(didAddTimeControlStatusObserver){
+    if didAddTimeControlStatusObserver {
       avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
     }
     avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)

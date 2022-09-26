@@ -32,8 +32,8 @@ let package = Package(
       dependencies: ["ApiVideoPlayer"],
       path: "Tests/ApiVideoPlayerTests",
       resources: [
-          .copy("Resources/responseSuccess.json"),
-          .copy("Resources/responseError.json")
+        .copy("Resources/responseSuccess.json"),
+        .copy("Resources/responseError.json")
       ]
     )
   ]
