@@ -61,10 +61,7 @@ public class ApiVideoPlayerController: NSObject {
 
     if let privateToken = privateToken {
       url = baseUrl + "\(videoId)/token/\(privateToken)/player.json"
-    } else {
-      url = baseUrl + "\(videoId)/player.json"
-    }
-
+    } else { url = baseUrl + "\(videoId)/player.json" }
     return url
   }
 
@@ -169,9 +166,7 @@ public class ApiVideoPlayerController: NSObject {
 
   private func setUpAnalytics(url: String) {
     do {
-      let option = try Options(
-        mediaUrl: url, metadata: []
-      )
+      let option = try Options(mediaUrl: url, metadata: [])
       self.analytics = PlayerAnalytics(options: option)
     } catch {
       print("error with the url")
@@ -191,9 +186,7 @@ public class ApiVideoPlayerController: NSObject {
       .seek(from: Float(CMTimeGetSeconds(self.currentTime)), to: Float(CMTimeGetSeconds(CMTime.zero))) { result in
         switch result {
         case .success: break
-
-        case let .failure(error):
-          print("analytics error on seek event: \(error)")
+        case let .failure(error): print("analytics error on seek event: \(error)")
         }
       }
     self.avPlayer.seek(to: CMTime.zero)
@@ -206,9 +199,7 @@ public class ApiVideoPlayerController: NSObject {
         print("analytics error on resume event: \(error)")
       }
     }
-    for events in self.events {
-      events.didReplay?()
-    }
+    for events in self.events { events.didReplay?() }
   }
 
   public func pause() {
@@ -235,8 +226,7 @@ public class ApiVideoPlayerController: NSObject {
       switch result {
       case .success: break
 
-      case let .failure(error):
-        print("analytics error seek: \(error)")
+      case let .failure(error): print("analytics error seek: \(error)")
       }
     }
 
@@ -278,9 +268,7 @@ public class ApiVideoPlayerController: NSObject {
   public var duration: CMTime {
     if let duration = avPlayer.currentItem?.asset.duration {
       return duration
-    } else {
-      return CMTime(seconds: 0.0, preferredTimescale: 1_000)
-    }
+    } else { return CMTime(seconds: 0.0, preferredTimescale: 1_000) }
   }
 
   public var currentTime: CMTime {
