@@ -70,7 +70,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
 
   /// Assert didError is called if the server returns an error
   func testWithServerError() throws {
-    MockedTasksExecutor.error = MockServerError.serverError("error 500") // TODO: error
+    MockedTasksExecutor.error = MockServerError.serverError("error 500")
     let events = PlayerEvents(
       didPrepare: { () in
         print("didPrepare")

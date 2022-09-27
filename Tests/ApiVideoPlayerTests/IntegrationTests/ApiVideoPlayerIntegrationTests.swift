@@ -123,7 +123,6 @@ final class ApiVideoPlayerIntegrationTests: XCTestCase {
       videoType: VideoType.vod /* only .vod is supported */,
       events: events
     )
-    // playerView.play()
     waitForExpectations(timeout: 10, handler: nil)
   }
 }
