@@ -67,7 +67,6 @@ final class ApiVideoPlayerIntegrationTests: XCTestCase {
       events: events
     )
     wait(for: [completedExpectationPrepare], timeout: 10)
-    print(playerView.duration.seconds)
     playerView.play()
     wait(for: [completedExpectationPlay], timeout: 3)
     playerView.pause()
