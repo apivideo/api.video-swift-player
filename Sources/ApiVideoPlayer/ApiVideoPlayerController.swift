@@ -38,6 +38,12 @@ public class ApiVideoPlayerController: NSObject {
     self.videoType = videoType
 
     super.init()
+      self.avPlayer.addObserver(
+        self,
+        forKeyPath: "timeControlStatus",
+        options: NSKeyValueObservingOptions.new,
+        context: nil
+      )
     if let events = events {
       self.addEvents(events: events)
     }
@@ -113,12 +119,6 @@ public class ApiVideoPlayerController: NSObject {
       let item = AVPlayerItem(url: url)
       self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
       self.avPlayer.replaceCurrentItem(with: item)
-      self.avPlayer.addObserver(
-        self,
-        forKeyPath: "timeControlStatus",
-        options: NSKeyValueObservingOptions.new,
-        context: nil
-      )
       item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
       NotificationCenter.default.addObserver(
         self,
