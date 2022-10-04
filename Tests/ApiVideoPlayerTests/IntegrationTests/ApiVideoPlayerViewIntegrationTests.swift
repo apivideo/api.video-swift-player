@@ -4,7 +4,7 @@ import XCTest
 
 /// Integration tests with connection to api.video
 @available(iOS 14.0, *)
-final class ApiVideoPlayerIntegrationTests: XCTestCase {
+final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
   private let validVideoId = "vi2G6Qr8ZVE67dWLNymk7qbc"
   private let invalidVideoId = "unknownVideoId"
 
@@ -32,7 +32,6 @@ final class ApiVideoPlayerIntegrationTests: XCTestCase {
       events: events
     )
     wait(for: [completedExpectationPrepare], timeout: 10)
-    print(playerView.duration.seconds)
     playerView.play()
     wait(for: [completedExpectationPlay], timeout: 3)
     XCTAssertTrue(didPlay, "The video must be played")
