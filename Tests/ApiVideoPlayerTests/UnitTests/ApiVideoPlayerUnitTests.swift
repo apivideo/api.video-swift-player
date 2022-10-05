@@ -14,7 +14,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         XCTAssertTrue(true)
       },
       didError: { error in
-        print("error \(error)")
+        print("error\(error)")
         XCTFail("Error should success")
       }
     )
@@ -45,7 +45,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         XCTFail("Should get an error")
       },
       didError: { error in
-        print("error toto \(error)")
+        print("error \(error)")
         XCTAssertTrue(true)
       }
     )
@@ -77,7 +77,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         XCTFail("Should get an error")
       },
       didError: { error in
-        print("error toto \(error)")
+        print("error \(error)")
         XCTAssertTrue(true)
       }
     )
