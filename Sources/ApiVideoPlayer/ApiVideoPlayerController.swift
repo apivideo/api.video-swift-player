@@ -38,12 +38,12 @@ public class ApiVideoPlayerController: NSObject {
     self.videoType = videoType
 
     super.init()
-      self.avPlayer.addObserver(
-        self,
-        forKeyPath: "timeControlStatus",
-        options: NSKeyValueObservingOptions.new,
-        context: nil
-      )
+    self.avPlayer.addObserver(
+      self,
+      forKeyPath: "timeControlStatus",
+      options: [NSKeyValueObservingOptions.new, NSKeyValueObservingOptions.old],
+      context: nil
+    )
     if let events = events {
       self.addEvents(events: events)
     }
@@ -450,14 +450,25 @@ public class ApiVideoPlayerController: NSObject {
   override public func observeValue(
     forKeyPath keyPath: String?,
     of _: Any?,
-    change _: [NSKeyValueChangeKey: Any]?,
+    change: [NSKeyValueChangeKey: Any]?,
     context _: UnsafeMutableRawPointer?
   ) {
     if keyPath == "status" {
       self.doStatus()
     }
     if keyPath == "timeControlStatus" {
-      self.doTimeControlStatus()
+      guard let change = change else {
+        return
+      }
+      guard let newValue = change[.newKey] as? Int else {
+        return
+      }
+      guard let oldValue = change[.oldKey] as? Int else {
+        return
+      }
+      if oldValue != newValue {
+        self.doTimeControlStatus()
+      }
     }
   }
 

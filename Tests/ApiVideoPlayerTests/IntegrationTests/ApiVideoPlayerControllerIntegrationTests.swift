@@ -50,11 +50,32 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     wait(for: [completedExpectationPlay], timeout: 2)
     controller.pause()
     wait(for: [completedExpectationPause], timeout: 2)
+  }
 
+  func testReturnOneEventOnMultiplePause() throws {
+    let completedExpectationPrepare = expectation(description: "Completed Prepare")
+    let expectationPause = self.expectation(description: "pause is called 1 times")
+    expectationPause.expectedFulfillmentCount = 1
+    let events = PlayerEvents(
+      didPrepare: { () in
+        print("ready")
+        completedExpectationPrepare.fulfill()
+      },
+      didPause: { () in
+        print("paused")
+        expectationPause.fulfill()
+      }
+    )
+    let controller = ApiVideoPlayerController(videoId: validVideoId, videoType: .vod, events: events)
+    wait(for: [completedExpectationPrepare], timeout: 10)
+    controller.play()
+    controller.pause()
+    controller.pause()
+    waitForExpectations(timeout: 10, handler: nil)
   }
 
   func testDuration() throws {
-    let expectation = self.expectation(description: "delegate is called 3 times")
+    let expectation = self.expectation(description: "delegate is called 1 times")
     expectation.expectedFulfillmentCount = 1
     let events = PlayerEvents(
       didPrepare: { () in
