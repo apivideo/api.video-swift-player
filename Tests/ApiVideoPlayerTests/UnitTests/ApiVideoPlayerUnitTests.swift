@@ -8,14 +8,17 @@ class ApiVideoPlayerUnitTests: XCTestCase {
 
   /// Assert that didError is not called if the JSON is valid
   func testWithValidPlayerManifestJson() throws {
+    let prepareExpectation = self.expectation(description: "didPrepare is called")
+    let errorExpectation = self.expectation(description: "didError is called")
+    errorExpectation.isInverted = true
     let events = PlayerEvents(
       didPrepare: { () in
         print("didPrepare")
-        XCTAssertTrue(true)
+        prepareExpectation.fulfill()
       },
       didError: { error in
         print("error\(error)")
-        XCTFail("Error should success")
+        errorExpectation.fulfill()
       }
     )
 
@@ -35,18 +38,22 @@ class ApiVideoPlayerUnitTests: XCTestCase {
       events: events,
       taskExecutor: MockedTasksExecutor.self
     )
+    waitForExpectations(timeout: 10, handler: nil)
   }
 
   /// Assert didError is called if the JSON is invalid (syntax error or missing values)
   func testWithInvalidPlayerManifestJson() throws {
+    let prepareExpectation = self.expectation(description: "didPrepare is called")
+    prepareExpectation.isInverted = true
+    let errorExpectation = self.expectation(description: "didError is called")
     let events = PlayerEvents(
       didPrepare: { () in
         print("didPrepare")
-        XCTFail("Should get an error")
+        prepareExpectation.fulfill()
       },
       didError: { error in
         print("error \(error)")
-        XCTAssertTrue(true)
+        errorExpectation.fulfill()
       }
     )
     guard let resourceUrl = Bundle.module.url(forResource: "responseError", withExtension: "json") else {
@@ -66,19 +73,23 @@ class ApiVideoPlayerUnitTests: XCTestCase {
       events: events,
       taskExecutor: MockedTasksExecutor.self
     )
+    waitForExpectations(timeout: 10, handler: nil)
   }
 
   /// Assert didError is called if the server returns an error
   func testWithServerError() throws {
+    let prepareExpectation = self.expectation(description: "didPrepare is called")
+    prepareExpectation.isInverted = true
+    let errorExpectation = self.expectation(description: "didError is called")
     MockedTasksExecutor.error = MockServerError.serverError("error 500")
     let events = PlayerEvents(
       didPrepare: { () in
         print("didPrepare")
-        XCTFail("Should get an error")
+        prepareExpectation.fulfill()
       },
       didError: { error in
         print("error \(error)")
-        XCTAssertTrue(true)
+        errorExpectation.fulfill()
       }
     )
     let _ = ApiVideoPlayerController(
@@ -87,6 +98,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
       events: events,
       taskExecutor: MockedTasksExecutor.self
     )
+    waitForExpectations(timeout: 10, handler: nil)
   }
 }
 

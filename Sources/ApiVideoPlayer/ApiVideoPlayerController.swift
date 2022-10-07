@@ -78,7 +78,7 @@ public class ApiVideoPlayerController: NSObject {
     }
     let request = RequestsBuilder().getPlayerData(path: path)
     let session = RequestsBuilder().buildUrlSession()
-    taskExecutor.execute(session: session, request: request) { data, error in
+    self.taskExecutor.execute(session: session, request: request) { data, error in
       if let data = data {
         do {
           self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
