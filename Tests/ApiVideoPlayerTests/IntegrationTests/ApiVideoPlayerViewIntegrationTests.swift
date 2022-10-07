@@ -13,7 +13,8 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
   func testValidVideoIdPlay() throws {
     let completedExpectationPrepare = expectation(description: "Completed Prepare")
     let completedExpectationPlay = expectation(description: "Completed Play")
-    var didPlay = false
+    let errorExpectation = expectation(description: "error is called")
+    errorExpectation.isInverted = true
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
@@ -21,8 +22,11 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
       },
       didPlay: { () in
         print("play")
-        didPlay = true
         completedExpectationPlay.fulfill()
+      },
+      didError: { error in
+        print("error\(error)")
+        errorExpectation.fulfill()
       }
     )
     let playerView = ApiVideoPlayerView(
@@ -31,24 +35,23 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
       videoType: VideoType.vod /* only .vod is supported */,
       events: events
     )
-    wait(for: [completedExpectationPrepare], timeout: 10)
     playerView.play()
-    wait(for: [completedExpectationPlay], timeout: 3)
-    XCTAssertTrue(didPlay, "The video must be played")
+    waitForExpectations(timeout: 15, handler: nil)
   }
 
   /// Assert that didError is triggered when an invalid video id is passed
   func testInvalidVideoId() throws {
-    let completedExpectation = expectation(description: "Completed")
+    let prepareExpectation = expectation(description: "prepare is called")
+    prepareExpectation.isInverted = true
+    let errorExpectation = expectation(description: "error is called")
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
-        XCTFail("Should return didError")
+        prepareExpectation.fulfill()
       },
       didError: { error in
         print("error : \(error)")
-        completedExpectation.fulfill()
-        XCTAssertNotNil(error, "\(error)")
+        errorExpectation.fulfill()
       }
     )
     let playerView = ApiVideoPlayerView(

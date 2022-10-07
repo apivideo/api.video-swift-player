@@ -15,7 +15,7 @@ public class ApiVideoPlayerController: NSObject {
   private var timeObserver: Any?
   private var isFirstPlay = true
   private var isSeeking = false
-  private var taskExecutor: TasksExecutorProtocol.Type
+  private let taskExecutor: TasksExecutorProtocol.Type
   #if !os(macOS)
   convenience init(
     videoId: String,

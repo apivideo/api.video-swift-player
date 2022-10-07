@@ -8,40 +8,53 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
   private let invalidVideoId = "unknownVideoId"
 
   func testValidVideoIdPlay() throws {
-    let expectation = self.expectation(description: "delegate is called 2 times")
-    expectation.expectedFulfillmentCount = 2
-
+    let completedExpectationPrepare = expectation(description: "Completed Prepare")
+    let completedExpectationPlay = expectation(description: "Completed Play")
+    let errorExpectation = expectation(description: "error is called")
+    errorExpectation.isInverted = true
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
-        expectation.fulfill()
+        completedExpectationPrepare.fulfill()
       },
       didPlay: { () in
         print("play")
-        expectation.fulfill()
+        completedExpectationPlay.fulfill()
+      },
+      didError: { error in
+        print("error\(error)")
+        errorExpectation.fulfill()
       }
     )
     let controller = ApiVideoPlayerController(videoId: validVideoId, videoType: .vod, events: events)
+    wait(for: [completedExpectationPrepare], timeout: 10)
     controller.play()
-    waitForExpectations(timeout: 10, handler: nil)
+    wait(for: [completedExpectationPlay], timeout: 2)
+    wait(for: [errorExpectation], timeout: 5)
   }
 
   func testValidVideoIdPause() throws {
     let completedExpectationPrepare = expectation(description: "Completed Prepare")
     let completedExpectationPlay = expectation(description: "Completed Play")
     let completedExpectationPause = expectation(description: "Completed Pause")
+    let errorExpectation = expectation(description: "error is called")
+    errorExpectation.isInverted = true
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
         completedExpectationPrepare.fulfill()
       },
       didPause: { () in
-        print("paused test")
+        print("paused")
         completedExpectationPause.fulfill()
       },
       didPlay: { () in
         print("play")
         completedExpectationPlay.fulfill()
+      },
+      didError: { error in
+        print("error\(error)")
+        errorExpectation.fulfill()
       }
     )
     let controller = ApiVideoPlayerController(videoId: validVideoId, videoType: .vod, events: events)
@@ -50,12 +63,14 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     wait(for: [completedExpectationPlay], timeout: 2)
     controller.pause()
     wait(for: [completedExpectationPause], timeout: 2)
+    wait(for: [errorExpectation], timeout: 5)
   }
 
   func testReturnOneEventOnMultiplePause() throws {
     let completedExpectationPrepare = expectation(description: "Completed Prepare")
-    let expectationPause = self.expectation(description: "pause is called 1 times")
-    expectationPause.expectedFulfillmentCount = 1
+    let expectationPause = self.expectation(description: "pause is called")
+    let errorExpectation = expectation(description: "error is called")
+    errorExpectation.isInverted = true
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
@@ -64,6 +79,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
       didPause: { () in
         print("paused")
         expectationPause.fulfill()
+      },
+      didError: { error in
+        print("error\(error)")
+        errorExpectation.fulfill()
       }
     )
     let controller = ApiVideoPlayerController(videoId: validVideoId, videoType: .vod, events: events)
@@ -75,37 +94,36 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
   }
 
   func testDuration() throws {
-    let expectation = self.expectation(description: "delegate is called 1 times")
-    expectation.expectedFulfillmentCount = 1
+    let prepareExpectation = self.expectation(description: "prepare is called")
+    let errorExpectation = self.expectation(description: "error is called")
+    errorExpectation.isInverted = true
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
-        expectation.fulfill()
+        prepareExpectation.fulfill()
       },
       didError: { error in
         print("error : \(error)")
-        expectation.fulfill()
-        XCTFail("\(error)")
+        errorExpectation.fulfill()
       }
     )
-    var duration: Double = 0
     let controller = ApiVideoPlayerController(videoId: validVideoId, videoType: .vod, events: events)
     waitForExpectations(timeout: 10, handler: nil)
-    duration = controller.duration.seconds
-    XCTAssertEqual(duration, 60.2)
+    XCTAssertEqual(controller.duration.seconds, 60.2)
   }
 
   func testInvalidVideoId() throws {
-    let completedExpectation = expectation(description: "Completed")
+    let prepareExpectation = expectation(description: "prepare is called")
+    prepareExpectation.isInverted = true
+    let errorExpectation = expectation(description: "error is called")
     let events = PlayerEvents(
       didPrepare: { () in
         print("ready")
-        XCTFail("Should return didError")
+        prepareExpectation.fulfill()
       },
       didError: { error in
         print("error : \(error)")
-        completedExpectation.fulfill()
-        XCTAssertNotNil(error, "\(error)")
+        errorExpectation.fulfill()
       }
     )
     _ = ApiVideoPlayerController(videoId: self.invalidVideoId, videoType: .vod, events: events)

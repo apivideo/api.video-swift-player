@@ -6,6 +6,19 @@ import XCTest
 @available(iOS 14.0, *)
 class ApiVideoPlayerUnitTests: XCTestCase {
 
+  func generateRessource(ressource: String) {
+    guard let resourceUrl = Bundle.module.url(forResource: ressource, withExtension: "json") else {
+      XCTFail("Error can't find the json file")
+      return
+    }
+    do {
+      let data = try Data(contentsOf: resourceUrl, options: .mappedIfSafe)
+      MockedTasksExecutor.data = data
+    } catch {
+      XCTFail("Error can't get data from json")
+    }
+  }
+
   /// Assert that didError is not called if the JSON is valid
   func testWithValidPlayerManifestJson() throws {
     let prepareExpectation = self.expectation(description: "didPrepare is called")
@@ -21,24 +34,15 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         errorExpectation.fulfill()
       }
     )
+    self.generateRessource(ressource: "responseSuccess")
 
-    guard let resourceUrl = Bundle.module.url(forResource: "responseSuccess", withExtension: "json") else {
-      XCTFail("Error can't find the json file")
-      return
-    }
-    do {
-      let data = try Data(contentsOf: resourceUrl, options: .mappedIfSafe)
-      MockedTasksExecutor.data = data
-    } catch {
-      XCTFail("Error can't get data from json")
-    }
     _ = ApiVideoPlayerController(
       videoId: "vi18RL1kvZlDRdzk7Mas59HT",
       videoType: .vod,
       events: events,
       taskExecutor: MockedTasksExecutor.self
     )
-    waitForExpectations(timeout: 10, handler: nil)
+    waitForExpectations(timeout: 5, handler: nil)
   }
 
   /// Assert didError is called if the JSON is invalid (syntax error or missing values)
@@ -56,16 +60,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         errorExpectation.fulfill()
       }
     )
-    guard let resourceUrl = Bundle.module.url(forResource: "responseError", withExtension: "json") else {
-      XCTFail("Error can't find the json file")
-      return
-    }
-    do {
-      let data = try Data(contentsOf: resourceUrl, options: .mappedIfSafe)
-      MockedTasksExecutor.data = data
-    } catch {
-      XCTFail("Error can't get data from json")
-    }
+    self.generateRessource(ressource: "responseError")
 
     _ = ApiVideoPlayerController(
       videoId: "vi18RL1kvZlDRdzk7Mas59HT",
@@ -73,7 +68,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
       events: events,
       taskExecutor: MockedTasksExecutor.self
     )
-    waitForExpectations(timeout: 10, handler: nil)
+    waitForExpectations(timeout: 5, handler: nil)
   }
 
   /// Assert didError is called if the server returns an error
@@ -98,7 +93,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
       events: events,
       taskExecutor: MockedTasksExecutor.self
     )
-    waitForExpectations(timeout: 10, handler: nil)
+    waitForExpectations(timeout: 5, handler: nil)
   }
 }
 
