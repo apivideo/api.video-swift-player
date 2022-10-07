@@ -166,9 +166,7 @@ public class ApiVideoPlayerController: NSObject {
     do {
       let option = try Options(mediaUrl: url, metadata: [])
       self.analytics = PlayerAnalytics(options: option)
-    } catch {
-      print("error with the url")
-    }
+    } catch { print("error with the url") }
   }
 
   public func isPlaying() -> Bool {
@@ -192,9 +190,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.resume { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error on resume event: \(error)")
+      case let .failure(error): print("analytics error on resume event: \(error)")
       }
     }
     for events in self.events { events.didReplay?() }
@@ -223,7 +219,6 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.seek(from: from, to: calculatedTo) { result in
       switch result {
       case .success: break
-
       case let .failure(error): print("analytics error seek: \(error)")
       }
     }
@@ -326,9 +321,7 @@ public class ApiVideoPlayerController: NSObject {
   public func goToFullScreen(viewController: UIViewController) {
     let playerViewController = AVPlayerViewController()
     playerViewController.player = self.avPlayer
-    viewController.present(playerViewController, animated: true) {
-      self.play()
-    }
+    viewController.present(playerViewController, animated: true) { self.play() }
   }
   #endif
 
@@ -350,9 +343,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.end { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error on ended event: \(error)")
+      case let .failure(error): print("analytics error on ended event: \(error)")
       }
     }
     for events in self.events {
@@ -388,9 +379,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.pause { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error on pause event: \(error)")
+      case let .failure(error): print("analytics error on pause event: \(error)")
       }
     }
     for events in self.events {
@@ -408,18 +397,14 @@ public class ApiVideoPlayerController: NSObject {
       self.analytics?.play { result in
         switch result {
         case .success: return
-
-        case let .failure(error):
-          print("analytics error on play event: \(error)")
+        case let .failure(error): print("analytics error on play event: \(error)")
         }
       }
     } else {
       self.analytics?.resume { result in
         switch result {
         case .success: return
-
-        case let .failure(error):
-          print("analytics error on resume event: \(error)")
+        case let .failure(error): print("analytics error on resume event: \(error)")
         }
       }
     }
@@ -457,15 +442,9 @@ public class ApiVideoPlayerController: NSObject {
       self.doStatus()
     }
     if keyPath == "timeControlStatus" {
-      guard let change = change else {
-        return
-      }
-      guard let newValue = change[.newKey] as? Int else {
-        return
-      }
-      guard let oldValue = change[.oldKey] as? Int else {
-        return
-      }
+      guard let change = change else { return }
+      guard let newValue = change[.newKey] as? Int else { return }
+      guard let oldValue = change[.oldKey] as? Int else { return }
       if oldValue != newValue {
         self.doTimeControlStatus()
       }

@@ -32,7 +32,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     } catch {
       XCTFail("Error can't get data from json")
     }
-    let _ = ApiVideoPlayerController(
+    _ = ApiVideoPlayerController(
       videoId: "vi18RL1kvZlDRdzk7Mas59HT",
       videoType: .vod,
       events: events,
@@ -67,7 +67,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
       XCTFail("Error can't get data from json")
     }
 
-    let _ = ApiVideoPlayerController(
+    _ = ApiVideoPlayerController(
       videoId: "vi18RL1kvZlDRdzk7Mas59HT",
       videoType: .vod,
       events: events,
@@ -92,7 +92,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         errorExpectation.fulfill()
       }
     )
-    let _ = ApiVideoPlayerController(
+    _ = ApiVideoPlayerController(
       videoId: "vi18RL1kvZlDRdzk7Mas59HT",
       videoType: .vod,
       events: events,
