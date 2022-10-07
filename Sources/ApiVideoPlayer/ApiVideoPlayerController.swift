@@ -15,7 +15,7 @@ public class ApiVideoPlayerController: NSObject {
   private var timeObserver: Any?
   private var isFirstPlay = true
   private var isSeeking = false
-
+  private var taskExecutor: TasksExecutorProtocol.Type
   #if !os(macOS)
   convenience init(
     videoId: String,
@@ -32,11 +32,11 @@ public class ApiVideoPlayerController: NSObject {
     videoId: String,
     videoType: VideoType,
     events: PlayerEvents?,
-    taskExecutor _: TasksExecutorProtocol.Type = TasksExecutor.self
+    taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
   ) {
     self.videoId = videoId
     self.videoType = videoType
-
+    self.taskExecutor = taskExecutor
     super.init()
     self.avPlayer.addObserver(
       self,
@@ -78,7 +78,7 @@ public class ApiVideoPlayerController: NSObject {
     }
     let request = RequestsBuilder().getPlayerData(path: path)
     let session = RequestsBuilder().buildUrlSession()
-    TasksExecutor.execute(session: session, request: request) { data, error in
+    taskExecutor.execute(session: session, request: request) { data, error in
       if let data = data {
         do {
           self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
