@@ -97,7 +97,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     controller.play()
     controller.pause()
     controller.pause()
-     waitForExpectations(timeout: 15, handler: nil)
+    waitForExpectations(timeout: 15, handler: nil)
   }
 
   func testDuration() throws {
