@@ -5,8 +5,6 @@ import XCTest
 /// Integration tests with connection to api.video
 @available(iOS 14.0, *)
 final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
-  private let validVideoId = "vi2G6Qr8ZVE67dWLNymk7qbc"
-  private let invalidVideoId = "unknownVideoId"
 
   /// Assert that a valid video id is correctly played
   /// Check that the PlayerEvents are correctly called: didPrepare, didPlay
@@ -31,7 +29,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
     )
     let playerView = ApiVideoPlayerView(
       frame: .zero,
-      videoId: validVideoId,
+      videoId: VideoId.validVideoId,
       videoType: VideoType.vod /* only .vod is supported */,
       events: events
     )
@@ -56,7 +54,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
     )
     let playerView = ApiVideoPlayerView(
       frame: .zero,
-      videoId: invalidVideoId,
+      videoId: VideoId.invalidVideoId,
       videoType: VideoType.vod /* only .vod is supported */,
       events: events
     )
