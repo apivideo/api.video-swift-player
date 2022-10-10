@@ -65,8 +65,11 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
   }
 
   func testReturnOneEventOnMultiplePause() throws {
+    var didCalled = false
     let completedExpectationPrepare = expectation(description: "Completed Prepare")
     let expectationPause = self.expectation(description: "pause is called")
+    let secondExpectationPause = self.expectation(description: "2nd pause is called")
+    secondExpectationPause.isInverted = true
     let errorExpectation = expectation(description: "error is called")
     errorExpectation.isInverted = true
     let events = PlayerEvents(
@@ -76,7 +79,13 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
       },
       didPause: { () in
         print("paused")
-        expectationPause.fulfill()
+        if !didCalled {
+          didCalled = true
+          expectationPause.fulfill()
+        } else {
+          secondExpectationPause.fulfill()
+        }
+
       },
       didError: { error in
         print("error\(error)")
