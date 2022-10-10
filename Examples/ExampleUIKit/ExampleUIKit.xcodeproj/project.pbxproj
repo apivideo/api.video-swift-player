@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C72B1B5F2875CDED00A6EAEF /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */; };
 		C75C78F027E1E1FA001CA24D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */; };
 		C75C78F227E1E1FA001CA24D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */; };
 		C75C78F727E1E1FA001CA24D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F527E1E1FA001CA24D /* Main.storyboard */; };
 		C75C78F927E1E1FD001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F827E1E1FD001CA24D /* Assets.xcassets */; };
 		C75C78FC27E1E1FD001CA24D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */; };
 		C7922D942811685C00957116 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7922D932811685B00957116 /* PlayerViewController.swift */; };
+		C7BDF0DA28F22B1B00CBDC45 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7BDF0D928F22B1B00CBDC45 /* ApiVideoPlayer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C72B1B5F2875CDED00A6EAEF /* ApiVideoPlayer in Frameworks */,
+				C7BDF0DA28F22B1B00CBDC45 /* ApiVideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,7 +96,7 @@
 			);
 			name = ExampleUIKit;
 			packageProductDependencies = (
-				C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */,
+				C7BDF0D928F22B1B00CBDC45 /* ApiVideoPlayer */,
 			);
 			productName = ExampleiOS;
 			productReference = C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */;
@@ -314,6 +314,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -343,6 +344,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -381,7 +383,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C72B1B5E2875CDED00A6EAEF /* ApiVideoPlayer */ = {
+		C7BDF0D928F22B1B00CBDC45 /* ApiVideoPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ApiVideoPlayer;
 		};

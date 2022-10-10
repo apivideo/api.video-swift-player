@@ -15,7 +15,7 @@ public class ApiVideoPlayerController: NSObject {
   private var timeObserver: Any?
   private var isFirstPlay = true
   private var isSeeking = false
-
+  private let taskExecutor: TasksExecutorProtocol.Type
   #if !os(macOS)
   convenience init(
     videoId: String,
@@ -28,11 +28,22 @@ public class ApiVideoPlayerController: NSObject {
   }
   #endif
 
-  init(videoId: String, videoType: VideoType, events: PlayerEvents?) {
+  public init(
+    videoId: String,
+    videoType: VideoType,
+    events: PlayerEvents?,
+    taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
+  ) {
     self.videoId = videoId
     self.videoType = videoType
-
+    self.taskExecutor = taskExecutor
     super.init()
+    self.avPlayer.addObserver(
+      self,
+      forKeyPath: "timeControlStatus",
+      options: [NSKeyValueObservingOptions.new, NSKeyValueObservingOptions.old],
+      context: nil
+    )
     if let events = events {
       self.addEvents(events: events)
     }
@@ -55,10 +66,7 @@ public class ApiVideoPlayerController: NSObject {
 
     if let privateToken = privateToken {
       url = baseUrl + "\(videoId)/token/\(privateToken)/player.json"
-    } else {
-      url = baseUrl + "\(videoId)/player.json"
-    }
-
+    } else { url = baseUrl + "\(videoId)/player.json" }
     return url
   }
 
@@ -70,7 +78,7 @@ public class ApiVideoPlayerController: NSObject {
     }
     let request = RequestsBuilder().getPlayerData(path: path)
     let session = RequestsBuilder().buildUrlSession()
-    TasksExecutor.execute(session: session, request: request) { data, error in
+    self.taskExecutor.execute(session: session, request: request) { data, error in
       if let data = data {
         do {
           self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
@@ -111,12 +119,6 @@ public class ApiVideoPlayerController: NSObject {
       let item = AVPlayerItem(url: url)
       self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
       self.avPlayer.replaceCurrentItem(with: item)
-      self.avPlayer.addObserver(
-        self,
-        forKeyPath: "timeControlStatus",
-        options: NSKeyValueObservingOptions.new,
-        context: nil
-      )
       item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
       NotificationCenter.default.addObserver(
         self,
@@ -162,13 +164,9 @@ public class ApiVideoPlayerController: NSObject {
 
   private func setUpAnalytics(url: String) {
     do {
-      let option = try Options(
-        mediaUrl: url, metadata: []
-      )
+      let option = try Options(mediaUrl: url, metadata: [])
       self.analytics = PlayerAnalytics(options: option)
-    } catch {
-      print("error with the url")
-    }
+    } catch { print("error with the url") }
   }
 
   public func isPlaying() -> Bool {
@@ -184,9 +182,7 @@ public class ApiVideoPlayerController: NSObject {
       .seek(from: Float(CMTimeGetSeconds(self.currentTime)), to: Float(CMTimeGetSeconds(CMTime.zero))) { result in
         switch result {
         case .success: break
-
-        case let .failure(error):
-          print("analytics error on seek event: \(error)")
+        case let .failure(error): print("analytics error on seek event: \(error)")
         }
       }
     self.avPlayer.seek(to: CMTime.zero)
@@ -194,14 +190,10 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.resume { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error on resume event: \(error)")
+      case let .failure(error): print("analytics error on resume event: \(error)")
       }
     }
-    for events in self.events {
-      events.didReplay?()
-    }
+    for events in self.events { events.didReplay?() }
   }
 
   public func pause() {
@@ -227,9 +219,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.seek(from: from, to: calculatedTo) { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error seek: \(error)")
+      case let .failure(error): print("analytics error seek: \(error)")
       }
     }
 
@@ -271,9 +261,7 @@ public class ApiVideoPlayerController: NSObject {
   public var duration: CMTime {
     if let duration = avPlayer.currentItem?.asset.duration {
       return duration
-    } else {
-      return CMTime(seconds: 0.0, preferredTimescale: 1_000)
-    }
+    } else { return CMTime(seconds: 0.0, preferredTimescale: 1_000) }
   }
 
   public var currentTime: CMTime {
@@ -333,9 +321,7 @@ public class ApiVideoPlayerController: NSObject {
   public func goToFullScreen(viewController: UIViewController) {
     let playerViewController = AVPlayerViewController()
     playerViewController.player = self.avPlayer
-    viewController.present(playerViewController, animated: true) {
-      self.play()
-    }
+    viewController.present(playerViewController, animated: true) { self.play() }
   }
   #endif
 
@@ -357,9 +343,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.end { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error on ended event: \(error)")
+      case let .failure(error): print("analytics error on ended event: \(error)")
       }
     }
     for events in self.events {
@@ -384,7 +368,7 @@ public class ApiVideoPlayerController: NSObject {
   }
 
   private func doPauseAction() {
-    if self.currentTime.second >= self.duration.second {
+    if round(self.currentTime.seconds) >= round(self.duration.seconds) {
       return
     }
 
@@ -395,9 +379,7 @@ public class ApiVideoPlayerController: NSObject {
     self.analytics?.pause { result in
       switch result {
       case .success: break
-
-      case let .failure(error):
-        print("analytics error on pause event: \(error)")
+      case let .failure(error): print("analytics error on pause event: \(error)")
       }
     }
     for events in self.events {
@@ -415,18 +397,14 @@ public class ApiVideoPlayerController: NSObject {
       self.analytics?.play { result in
         switch result {
         case .success: return
-
-        case let .failure(error):
-          print("analytics error on play event: \(error)")
+        case let .failure(error): print("analytics error on play event: \(error)")
         }
       }
     } else {
       self.analytics?.resume { result in
         switch result {
         case .success: return
-
-        case let .failure(error):
-          print("analytics error on resume event: \(error)")
+        case let .failure(error): print("analytics error on resume event: \(error)")
         }
       }
     }
@@ -457,14 +435,19 @@ public class ApiVideoPlayerController: NSObject {
   override public func observeValue(
     forKeyPath keyPath: String?,
     of _: Any?,
-    change _: [NSKeyValueChangeKey: Any]?,
+    change: [NSKeyValueChangeKey: Any]?,
     context _: UnsafeMutableRawPointer?
   ) {
     if keyPath == "status" {
       self.doStatus()
     }
     if keyPath == "timeControlStatus" {
-      self.doTimeControlStatus()
+      guard let change = change else { return }
+      guard let newValue = change[.newKey] as? Int else { return }
+      guard let oldValue = change[.oldKey] as? Int else { return }
+      if oldValue != newValue {
+        self.doTimeControlStatus()
+      }
     }
   }
 
