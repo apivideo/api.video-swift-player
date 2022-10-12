@@ -1,7 +1,7 @@
 import UIKit
 
 @available(iOS 14.0, *)
-class SwiftUIPlayerViewController: UIViewController {
+public class SwiftUIPlayerViewController: UIViewController {
   let videoId: String
   let videoType: VideoType
   let events: PlayerEvents?
@@ -27,7 +27,7 @@ class SwiftUIPlayerViewController: UIViewController {
     super.init(nibName: nil, bundle: nil)
   }
 
-  override func viewDidLoad() {
+  override public func viewDidLoad() {
     super.viewDidLoad()
 
     view.addSubview(self.playerView)
@@ -40,8 +40,16 @@ class SwiftUIPlayerViewController: UIViewController {
     ])
   }
 
-  override func viewDidAppear(_: Bool) {
+  override public func viewDidAppear(_: Bool) {
     self.playerView.viewController = self
+  }
+
+  public func play() {
+    self.playerView.play()
+  }
+
+  public func pause() {
+    self.playerView.pause()
   }
 
 }
