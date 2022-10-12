@@ -27,10 +27,14 @@ public struct ApiVideoPlayerSwiftUIView: UIViewRepresentable {
   public func play() {
     self.view.play()
   }
+
+  public func pause() {
+    self.view.pause()
+  }
 }
 
 @available(iOS 14, macOS 11.0, *)
-struct SwiftUIView_Previews: PreviewProvider {
+struct ApiVideoPlayerSwiftUIView_Previews: PreviewProvider {
   struct Test: View {
     var body: some View {
       ApiVideoPlayerSwiftUIView(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)

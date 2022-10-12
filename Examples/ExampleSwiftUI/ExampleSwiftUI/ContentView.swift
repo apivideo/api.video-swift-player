@@ -1,24 +1,29 @@
 import ApiVideoPlayer
 import SwiftUI
 struct ContentView: View {
-  var player = ApiVideoPlayerSwiftUIView(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)
+//  var player = ApiVideoPlayerSwiftUIView(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)
+  var player = SwiftUIPlayerView(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)
   var body: some View {
     VStack {
       player
-        .frame(height: 200)
-      Spacer()
+        .frame(height: 250)
+        .padding(.bottom)
       HStack {
-        VStack {
-          Button(action: {
-            print("play")
-            player.play()
-          }) {
-            Text("Play")
-          }
+        Button(action: {
+          print("play")
+          player.play()
+        }) {
+          Text("Play")
+        }
+        Button(action: {
+          print("pause")
+          player.pause()
+        }) {
+          Text("Pause")
         }
       }
+      Spacer()
     }
-    Spacer()
   }
 
 }
