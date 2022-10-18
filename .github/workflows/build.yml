@@ -16,23 +16,30 @@ jobs:
           xcode-version: '13.4.1'
       - name: Build Package with swift
         run: swift build
-      - name: Build Package with xcodebuild
-        run: xcodebuild -scheme ApiVideoPlayer  -destination 'platform=iOS Simulator,name=iPhone 13'
       - name: Set Default Scheme
         run: |
           scheme_list=$(xcodebuild -list -json | tr -d "\n")
           default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['workspace']['schemes'][0]")
           echo $default | cat >default
           echo Using default scheme: $default
+      - name: Build Package with xcodebuild
+        env:
+          scheme: ${{ 'default' }}
+        run: xcodebuild -scheme $scheme  -destination 'platform=iOS Simulator,name=iPhone 13'
       - name: Verify cocoapods
         run: pod lib lint --allow-warnings
       - name: Execute swiftlint
         run: |
           swiftlint
-      - name: Build Examples
+      - name: Build Example UIKit
         env:
           scheme: ${{ 'default' }}
-          platform: ${{ 'iOS Simulator' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
           xcodebuild clean build -project Examples/ExampleUIKit/ExampleUIKit.xcodeproj -scheme $scheme -sdk iphoneos
+      - name: Build Example SwiftUI
+        env:
+          scheme: ${{ 'default' }}
+        run: |
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          xcodebuild clean build -project Examples/ExampleSwiftUI/ExampleSwiftUI.xcodeproj -scheme $scheme -sdk iphoneos
