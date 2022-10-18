@@ -1,3 +1,4 @@
+#if !os(macOS)
 import UIKit
 
 @available(iOS 14.0, *)
@@ -53,3 +54,4 @@ public class SwiftUIPlayerViewController: UIViewController {
   }
 
 }
+#endif
