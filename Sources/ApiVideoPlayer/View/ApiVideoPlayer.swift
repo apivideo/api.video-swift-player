@@ -1,3 +1,4 @@
+#if !os(macOS)
 import SwiftUI
 
 @available(iOS 14, macOS 11.0, *)
@@ -35,3 +36,4 @@ struct SwiftUIView_Previews: PreviewProvider {
     ApiVideoPlayer(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)
   }
 }
+#endif
