@@ -57,7 +57,6 @@ public class ApiVideoPlayerView: UIView {
     backgroundColor = .clear
 
     layer.addSublayer(self.playerLayer)
-    self.playerLayer.videoGravity = .resizeAspectFill
   }
 
   private func setupSubviews() {

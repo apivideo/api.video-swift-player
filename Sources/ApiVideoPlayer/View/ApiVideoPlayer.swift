@@ -33,6 +33,5 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 struct SwiftUIView_Previews: PreviewProvider {
   static var previews: some View {
     ApiVideoPlayer(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)
-      .frame(height: 250)
   }
 }
