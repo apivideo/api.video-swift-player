@@ -25,12 +25,13 @@ jobs:
       - name: Build Package with xcodebuild
         env:
           scheme: ${{ 'default' }}
-        run: xcodebuild -scheme $scheme  -destination 'platform=iOS Simulator,name=iPhone 13'
+        run: |
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          xcodebuild -scheme $scheme  -destination 'platform=iOS Simulator,name=iPhone 13'
       - name: Verify cocoapods
         run: pod lib lint --allow-warnings
       - name: Execute swiftlint
-        run: |
-          swiftlint
+        run: swiftlint
       - name: Build Example UIKit
         env:
           scheme: ${{ 'default' }}
