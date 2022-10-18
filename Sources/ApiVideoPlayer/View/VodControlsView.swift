@@ -9,7 +9,16 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
   private let playerController: ApiVideoPlayerController
   private var subtitleView: SubtitleView?
   private var timeObserver: Any?
-  public var viewController: UIViewController!
+  public var viewController: UIViewController? {
+    didSet {
+      if self.viewController != nil {
+        self.fullScreenButton.isHidden = false
+      } else {
+        self.fullScreenButton.isHidden = true
+      }
+    }
+  }
+
   private let events = PlayerEvents()
   private var timerLeadingConstraintWithSubtitleButton: NSLayoutConstraint?
   private var timerLeadingConstraintWithoutSubtitleButton: NSLayoutConstraint?
@@ -159,6 +168,7 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
     // Full Screen Button
     addSubview(self.fullScreenButton)
     self.fullScreenButton.addTarget(self, action: #selector(self.goToFullScreenAction), for: .touchUpInside)
+    self.fullScreenButton.isHidden = true // Will be display if a viewController is set
 
     self.setupConstraints()
     self.activateTimer()
@@ -306,7 +316,10 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
 
   @objc
   func goToFullScreenAction() {
-    self.playerController.goToFullScreen(viewController: self.viewController)
+    guard let vc = viewController else {
+      return
+    }
+    self.playerController.goToFullScreen(viewController: vc)
   }
 
   @available(iOS 14.0, *)
