@@ -39,6 +39,10 @@ public class SwiftUIPlayerViewController: UIViewController {
     self.playerView.viewController = self
   }
 
+  override public func viewDidDisappear(_: Bool) {
+    self.playerView.viewController = nil
+  }
+
   public func play() {
     self.playerView.play()
   }
