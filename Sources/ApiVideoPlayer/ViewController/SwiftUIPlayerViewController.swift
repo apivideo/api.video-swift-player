@@ -3,11 +3,8 @@ import UIKit
 
 @available(iOS 14.0, *)
 public class SwiftUIPlayerViewController: UIViewController {
-  let videoId: String
-  let videoType: VideoType
-  let events: PlayerEvents?
 
-  var playerView: ApiVideoPlayerView
+  let playerView: ApiVideoPlayerView
 
   @available(*, unavailable)
   required init?(coder _: NSCoder) {
@@ -15,15 +12,11 @@ public class SwiftUIPlayerViewController: UIViewController {
   }
 
   init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
-    self.videoId = videoId
-    self.videoType = videoType
-    self.events = events
-
     self.playerView = ApiVideoPlayerView(
       frame: .zero,
-      videoId: self.videoId,
-      videoType: self.videoType /* only .vod is supported */,
-      events: self.events
+      videoId: videoId,
+      videoType: videoType /* only .vod is supported */,
+      events: events
     )
     super.init(nibName: nil, bundle: nil)
   }
