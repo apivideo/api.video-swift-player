@@ -1,4 +1,5 @@
 #if !os(macOS)
+import AVKit
 import UIKit
 
 @available(iOS 14.0, *)
@@ -44,6 +45,69 @@ public class SwiftUIPlayerViewController: UIViewController {
 
   public func pause() {
     self.playerView.pause()
+  }
+
+  public func isPlaying() -> Bool {
+    return self.playerView.isPlaying()
+  }
+
+  public func replay() {
+    self.playerView.replay()
+  }
+
+  public var isMuted: Bool {
+    get { self.playerView.isMuted }
+    set(newValue) { self.playerView.isMuted = newValue }
+  }
+
+  public func hideControls() {
+    self.playerView.hideControls()
+  }
+
+  public func showControls() {
+    self.playerView.showControls()
+  }
+
+  public func hideSubtitle() {
+    self.playerView.hideSubtitle()
+  }
+
+  public func seek(offset: CMTime) {
+    self.playerView.seek(offset: offset)
+  }
+
+  public func seek(to: CMTime) {
+    self.playerView.seek(to: to)
+  }
+
+  public var volume: Float {
+    get {
+      self.playerView.volume
+    }
+    set(newValue) {
+      self.playerView.volume = newValue
+    }
+  }
+
+  public var duration: CMTime {
+    self.playerView.duration
+  }
+
+  public var currentTime: CMTime {
+    self.playerView.currentTime
+  }
+
+  public func goToFullScreen() {
+    self.playerView.goToFullScreen()
+  }
+
+  public var isLooping: Bool {
+    get {
+      self.playerView.isLooping
+    }
+    set(newValue) {
+      self.playerView.isLooping = newValue
+    }
   }
 
 }

@@ -1,4 +1,5 @@
 #if !os(macOS)
+import AVKit
 import SwiftUI
 
 @available(iOS 14, macOS 11.0, *)
@@ -21,6 +22,69 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
   public func pause() {
     self.playerViewController.pause()
+  }
+
+  public func isPlaying() -> Bool {
+    return self.playerViewController.isPlaying()
+  }
+
+  public func replay() {
+    self.playerViewController.replay()
+  }
+
+  public var isMuted: Bool {
+    get { self.playerViewController.isMuted }
+    set(newValue) { self.playerViewController.isMuted = newValue }
+  }
+
+  public func hideControls() {
+    self.playerViewController.hideControls()
+  }
+
+  public func showControls() {
+    self.playerViewController.showControls()
+  }
+
+  public func hideSubtitle() {
+    self.playerViewController.hideSubtitle()
+  }
+
+  public func seek(offset: CMTime) {
+    self.playerViewController.seek(offset: offset)
+  }
+
+  public func seek(to: CMTime) {
+    self.playerViewController.seek(to: to)
+  }
+
+  public var volume: Float {
+    get {
+      self.playerViewController.volume
+    }
+    set(newValue) {
+      self.playerViewController.volume = newValue
+    }
+  }
+
+  public var duration: CMTime {
+    self.playerViewController.duration
+  }
+
+  public var currentTime: CMTime {
+    self.playerViewController.currentTime
+  }
+
+  public func goToFullScreen() {
+    self.playerViewController.goToFullScreen()
+  }
+
+  public var isLooping: Bool {
+    get {
+      self.playerViewController.isLooping
+    }
+    set(newValue) {
+      self.playerViewController.isLooping = newValue
+    }
   }
 
 }
