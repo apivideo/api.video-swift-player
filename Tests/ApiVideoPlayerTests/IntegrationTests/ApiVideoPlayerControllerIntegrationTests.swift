@@ -2,7 +2,6 @@
 import CoreMedia
 import XCTest
 
-@available(iOS 14.0, *)
 final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
 
   func testValidVideoIdPlay() throws {

@@ -3,7 +3,6 @@ import AVKit
 import UIKit
 
 @available(tvOS 10.0, *)
-@available(iOS 14.0, *)
 public class ApiVideoPlayerView: UIView {
   private let playerLayer = AVPlayerLayer()
   private let videoPlayerView = UIView()

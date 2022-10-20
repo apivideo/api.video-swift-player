@@ -3,7 +3,6 @@ import XCTest
 
 /// Unit tests on PlayerController without connection to api.video
 /// The connection is mocked with MockedTasksExecutor
-@available(iOS 14.0, *)
 class ApiVideoPlayerUnitTests: XCTestCase {
 
   func generateRessource(ressource: String) {
