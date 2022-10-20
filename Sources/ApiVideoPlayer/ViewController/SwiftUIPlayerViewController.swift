@@ -2,7 +2,6 @@
 import AVKit
 import UIKit
 
-@available(iOS 14.0, *)
 public class SwiftUIPlayerViewController: UIViewController {
 
   let playerView: ApiVideoPlayerView

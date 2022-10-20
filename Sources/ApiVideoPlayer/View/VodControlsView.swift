@@ -3,7 +3,6 @@ import AVFoundation
 import Foundation
 import UIKit
 
-@available(iOS 14.0, *)
 class VodControlsView: UIView, UIGestureRecognizerDelegate {
   private var timer: Timer?
   private let playerController: ApiVideoPlayerController
@@ -114,7 +113,6 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
     return btn
   }()
 
-  @available(iOS 14.0, *)
   private func setup() {
     // Controls View
     let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTap))
@@ -322,7 +320,6 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
     self.playerController.goToFullScreen(viewController: vc)
   }
 
-  @available(iOS 14.0, *)
   @objc
   func toggleSubtitleView() {
     self.resetTimer()

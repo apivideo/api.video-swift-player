@@ -3,7 +3,6 @@ import AVFoundation
 import AVKit
 import Foundation
 
-@available(iOS 14.0, *)
 public class ApiVideoPlayerController: NSObject {
   private var events = [PlayerEvents]()
   private let avPlayer = AVPlayer(playerItem: nil)

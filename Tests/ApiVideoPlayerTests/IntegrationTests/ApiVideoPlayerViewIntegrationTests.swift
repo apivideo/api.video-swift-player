@@ -4,7 +4,6 @@ import XCTest
 #if !os(macOS)
 
 /// Integration tests with connection to api.video
-@available(iOS 14.0, *)
 final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
 
   /// Assert that a valid video id is correctly played

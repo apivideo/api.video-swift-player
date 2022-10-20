@@ -2,7 +2,6 @@
 import AVKit
 import SwiftUI
 
-@available(iOS 14, macOS 11.0, *)
 public struct ApiVideoPlayer: UIViewControllerRepresentable {
   private let playerViewController: SwiftUIPlayerViewController
 
@@ -89,7 +88,6 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
 }
 
-@available(iOS 14, macOS 11.0, *)
 struct SwiftUIView_Previews: PreviewProvider {
   static var previews: some View {
     ApiVideoPlayer(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)

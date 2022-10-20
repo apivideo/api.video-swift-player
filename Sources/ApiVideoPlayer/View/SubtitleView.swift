@@ -3,7 +3,6 @@ import AVFoundation
 import Foundation
 import UIKit
 
-@available(iOS 14.0, *)
 class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
   private var selectedRow = 0
   private var subtitles: [SubtitleLanguage] = []
@@ -76,7 +75,6 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     if self.isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
       cell.accessoryType = .checkmark
     }
-    cell.contentConfiguration = content
     return cell
   }
 
