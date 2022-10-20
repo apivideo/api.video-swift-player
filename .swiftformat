@@ -89,7 +89,7 @@
  ### Others
  --commas inline
  --ifdef noindent
- --indent 2
+ --indent 4
  --linebreaks lf ##default
  --maxwidth 120
  --patternlet hoist ##default
