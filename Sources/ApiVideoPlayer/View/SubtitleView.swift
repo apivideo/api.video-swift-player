@@ -69,9 +69,13 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
       for: indexPath
     ) as UITableViewCell
     let selectedSubtitleRow = self.subtitles[indexPath.row]
-    var content = cell.defaultContentConfiguration()
-
-    content.text = selectedSubtitleRow.language
+    if #available(iOS 14.0, *) {
+      var content = cell.defaultContentConfiguration()
+      content.text = selectedSubtitleRow.language
+      cell.contentConfiguration = content
+    } else {
+      cell.textLabel?.text = selectedSubtitleRow.language
+    }
     if self.isCurrentSubtitleLanguage(subtitleLanguage: selectedSubtitleRow) {
       cell.accessoryType = .checkmark
     }
