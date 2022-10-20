@@ -302,16 +302,15 @@ public class ApiVideoPlayerController: NSObject {
       if let playerItem = avPlayer.currentItem,
          let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
       {
-        if newSubtitle.code == nil {
-          self.hideSubtitle()
-        } else {
-          guard let code = newSubtitle.code else { return }
+        if let code = newSubtitle.code {
           let locale = Locale(identifier: code)
           let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
           if let option = options.first {
             guard let currentItem = self.avPlayer.currentItem else { return }
             currentItem.select(option, in: group)
           }
+        } else {
+          self.hideSubtitle()
         }
       }
     }
