@@ -136,6 +136,20 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    public func addOutput(output: AVPlayerItemOutput) {
+        guard let item = avPlayer.currentItem else {
+            return
+        }
+        item.add(output)
+    }
+
+    public func removeOutput(output: AVPlayerItemOutput) {
+        guard let item = avPlayer.currentItem else {
+            return
+        }
+        item.remove(output)
+    }
+
     public func addEvents(events: PlayerEvents) {
         self.events.append(events)
     }
