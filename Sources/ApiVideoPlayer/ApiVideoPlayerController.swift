@@ -16,7 +16,7 @@ public class ApiVideoPlayerController: NSObject {
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
     #if !os(macOS)
-    convenience init(
+    public convenience init(
         videoId: String,
         videoType: VideoType,
         playerLayer: AVPlayerLayer,
