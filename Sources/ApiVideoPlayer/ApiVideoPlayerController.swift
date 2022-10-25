@@ -16,7 +16,7 @@ public class ApiVideoPlayerController: NSObject {
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
     #if !os(macOS)
-    convenience init(
+    public convenience init(
         videoId: String,
         videoType: VideoType,
         playerLayer: AVPlayerLayer,
@@ -134,6 +134,20 @@ public class ApiVideoPlayerController: NSObject {
         for events in self.events {
             events.didError?(error)
         }
+    }
+
+    public func addOutput(output: AVPlayerItemOutput) {
+        guard let item = avPlayer.currentItem else {
+            return
+        }
+        item.add(output)
+    }
+
+    public func removeOutput(output: AVPlayerItemOutput) {
+        guard let item = avPlayer.currentItem else {
+            return
+        }
+        item.remove(output)
     }
 
     public func addEvents(events: PlayerEvents) {

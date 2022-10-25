@@ -109,8 +109,8 @@ function_parameter_count:
   error: 8
 
 type_body_length:
-  warning: 300
-  error: 300
+  warning: 350
+  error: 450
 
 file_length:
   warning: 1000
