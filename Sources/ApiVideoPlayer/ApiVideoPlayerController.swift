@@ -175,8 +175,8 @@ public class ApiVideoPlayerController: NSObject {
         } catch { print("error with the url") }
     }
 
-    public func isPlaying() -> Bool {
-        return self.avPlayer.isPlaying()
+    public var isPlaying: Bool {
+        return self.avPlayer.isPlaying
     }
 
     public func play() {
@@ -479,7 +479,7 @@ public class ApiVideoPlayerController: NSObject {
 
 extension AVPlayer {
     @available(iOS 10.0, *)
-    func isPlaying() -> Bool {
+    var isPlaying: Bool {
         return (rate != 0 && error == nil)
     }
 }

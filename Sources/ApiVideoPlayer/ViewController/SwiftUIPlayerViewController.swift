@@ -49,8 +49,8 @@ public class SwiftUIPlayerViewController: UIViewController {
         self.playerView.pause()
     }
 
-    public func isPlaying() -> Bool {
-        return self.playerView.isPlaying()
+    public var isPlaying: Bool {
+        return self.playerView.isPlaying
     }
 
     public func replay() {
