@@ -37,6 +37,12 @@ public class ApiVideoPlayerController: NSObject {
             options: [NSKeyValueObservingOptions.new, NSKeyValueObservingOptions.old],
             context: nil
         )
+        self.avPlayer.addObserver(
+            self,
+            forKeyPath: "currentItem.presentationSize",
+            options: NSKeyValueObservingOptions.new,
+            context: nil
+        )
         if let events = events {
             self.addEvents(events: events)
         }
@@ -291,6 +297,10 @@ public class ApiVideoPlayerController: NSObject {
         self.duration.roundedSeconds == self.currentTime.roundedSeconds
     }
 
+    public var videoSize: CGSize {
+        self.avPlayer.videoSize
+    }
+
     var hasSubtitles: Bool {
         self.subtitles.count > 1
     }
@@ -468,9 +478,17 @@ public class ApiVideoPlayerController: NSObject {
                 self.doTimeControlStatus()
             }
         }
+        if keyPath == "currentItem.presentationSize" {
+            guard let change = change else { return }
+            guard let newSize = change[.newKey] as? CGSize else { return }
+            for events in self.events {
+                events.didVideoSizeChanged?(newSize)
+            }
+        }
     }
 
     deinit {
+        avPlayer.removeObserver(self, forKeyPath: "currentItem.presentationSize", context: nil)
         avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
         avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
         NotificationCenter.default.removeObserver(self)
@@ -478,9 +496,15 @@ public class ApiVideoPlayerController: NSObject {
 }
 
 extension AVPlayer {
-    @available(iOS 10.0, *)
-    var isPlaying: Bool {
+    @available(iOS 10.0, *)  var isPlaying: Bool {
         return (rate != 0 && error == nil)
+    }
+
+    var videoSize: CGSize {
+        guard let size = self.currentItem?.presentationSize else {
+            return CGSize(width: 0, height: 0)
+        }
+        return size
     }
 }
 

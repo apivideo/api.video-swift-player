@@ -12,6 +12,7 @@ public class PlayerEvents {
     public var didSeek: ((_ from: CMTime, _ to: CMTime) -> Void)?
     public var didEnd: (() -> Void)?
     public var didError: ((_ error: Error) -> Void)?
+    public var didVideoSizeChanged: ((_ size: CGSize) -> Void)?
 
     public init(
         didPrepare: (() -> Void)? = nil,
@@ -24,7 +25,8 @@ public class PlayerEvents {
         didSetVolume: ((Float) -> Void)? = nil,
         didSeek: ((CMTime, CMTime) -> Void)? = nil,
         didEnd: (() -> Void)? = nil,
-        didError: ((Error) -> Void)? = nil
+        didError: ((Error) -> Void)? = nil,
+        didVideoSizeChanged: ((CGSize) -> Void)? = nil
     ) {
         self.didPrepare = didPrepare
         self.didPause = didPause
@@ -37,5 +39,6 @@ public class PlayerEvents {
         self.didSeek = didSeek
         self.didEnd = didEnd
         self.didError = didError
+        self.didVideoSizeChanged = didVideoSizeChanged
     }
 }
