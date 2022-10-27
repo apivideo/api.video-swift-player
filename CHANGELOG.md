@@ -1,6 +1,11 @@
 # Changelog
 All changes to this project will be documented in this file.
 
+## [1.0.3] - 2022-10-27
+- Add an API to change the video id on the fly. Check out for `videoOptions`.
+- Add an API to get the video size in the controller
+- Publicize API on subtitles in the controller
+
 ## [1.0.2] - 2022-10-25
 - Publicize `ApiVideoPlayerController`
 - Add output API in `ApiVideoPlayerController` to set/remove `AVPlayerItemOutput`
