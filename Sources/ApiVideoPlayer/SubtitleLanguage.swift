@@ -1,6 +1,6 @@
 import Foundation
 
-struct SubtitleLanguage {
+public struct SubtitleLanguage {
     public var language: String
     public var code: String?
 

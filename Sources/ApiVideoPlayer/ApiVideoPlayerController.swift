@@ -301,11 +301,11 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.videoSize
     }
 
-    var hasSubtitles: Bool {
+    public var hasSubtitles: Bool {
         self.subtitles.count > 1
     }
 
-    var subtitles: [SubtitleLanguage] {
+    public var subtitles: [SubtitleLanguage] {
         var subtitles: [SubtitleLanguage] = [offSubtitleLanguage]
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
@@ -317,7 +317,7 @@ public class ApiVideoPlayerController: NSObject {
         return subtitles
     }
 
-    var currentSubtitle: SubtitleLanguage {
+    public var currentSubtitle: SubtitleLanguage {
         get {
             if let playerItem = avPlayer.currentItem,
                let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
@@ -354,7 +354,7 @@ public class ApiVideoPlayerController: NSObject {
     }
     #endif
 
-    func hideSubtitle() {
+    public func hideSubtitle() {
         guard let currentItem = self.avPlayer.currentItem else { return }
         if let group = currentItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
             currentItem.select(nil, in: group)
