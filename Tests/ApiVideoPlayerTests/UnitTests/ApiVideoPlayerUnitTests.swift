@@ -36,8 +36,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         self.generateRessource(ressource: "responseSuccess")
 
         _ = ApiVideoPlayerController(
-            videoId: "vi18RL1kvZlDRdzk7Mas59HT",
-            videoType: .vod,
+            videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
             taskExecutor: MockedTasksExecutor.self
         )
@@ -62,8 +61,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         self.generateRessource(ressource: "responseError")
 
         _ = ApiVideoPlayerController(
-            videoId: "vi18RL1kvZlDRdzk7Mas59HT",
-            videoType: .vod,
+            videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
             taskExecutor: MockedTasksExecutor.self
         )
@@ -87,8 +85,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
             }
         )
         _ = ApiVideoPlayerController(
-            videoId: "vi18RL1kvZlDRdzk7Mas59HT",
-            videoType: .vod,
+            videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
             taskExecutor: MockedTasksExecutor.self
         )

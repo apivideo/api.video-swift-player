@@ -11,11 +11,10 @@ public class SwiftUIPlayerViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
+    init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
         self.playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoId: videoId,
-            videoType: videoType /* only .vod is supported */,
+            videoOptions: videoOptions,
             events: events
         )
         super.init(nibName: nil, bundle: nil)
@@ -50,8 +49,8 @@ public class SwiftUIPlayerViewController: UIViewController {
         self.playerView.pause()
     }
 
-    public func isPlaying() -> Bool {
-        return self.playerView.isPlaying()
+    public var isPlaying: Bool {
+        return self.playerView.isPlaying
     }
 
     public func replay() {

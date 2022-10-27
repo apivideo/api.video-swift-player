@@ -282,7 +282,7 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
     @objc
     func playPauseAction() {
         self.resetTimer()
-        if !self.playerController.isPlaying() {
+        if !self.playerController.isPlaying {
             // Detects end of playing
             if self.playerController.isAtEnd {
                 self.playerController.replay()
@@ -385,7 +385,7 @@ class VodControlsView: UIView, UIGestureRecognizerDelegate {
             switch touchEvent.phase {
             case .began:
                 // handle drag began
-                if self.playerController.isPlaying() {
+                if self.playerController.isPlaying {
                     // Avoid to trigger callbacks and analytics when the user uses the seek slider
                     self.playerController.pauseBeforeSeek()
                     self.sliderDidPauseVideo = true

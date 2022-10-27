@@ -23,18 +23,36 @@ public class ApiVideoPlayerView: UIView {
     ///   - videoId: Need videoid to display the video.
     ///   - videoType: VideoType object to display vod or live controls. Only vod is supported yet.
     ///   - events: Callback to get all the player events.
-    public init(
+    public convenience init(
         frame: CGRect,
         videoId: String,
         videoType: VideoType,
         hideControls: Bool = false,
         events: PlayerEvents? = nil
     ) {
+        self.init(
+            frame: frame,
+            videoOptions: VideoOptions(videoId: videoId, videoType: videoType),
+            hideControls: hideControls,
+            events: events
+        )
+    }
+
+    /// Init method for PlayerView.
+    /// - Parameters:
+    ///   - frame: frame of theplayer view.
+    ///   - videoOption: The video option containing the videoId and the videoType
+    ///   - events: Callback to get all the player events.
+    public init(
+        frame: CGRect,
+        videoOptions: VideoOptions,
+        hideControls: Bool = false,
+        events: PlayerEvents? = nil
+    ) {
         self.userEvents = events
         self.isHidenControls = hideControls
         self.playerController = ApiVideoPlayerController(
-            videoId: videoId,
-            videoType: videoType,
+            videoOptions: videoOptions,
             playerLayer: self.playerLayer,
             events: events
         )
@@ -81,10 +99,19 @@ public class ApiVideoPlayerView: UIView {
         self.playerLayer.frame = bounds
     }
 
+    public var videoOptions: VideoOptions? {
+        get {
+            self.playerController.videoOptions
+        }
+        set {
+            self.playerController.videoOptions = newValue
+        }
+    }
+
     /// Get information if the video is playing.
     /// - Returns: Boolean.
-    public func isPlaying() -> Bool {
-        return self.playerController.isPlaying()
+    public var isPlaying: Bool {
+        return self.playerController.isPlaying
     }
 
     /// Play the video.

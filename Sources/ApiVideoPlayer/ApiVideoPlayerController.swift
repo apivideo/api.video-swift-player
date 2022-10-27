@@ -8,8 +8,6 @@ public class ApiVideoPlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
-    private let videoType: VideoType
-    private let videoId: String
     private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
     private var isFirstPlay = true
@@ -17,24 +15,20 @@ public class ApiVideoPlayerController: NSObject {
     private let taskExecutor: TasksExecutorProtocol.Type
     #if !os(macOS)
     public convenience init(
-        videoId: String,
-        videoType: VideoType,
+        videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
         events: PlayerEvents? = nil
     ) {
-        self.init(videoId: videoId, videoType: videoType, events: events)
+        self.init(videoOptions: videoOptions, events: events)
         playerLayer.player = self.avPlayer
     }
     #endif
 
     public init(
-        videoId: String,
-        videoType: VideoType,
+        videoOptions: VideoOptions?,
         events: PlayerEvents?,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
-        self.videoId = videoId
-        self.videoType = videoType
         self.taskExecutor = taskExecutor
         super.init()
         self.avPlayer.addObserver(
@@ -43,20 +37,25 @@ public class ApiVideoPlayerController: NSObject {
             options: [NSKeyValueObservingOptions.new, NSKeyValueObservingOptions.old],
             context: nil
         )
+        self.avPlayer.addObserver(
+            self,
+            forKeyPath: "currentItem.presentationSize",
+            options: NSKeyValueObservingOptions.new,
+            context: nil
+        )
         if let events = events {
             self.addEvents(events: events)
         }
 
-        self.getPlayerJSON(videoType: videoType) { error in
-            if let error = error {
-                self.notifyError(error: error)
-            }
+        defer {
+            self.videoOptions = videoOptions
         }
     }
 
-    private func getVideoUrl(videoType: VideoType, videoId: String, privateToken: String? = nil) -> String {
+    private func getVideoUrl(videoOptions: VideoOptions) -> String {
+        let privateToken: String? = nil
         var baseUrl = ""
-        if videoType == .vod {
+        if videoOptions.videoType == .vod {
             baseUrl = "https://cdn.api.video/vod/"
         } else {
             baseUrl = "https://live.api.video/"
@@ -64,13 +63,13 @@ public class ApiVideoPlayerController: NSObject {
         var url: String!
 
         if let privateToken = privateToken {
-            url = baseUrl + "\(videoId)/token/\(privateToken)/player.json"
-        } else { url = baseUrl + "\(videoId)/player.json" }
+            url = baseUrl + "\(videoOptions.videoId)/token/\(privateToken)/player.json"
+        } else { url = baseUrl + "\(videoOptions.videoId)/player.json" }
         return url
     }
 
-    private func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void) {
-        let url = self.getVideoUrl(videoType: videoType, videoId: self.videoId)
+    private func getPlayerJSON(videoOptions: VideoOptions, completion: @escaping (Error?) -> Void) {
+        let url = self.getVideoUrl(videoOptions: videoOptions)
         guard let path = URL(string: url) else {
             completion(PlayerError.urlError("Couldn't set up url from this videoId"))
             return
@@ -182,8 +181,8 @@ public class ApiVideoPlayerController: NSObject {
         } catch { print("error with the url") }
     }
 
-    public func isPlaying() -> Bool {
-        return self.avPlayer.isPlaying()
+    public var isPlaying: Bool {
+        return self.avPlayer.isPlaying
     }
 
     public func play() {
@@ -241,6 +240,19 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    public var videoOptions: VideoOptions? {
+        didSet {
+            guard let videoOptions = videoOptions else {
+                return
+            }
+            self.getPlayerJSON(videoOptions: videoOptions) { error in
+                if let error = error {
+                    self.notifyError(error: error)
+                }
+            }
+        }
+    }
+
     public var isMuted: Bool {
         get {
             self.avPlayer.isMuted
@@ -285,11 +297,15 @@ public class ApiVideoPlayerController: NSObject {
         self.duration.roundedSeconds == self.currentTime.roundedSeconds
     }
 
-    var hasSubtitles: Bool {
+    public var videoSize: CGSize {
+        self.avPlayer.videoSize
+    }
+
+    public var hasSubtitles: Bool {
         self.subtitles.count > 1
     }
 
-    var subtitles: [SubtitleLanguage] {
+    public var subtitles: [SubtitleLanguage] {
         var subtitles: [SubtitleLanguage] = [offSubtitleLanguage]
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
@@ -301,7 +317,7 @@ public class ApiVideoPlayerController: NSObject {
         return subtitles
     }
 
-    var currentSubtitle: SubtitleLanguage {
+    public var currentSubtitle: SubtitleLanguage {
         get {
             if let playerItem = avPlayer.currentItem,
                let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
@@ -338,7 +354,7 @@ public class ApiVideoPlayerController: NSObject {
     }
     #endif
 
-    func hideSubtitle() {
+    public func hideSubtitle() {
         guard let currentItem = self.avPlayer.currentItem else { return }
         if let group = currentItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
             currentItem.select(nil, in: group)
@@ -462,9 +478,17 @@ public class ApiVideoPlayerController: NSObject {
                 self.doTimeControlStatus()
             }
         }
+        if keyPath == "currentItem.presentationSize" {
+            guard let change = change else { return }
+            guard let newSize = change[.newKey] as? CGSize else { return }
+            for events in self.events {
+                events.didVideoSizeChanged?(newSize)
+            }
+        }
     }
 
     deinit {
+        avPlayer.removeObserver(self, forKeyPath: "currentItem.presentationSize", context: nil)
         avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
         avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
         NotificationCenter.default.removeObserver(self)
@@ -472,9 +496,15 @@ public class ApiVideoPlayerController: NSObject {
 }
 
 extension AVPlayer {
-    @available(iOS 10.0, *)
-    func isPlaying() -> Bool {
+    @available(iOS 10.0, *)  var isPlaying: Bool {
         return (rate != 0 && error == nil)
+    }
+
+    var videoSize: CGSize {
+        guard let size = self.currentItem?.presentationSize else {
+            return CGSize(width: 0, height: 0)
+        }
+        return size
     }
 }
 
