@@ -8,8 +8,6 @@ public class ApiVideoPlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
-    private let videoType: VideoType
-    private let videoId: String
     private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
     private var isFirstPlay = true
@@ -17,24 +15,20 @@ public class ApiVideoPlayerController: NSObject {
     private let taskExecutor: TasksExecutorProtocol.Type
     #if !os(macOS)
     public convenience init(
-        videoId: String,
-        videoType: VideoType,
+        videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
         events: PlayerEvents? = nil
     ) {
-        self.init(videoId: videoId, videoType: videoType, events: events)
+        self.init(videoOptions: videoOptions, events: events)
         playerLayer.player = self.avPlayer
     }
     #endif
 
     public init(
-        videoId: String,
-        videoType: VideoType,
+        videoOptions: VideoOptions?,
         events: PlayerEvents?,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
-        self.videoId = videoId
-        self.videoType = videoType
         self.taskExecutor = taskExecutor
         super.init()
         self.avPlayer.addObserver(
@@ -47,16 +41,15 @@ public class ApiVideoPlayerController: NSObject {
             self.addEvents(events: events)
         }
 
-        self.getPlayerJSON(videoType: videoType) { error in
-            if let error = error {
-                self.notifyError(error: error)
-            }
+        defer {
+            self.videoOptions = videoOptions
         }
     }
 
-    private func getVideoUrl(videoType: VideoType, videoId: String, privateToken: String? = nil) -> String {
+    private func getVideoUrl(videoOptions: VideoOptions) -> String {
+        let privateToken: String? = nil
         var baseUrl = ""
-        if videoType == .vod {
+        if videoOptions.videoType == .vod {
             baseUrl = "https://cdn.api.video/vod/"
         } else {
             baseUrl = "https://live.api.video/"
@@ -64,13 +57,13 @@ public class ApiVideoPlayerController: NSObject {
         var url: String!
 
         if let privateToken = privateToken {
-            url = baseUrl + "\(videoId)/token/\(privateToken)/player.json"
-        } else { url = baseUrl + "\(videoId)/player.json" }
+            url = baseUrl + "\(videoOptions.videoId)/token/\(privateToken)/player.json"
+        } else { url = baseUrl + "\(videoOptions.videoId)/player.json" }
         return url
     }
 
-    private func getPlayerJSON(videoType: VideoType, completion: @escaping (Error?) -> Void) {
-        let url = self.getVideoUrl(videoType: videoType, videoId: self.videoId)
+    private func getPlayerJSON(videoOptions: VideoOptions, completion: @escaping (Error?) -> Void) {
+        let url = self.getVideoUrl(videoOptions: videoOptions)
         guard let path = URL(string: url) else {
             completion(PlayerError.urlError("Couldn't set up url from this videoId"))
             return
@@ -238,6 +231,19 @@ public class ApiVideoPlayerController: NSObject {
 
         for events in self.events {
             events.didSeek?(from, calculatedTo)
+        }
+    }
+
+    public var videoOptions: VideoOptions? {
+        didSet {
+            guard let videoOptions = videoOptions else {
+                return
+            }
+            self.getPlayerJSON(videoOptions: videoOptions) { error in
+                if let error = error {
+                    self.notifyError(error: error)
+                }
+            }
         }
     }
 

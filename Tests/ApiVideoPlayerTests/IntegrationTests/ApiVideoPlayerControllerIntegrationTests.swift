@@ -23,7 +23,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        let controller = ApiVideoPlayerController(videoId: VideoId.validVideoId, videoType: .vod, events: events)
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            events: events
+        )
         wait(for: [completedExpectationPrepare], timeout: 10)
         controller.play()
         wait(for: [completedExpectationPlay], timeout: 2)
@@ -54,7 +57,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        let controller = ApiVideoPlayerController(videoId: VideoId.validVideoId, videoType: .vod, events: events)
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            events: events
+        )
         wait(for: [completedExpectationPrepare], timeout: 10)
         controller.play()
         wait(for: [completedExpectationPlay], timeout: 2)
@@ -91,7 +97,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        let controller = ApiVideoPlayerController(videoId: VideoId.validVideoId, videoType: .vod, events: events)
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            events: events
+        )
         wait(for: [completedExpectationPrepare], timeout: 10)
         controller.play()
         controller.pause()
@@ -113,7 +122,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        let controller = ApiVideoPlayerController(videoId: VideoId.validVideoId, videoType: .vod, events: events)
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            events: events
+        )
         waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
@@ -132,7 +144,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        _ = ApiVideoPlayerController(videoId: VideoId.invalidVideoId, videoType: .vod, events: events)
+        _ = ApiVideoPlayerController(videoOptions: VideoOptions(videoId: VideoId.invalidVideoId), events: events)
         waitForExpectations(timeout: 10, handler: nil)
     }
 

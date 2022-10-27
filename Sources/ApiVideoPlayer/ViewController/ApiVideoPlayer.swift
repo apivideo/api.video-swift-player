@@ -6,7 +6,11 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
     private let playerViewController: SwiftUIPlayerViewController
 
     public init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
-        self.playerViewController = SwiftUIPlayerViewController(videoId: videoId, videoType: videoType, events: events)
+        self.init(videoOptions: VideoOptions(videoId: videoId, videoType: videoType), events: events)
+    }
+
+    public init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
+        self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions, events: events)
     }
 
     public func makeUIViewController(context _: Context) -> SwiftUIPlayerViewController {
