@@ -40,7 +40,7 @@ In the Project Navigator select your own project. Then select the project in the
 Or add this in your Package.swift
 ```
   dependencies: [
-        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.0.3"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.0.4"),
     ],
 ```
 
