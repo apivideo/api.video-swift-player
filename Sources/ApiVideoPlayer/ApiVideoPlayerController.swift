@@ -17,20 +17,23 @@ public class ApiVideoPlayerController: NSObject {
     public convenience init(
         videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
+        autoplay: Bool = false,
         events: PlayerEvents? = nil
     ) {
-        self.init(videoOptions: videoOptions, events: events)
+        self.init(videoOptions: videoOptions, autoplay: autoplay, events: events)
         playerLayer.player = self.avPlayer
     }
     #endif
 
     public init(
         videoOptions: VideoOptions?,
+        autoplay: Bool = false,
         events: PlayerEvents?,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
         self.taskExecutor = taskExecutor
         super.init()
+        self.autoplay = autoplay
         self.avPlayer.addObserver(
             self,
             forKeyPath: "timeControlStatus",
@@ -272,6 +275,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public var isLooping = false
+    public var autoplay = false
 
     public var volume: Float {
         get { self.avPlayer.volume }
@@ -380,7 +384,7 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
-    private func doStatus() {
+    private func doFallbackOnFailed() {
         if self.avPlayer.currentItem?.status == .failed {
             guard let url = (avPlayer.currentItem?.asset as? AVURLAsset)?.url else {
                 return
@@ -392,6 +396,15 @@ public class ApiVideoPlayerController: NSObject {
             } else {
                 print("Error with video url, trying with mp4")
                 self.retrySetUpPlayerUrlWithMp4()
+            }
+        }
+    }
+
+    private func doAutoplay() {
+
+        if self.avPlayer.currentItem?.status == .readyToPlay {
+            if self.autoplay {
+                self.play()
             }
         }
     }
@@ -468,7 +481,8 @@ public class ApiVideoPlayerController: NSObject {
         context _: UnsafeMutableRawPointer?
     ) {
         if keyPath == "status" {
-            self.doStatus()
+            self.doFallbackOnFailed()
+            self.doAutoplay()
         }
         if keyPath == "timeControlStatus" {
             guard let change = change else { return }
@@ -496,7 +510,7 @@ public class ApiVideoPlayerController: NSObject {
 }
 
 extension AVPlayer {
-    @available(iOS 10.0, *)  var isPlaying: Bool {
+    @available(iOS 10.0, *) var isPlaying: Bool {
         return (rate != 0 && error == nil)
     }
 
