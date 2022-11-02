@@ -22,18 +22,22 @@ public class ApiVideoPlayerView: UIView {
     ///   - frame: frame of theplayer view.
     ///   - videoId: Need videoid to display the video.
     ///   - videoType: VideoType object to display vod or live controls. Only vod is supported yet.
+    ///   - hideControls: true to hide video controls, false to show them
+    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     ///   - events: Callback to get all the player events.
     public convenience init(
         frame: CGRect,
         videoId: String,
         videoType: VideoType,
         hideControls: Bool = false,
+        autoplay: Bool = false,
         events: PlayerEvents? = nil
     ) {
         self.init(
             frame: frame,
             videoOptions: VideoOptions(videoId: videoId, videoType: videoType),
             hideControls: hideControls,
+            autoplay: autoplay,
             events: events
         )
     }
@@ -42,11 +46,14 @@ public class ApiVideoPlayerView: UIView {
     /// - Parameters:
     ///   - frame: frame of theplayer view.
     ///   - videoOption: The video option containing the videoId and the videoType
+    ///   - hideControls: true to hide video controls, false to show them
+    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     ///   - events: Callback to get all the player events.
     public init(
         frame: CGRect,
         videoOptions: VideoOptions,
         hideControls: Bool = false,
+        autoplay: Bool = false,
         events: PlayerEvents? = nil
     ) {
         self.userEvents = events
@@ -54,6 +61,7 @@ public class ApiVideoPlayerView: UIView {
         self.playerController = ApiVideoPlayerController(
             videoOptions: videoOptions,
             playerLayer: self.playerLayer,
+            autoplay: autoplay,
             events: events
         )
         super.init(frame: frame)
