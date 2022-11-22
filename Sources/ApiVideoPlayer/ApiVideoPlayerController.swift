@@ -193,11 +193,12 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func seekImpl(to time: CMTime, completion: @escaping (Bool) -> Void) {
+        let from = self.currentTime
         self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
             self.analytics?
                 .seek(
-                    from: Float(CMTimeGetSeconds(self.currentTime)),
-                    to: Float(CMTimeGetSeconds(time))
+                    from: Float(CMTimeGetSeconds(from)),
+                    to: Float(CMTimeGetSeconds(self.currentTime))
                 ) { result in
                     switch result {
                     case .success: break
@@ -232,13 +233,6 @@ public class ApiVideoPlayerController: NSObject {
     public func seek(to: CMTime) {
         let from = self.currentTime
         self.seekImpl(to: to, completion: { _ in
-            self.analytics?.seek(from: from, to: self.currentTime) { result in
-                switch result {
-                case .success: break
-                case let .failure(error): print("analytics error seek: \(error)")
-                }
-            }
-
             for events in self.events {
                 events.didSeek?(from, self.currentTime)
             }
