@@ -192,23 +192,29 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.play()
     }
 
-    public func replay() {
-        self.analytics?
-            .seek(from: Float(CMTimeGetSeconds(self.currentTime)), to: Float(CMTimeGetSeconds(CMTime.zero))) { result in
-                switch result {
-                case .success: break
-                case let .failure(error): print("analytics error on seek event: \(error)")
+    private func seekImpl(to time: CMTime, completion: @escaping (Bool) -> Void) {
+        let from = self.currentTime
+        self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
+            self.analytics?
+                .seek(
+                    from: Float(CMTimeGetSeconds(from)),
+                    to: Float(CMTimeGetSeconds(self.currentTime))
+                ) { result in
+                    switch result {
+                    case .success: break
+                    case let .failure(error): print("analytics error on seek event: \(error)")
+                    }
                 }
-            }
-        self.avPlayer.seek(to: CMTime.zero)
-        self.play()
-        self.analytics?.resume { result in
-            switch result {
-            case .success: break
-            case let .failure(error): print("analytics error on resume event: \(error)")
-            }
+            completion(finished)
         }
-        for events in self.events { events.didReplay?() }
+    }
+
+    public func replay() {
+        self.seekImpl(to: CMTime.zero, completion: { _ in
+            self.play()
+            for events in self.events { events.didReplay?() }
+        })
+
     }
 
     public func pause() {
@@ -226,21 +232,11 @@ public class ApiVideoPlayerController: NSObject {
 
     public func seek(to: CMTime) {
         let from = self.currentTime
-        self.avPlayer.seek(to: to, toleranceBefore: .zero, toleranceAfter: .zero)
-        let calculatedTo = CMTime(
-            seconds: min(max(0.0, CMTimeGetSeconds(to)), CMTimeGetSeconds(duration)),
-            preferredTimescale: 1_000
-        )
-        self.analytics?.seek(from: from, to: calculatedTo) { result in
-            switch result {
-            case .success: break
-            case let .failure(error): print("analytics error seek: \(error)")
+        self.seekImpl(to: to, completion: { _ in
+            for events in self.events {
+                events.didSeek?(from, self.currentTime)
             }
-        }
-
-        for events in self.events {
-            events.didSeek?(from, calculatedTo)
-        }
+        })
     }
 
     public var videoOptions: VideoOptions? {
