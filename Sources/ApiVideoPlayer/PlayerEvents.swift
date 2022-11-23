@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 public class PlayerEvents {
     public var didPrepare: (() -> Void)?
+    public var didReady: (() -> Void)?
     public var didPause: (() -> Void)?
     public var didPlay: (() -> Void)?
     public var didReplay: (() -> Void)?
@@ -16,6 +17,7 @@ public class PlayerEvents {
 
     public init(
         didPrepare: (() -> Void)? = nil,
+        didReady: (() -> Void)? = nil,
         didPause: (() -> Void)? = nil,
         didPlay: (() -> Void)? = nil,
         didReplay: (() -> Void)? = nil,
@@ -29,6 +31,7 @@ public class PlayerEvents {
         didVideoSizeChanged: ((CGSize) -> Void)? = nil
     ) {
         self.didPrepare = didPrepare
+        self.didReady = didReady
         self.didPause = didPause
         self.didPlay = didPlay
         self.didReplay = didReplay

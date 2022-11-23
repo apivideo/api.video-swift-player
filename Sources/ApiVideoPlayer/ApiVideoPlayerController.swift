@@ -85,9 +85,6 @@ public class ApiVideoPlayerController: NSObject {
                     self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
                     self.setUpAnalytics(url: self.playerManifest.video.src)
                     try self.setUpPlayer(self.playerManifest.video.src)
-                    for event in self.events {
-                        event.didPrepare?()
-                    }
                     completion(nil)
                 } catch {
                     completion(error)
@@ -107,9 +104,6 @@ public class ApiVideoPlayerController: NSObject {
         }
         do {
             try self.setUpPlayer(mp4)
-            for event in self.events {
-                event.didPrepare?()
-            }
         } catch {
             self.notifyError(error: error)
         }
@@ -117,6 +111,9 @@ public class ApiVideoPlayerController: NSObject {
 
     private func setUpPlayer(_ url: String) throws {
         if let url = URL(string: url) {
+            for event in self.events {
+                event.didPrepare?()
+            }
             let item = AVPlayerItem(url: url)
             self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
             self.avPlayer.replaceCurrentItem(with: item)
@@ -396,9 +393,11 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
-    private func doAutoplay() {
-
+    private func doReadyToPlay() {
         if self.avPlayer.currentItem?.status == .readyToPlay {
+            for events in self.events {
+                events.didReady?()
+            }
             if self.autoplay {
                 self.play()
             }
@@ -478,7 +477,7 @@ public class ApiVideoPlayerController: NSObject {
     ) {
         if keyPath == "status" {
             self.doFallbackOnFailed()
-            self.doAutoplay()
+            self.doReadyToPlay()
         }
         if keyPath == "timeControlStatus" {
             guard let change = change else { return }
