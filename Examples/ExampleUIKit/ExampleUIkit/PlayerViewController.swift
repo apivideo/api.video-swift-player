@@ -11,6 +11,12 @@ class PlayerViewController: UIViewController {
 
     let playerView: ApiVideoPlayerView = {
         let events = PlayerEvents(
+            didPrepare: { () in
+                print("didPrepare")
+            },
+            didReady: { () in
+                print("didReady")
+            },
             didPause: { () in
                 print("paused")
             },
