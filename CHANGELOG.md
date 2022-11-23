@@ -1,5 +1,8 @@
 # Changelog
 All changes to this project will be documented in this file.
+## [1.0.5] - 2022-11-23
+- Add didReady event
+- Use completionhandler in seek method to get the result of the seek, before doing any other action.
 
 ## [1.0.4] - 2022-11-03
 - Add an API to automatically play the video after loading. See `ApiVideoPlayerController`'s `autoplay` field.
