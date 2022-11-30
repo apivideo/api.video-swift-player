@@ -13,6 +13,8 @@ public class ApiVideoPlayerController: NSObject {
     private var isFirstPlay = true
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
+    private let baseVodUrl = "https://cdn.api.video/"
+    private let baseLiveUrl = "hhtps://live.api.video/"
     #if !os(macOS)
     public convenience init(
         videoOptions: VideoOptions?,
@@ -55,57 +57,52 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
-    private func getVideoUrl(videoOptions: VideoOptions) -> String {
-        let privateToken: String? = nil
-        var baseUrl = ""
-        if videoOptions.videoType == .vod {
-            baseUrl = "https://cdn.api.video/vod/"
-        } else {
-            baseUrl = "https://live.api.video/"
+    private func getVideoFromVideoOption(videoOptions: VideoOptions, completion: @escaping (Error?) -> Void) {
+        do {
+            try self.setUpPlayer(self.getVideoSrc(videoOptions: videoOptions))
+            completion(nil)
+        } catch {
+            completion(error)
         }
-        var url: String!
-
-        if let privateToken = privateToken {
-            url = baseUrl + "\(videoOptions.videoId)/token/\(privateToken)/player.json"
-        } else { url = baseUrl + "\(videoOptions.videoId)/player.json" }
-        return url
     }
 
-    private func getPlayerJSON(videoOptions: VideoOptions, completion: @escaping (Error?) -> Void) {
-        let url = self.getVideoUrl(videoOptions: videoOptions)
-        guard let path = URL(string: url) else {
-            completion(PlayerError.urlError("Couldn't set up url from this videoId"))
-            return
+    private func getVideoSrc(videoOptions: VideoOptions) -> String {
+        var src = ""
+        switch videoOptions.videoType {
+        case .vod:
+            src = "\(self.baseVodUrl)vod/\(videoOptions.videoId)/hls/manifest.m3u8"
+        case .live:
+            src = ""
         }
-        let request = RequestsBuilder().getPlayerData(path: path)
-        let session = RequestsBuilder().buildUrlSession()
-        self.taskExecutor.execute(session: session, request: request) { data, error in
-            if let data = data {
-                do {
-                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
-                    self.setUpAnalytics(url: self.playerManifest.video.src)
-                    try self.setUpPlayer(self.playerManifest.video.src)
-                    completion(nil)
-                } catch {
-                    completion(error)
-                    return
-                }
-            } else {
-                completion(error)
-            }
+        return src
+    }
+
+    private func getVideoMP4(videoOptions: VideoOptions) -> String {
+        var mp4 = ""
+        switch videoOptions.videoType {
+        case .vod:
+            mp4 = "\(self.baseVodUrl)vod/\(videoOptions.videoId)/mp4/source.mp4"
+        case .live:
+            mp4 = ""
         }
+        return mp4
+    }
+
+    private func getVideoPoster(videoOptions: VideoOptions) -> String {
+        var poster = ""
+        if videoOptions.videoType == .vod {
+            poster = "\(self.baseVodUrl)vod/\(videoOptions.videoId)/thumbnail.jpg"
+        }
+        return poster
     }
 
     private func retrySetUpPlayerUrlWithMp4() {
-        guard let mp4 = playerManifest.video.mp4 else {
-            print("Error there is no mp4")
-            self.notifyError(error: PlayerError.mp4Error("There is no mp4"))
-            return
-        }
-        do {
-            try self.setUpPlayer(mp4)
-        } catch {
-            self.notifyError(error: error)
+        if self.videoOptions != nil {
+            do {
+                try self.setUpPlayer(self.getVideoMP4(videoOptions: self.videoOptions!))
+            } catch {
+                self.notifyError(error: error)
+            }
         }
     }
 
@@ -241,7 +238,7 @@ public class ApiVideoPlayerController: NSObject {
             guard let videoOptions = videoOptions else {
                 return
             }
-            self.getPlayerJSON(videoOptions: videoOptions) { error in
+            self.getVideoFromVideoOption(videoOptions: videoOptions) { error in
                 if let error = error {
                     self.notifyError(error: error)
                 }
