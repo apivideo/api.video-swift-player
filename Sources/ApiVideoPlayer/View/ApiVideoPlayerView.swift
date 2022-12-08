@@ -61,8 +61,8 @@ public class ApiVideoPlayerView: UIView {
         self.playerController = ApiVideoPlayerController(
             videoOptions: videoOptions,
             playerLayer: self.playerLayer,
-            autoplay: autoplay,
-            events: events
+            events: events,
+            autoplay: autoplay
         )
         super.init(frame: frame)
         self.setupView()
@@ -119,7 +119,7 @@ public class ApiVideoPlayerView: UIView {
     /// Get information if the video is playing.
     /// - Returns: Boolean.
     public var isPlaying: Bool {
-        return self.playerController.isPlaying
+        self.playerController.isPlaying
     }
 
     /// Play the video.

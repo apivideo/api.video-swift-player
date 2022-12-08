@@ -28,7 +28,7 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
     }
 
     public var isPlaying: Bool {
-        return self.playerViewController.isPlaying
+        self.playerViewController.isPlaying
     }
 
     public func replay() {

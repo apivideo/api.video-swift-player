@@ -32,14 +32,10 @@ struct ContentView: View {
                 .frame(height: 250)
                 .padding(.bottom)
             HStack {
-                Button(action: {
-                    player.play()
-                }) {
+                Button(action: { player.play() }) {
                     Text("Play")
                 }
-                Button(action: {
-                    player.pause()
-                }) {
+                Button(action: { player.pause() }) {
                     Text("Pause")
                 }
             }
