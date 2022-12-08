@@ -94,13 +94,16 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func retrySetUpPlayerUrlWithMp4() {
-        if self.videoOptions != nil {
-            do {
-                try self.setUpPlayer(self.getVideoMP4(videoOptions: self.videoOptions!))
-            } catch {
-                self.notifyError(error: error)
-            }
+        guard let videoOptions = self.videoOptions else {
+            self.notifyError(error: PlayerError.videoOptionsError("Something went wrong with the video options."))
+            return
         }
+        do {
+            try self.setUpPlayer(self.getVideoMP4(videoOptions: videoOptions))
+        } catch {
+            self.notifyError(error: error)
+        }
+
     }
 
     private func setUpPlayer(_ url: String) throws {
@@ -515,4 +518,5 @@ enum PlayerError: Error {
     case mp4Error(String)
     case urlError(String)
     case videoIdError(String)
+    case videoOptionsError(String)
 }
