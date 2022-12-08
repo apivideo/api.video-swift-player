@@ -32,6 +32,9 @@ public class ApiVideoPlayerController: NSObject {
         autoplay: Bool = false
     ) {
         super.init()
+        defer {
+            self.videoOptions = videoOptions
+        }
         self.autoplay = autoplay
         self.avPlayer.addObserver(
             self,
@@ -47,10 +50,6 @@ public class ApiVideoPlayerController: NSObject {
         )
         if let events = events {
             self.addEvents(events: events)
-        }
-
-        defer {
-            self.videoOptions = videoOptions
         }
     }
 
@@ -502,7 +501,7 @@ public class ApiVideoPlayerController: NSObject {
 }
 
 extension AVPlayer {
-    @available(iOS 10.0, *)  var isPlaying: Bool {
+    var isPlaying: Bool {
         rate != 0 && error == nil
     }
 
