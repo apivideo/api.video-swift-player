@@ -12,7 +12,6 @@ public class ApiVideoPlayerController: NSObject {
     private var timeObserver: Any?
     private var isFirstPlay = true
     private var isSeeking = false
-    private let taskExecutor: TasksExecutorProtocol.Type
     private let baseVodUrl = "https://cdn.api.video/"
     private let baseLiveUrl = "hhtps://live.api.video/"
     #if !os(macOS)
@@ -30,10 +29,8 @@ public class ApiVideoPlayerController: NSObject {
     public init(
         videoOptions: VideoOptions?,
         autoplay: Bool = false,
-        events: PlayerEvents?,
-        taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
+        events: PlayerEvents?
     ) {
-        self.taskExecutor = taskExecutor
         super.init()
         self.autoplay = autoplay
         self.avPlayer.addObserver(
