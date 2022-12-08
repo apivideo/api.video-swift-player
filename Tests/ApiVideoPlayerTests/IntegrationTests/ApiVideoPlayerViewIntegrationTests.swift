@@ -14,7 +14,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
         let errorExpectation = expectation(description: "error is called")
         errorExpectation.isInverted = true
         let events = PlayerEvents(
-            didPrepare: { () in
+            didReady: { () in
                 print("ready")
                 completedExpectationPrepare.fulfill()
             },
@@ -43,7 +43,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
         prepareExpectation.isInverted = true
         let errorExpectation = expectation(description: "error is called")
         let events = PlayerEvents(
-            didPrepare: { () in
+            didReady: { () in
                 print("ready")
                 prepareExpectation.fulfill()
             },

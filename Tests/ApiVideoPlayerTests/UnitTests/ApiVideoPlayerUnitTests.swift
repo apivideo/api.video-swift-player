@@ -24,7 +24,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let errorExpectation = self.expectation(description: "didError is called")
         errorExpectation.isInverted = true
         let events = PlayerEvents(
-            didPrepare: { () in
+            didReady: { () in
                 print("didPrepare")
                 prepareExpectation.fulfill()
             },
@@ -35,7 +35,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         )
         self.generateRessource(ressource: "responseSuccess")
 
-        _ = ApiVideoPlayerController(
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
             taskExecutor: MockedTasksExecutor.self
@@ -49,7 +49,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         prepareExpectation.isInverted = true
         let errorExpectation = self.expectation(description: "didError is called")
         let events = PlayerEvents(
-            didPrepare: { () in
+            didReady: { () in
                 print("didPrepare")
                 prepareExpectation.fulfill()
             },
@@ -60,7 +60,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         )
         self.generateRessource(ressource: "responseError")
 
-        _ = ApiVideoPlayerController(
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
             taskExecutor: MockedTasksExecutor.self
@@ -75,7 +75,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let errorExpectation = self.expectation(description: "didError is called")
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
         let events = PlayerEvents(
-            didPrepare: { () in
+            didReady: { () in
                 print("didPrepare")
                 prepareExpectation.fulfill()
             },
@@ -84,7 +84,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        _ = ApiVideoPlayerController(
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
             taskExecutor: MockedTasksExecutor.self
