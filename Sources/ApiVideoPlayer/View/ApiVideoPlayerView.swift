@@ -6,14 +6,16 @@ import UIKit
 public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let videoPlayerView = UIView()
-    private var vodControlsView: VodControlsView?
+//    private var vodControlsView: VodControlsView?
+    private var controlsView: ControlsView?
     private var playerController: ApiVideoPlayerController
     private var userEvents: PlayerEvents?
     private var isFirstPlay = true
     private var isHidenControls: Bool
     public var viewController: UIViewController? {
         didSet {
-            self.vodControlsView?.viewController = self.viewController
+            //self.vodControlsView?.viewController = self.viewController
+            self.controlsView?.viewController = self.viewController
         }
     }
 
@@ -67,7 +69,8 @@ public class ApiVideoPlayerView: UIView {
         super.init(frame: frame)
         self.setupView()
         if !hideControls {
-            self.vodControlsView = VodControlsView(frame: frame, playerController: self.playerController)
+            //self.vodControlsView = VodControlsView(frame: frame, playerController: self.playerController)
+            self.controlsView = ControlsView(frame: frame, playerController: playerController, videoOptions: videoOptions)
         }
 
         self.setupSubviews()
@@ -86,20 +89,21 @@ public class ApiVideoPlayerView: UIView {
 
     private func setupSubviews() {
         // Controls View
-        if let vodControlsView = vodControlsView {
-            addSubview(vodControlsView)
+        if let controlsView = controlsView{
+            addSubview(controlsView)
 
-            vodControlsView.translatesAutoresizingMaskIntoConstraints = false
-            vodControlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-            vodControlsView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-            vodControlsView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-            vodControlsView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+            controlsView.translatesAutoresizingMaskIntoConstraints = false
+            controlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+            controlsView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+            controlsView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+            controlsView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         }
     }
 
     override public func layoutSubviews() {
         super.layoutSubviews()
-        self.vodControlsView?.frame = bounds
+//        self.vodControlsView?.frame = bounds
+        self.controlsView?.frame = bounds
     }
 
     override public func layoutSublayers(of layer: CALayer) {
@@ -161,13 +165,15 @@ public class ApiVideoPlayerView: UIView {
     /// Hide all the controls of the player.
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func hideControls() {
-        self.vodControlsView?.isHidden = true
+//        self.vodControlsView?.isHidden = true
+        self.controlsView?.isHidden = true
     }
 
     /// Show all the controls of the player.
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func showControls() {
-        self.vodControlsView?.isHidden = false
+//        self.vodControlsView?.isHidden = false
+        self.controlsView?.isHidden = false
     }
 
     /// Hide the selected subtitle.
