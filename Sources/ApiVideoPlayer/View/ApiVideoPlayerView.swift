@@ -6,7 +6,6 @@ import UIKit
 public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let videoPlayerView = UIView()
-//    private var vodControlsView: VodControlsView?
     private var controlsView: ControlsView?
     private var playerController: ApiVideoPlayerController
     private var userEvents: PlayerEvents?
@@ -14,7 +13,6 @@ public class ApiVideoPlayerView: UIView {
     private var isHidenControls: Bool
     public var viewController: UIViewController? {
         didSet {
-            //self.vodControlsView?.viewController = self.viewController
             self.controlsView?.viewController = self.viewController
         }
     }
@@ -69,8 +67,11 @@ public class ApiVideoPlayerView: UIView {
         super.init(frame: frame)
         self.setupView()
         if !hideControls {
-            //self.vodControlsView = VodControlsView(frame: frame, playerController: self.playerController)
-            self.controlsView = ControlsView(frame: frame, playerController: playerController, videoOptions: videoOptions)
+            self.controlsView = ControlsView(
+                frame: frame,
+                playerController: self.playerController,
+                videoOptions: videoOptions
+            )
         }
 
         self.setupSubviews()
@@ -89,7 +90,7 @@ public class ApiVideoPlayerView: UIView {
 
     private func setupSubviews() {
         // Controls View
-        if let controlsView = controlsView{
+        if let controlsView = controlsView {
             addSubview(controlsView)
 
             controlsView.translatesAutoresizingMaskIntoConstraints = false
