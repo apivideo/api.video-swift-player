@@ -103,7 +103,6 @@ public class ApiVideoPlayerView: UIView {
 
     override public func layoutSubviews() {
         super.layoutSubviews()
-//        self.vodControlsView?.frame = bounds
         self.controlsView?.frame = bounds
     }
 
