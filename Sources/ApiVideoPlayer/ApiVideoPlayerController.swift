@@ -512,7 +512,8 @@ public class ApiVideoPlayerController: NSObject {
 }
 
 extension AVPlayer {
-    @available(iOS 10.0, *)  var isPlaying: Bool {
+    @available(iOS 10.0, *)
+    var isPlaying: Bool {
         rate != 0 && error == nil
     }
 
