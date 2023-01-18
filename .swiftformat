@@ -80,7 +80,6 @@
  ### Attributes
  --funcattributes prev-line
  --typeattributes prev-line
- --varattributes same-line
 
  ### Else
  --elseposition same-line
