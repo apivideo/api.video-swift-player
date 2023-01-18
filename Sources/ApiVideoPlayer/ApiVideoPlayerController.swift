@@ -20,19 +20,22 @@ public class ApiVideoPlayerController: NSObject {
         autoplay: Bool = false,
         events: PlayerEvents? = nil
     ) {
-        self.init(videoOptions: videoOptions, autoplay: autoplay, events: events)
+        self.init(videoOptions: videoOptions, events: events, autoplay: autoplay)
         playerLayer.player = self.avPlayer
     }
     #endif
 
     public init(
         videoOptions: VideoOptions?,
-        autoplay: Bool = false,
         events: PlayerEvents?,
+        autoplay: Bool = false,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
         self.taskExecutor = taskExecutor
         super.init()
+        defer {
+            self.videoOptions = videoOptions
+        }
         self.autoplay = autoplay
         self.avPlayer.addObserver(
             self,
@@ -48,10 +51,6 @@ public class ApiVideoPlayerController: NSObject {
         )
         if let events = events {
             self.addEvents(events: events)
-        }
-
-        defer {
-            self.videoOptions = videoOptions
         }
     }
 
@@ -182,7 +181,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public var isPlaying: Bool {
-        return self.avPlayer.isPlaying
+        self.avPlayer.isPlaying
     }
 
     public func play() {
@@ -513,13 +512,13 @@ public class ApiVideoPlayerController: NSObject {
 }
 
 extension AVPlayer {
-    @available(iOS 10.0, *) var isPlaying: Bool {
-        return (rate != 0 && error == nil)
+    @available(iOS 10.0, *)  var isPlaying: Bool {
+        rate != 0 && error == nil
     }
 
     var videoSize: CGSize {
         guard let size = self.currentItem?.presentationSize else {
-            return CGSize(width: 0, height: 0)
+            return .zero
         }
         return size
     }

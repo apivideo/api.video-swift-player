@@ -123,7 +123,7 @@ public class ApiVideoPlayerView: UIView {
     /// Get information if the video is playing.
     /// - Returns: Boolean.
     public var isPlaying: Bool {
-        return self.playerController.isPlaying
+        self.playerController.isPlaying
     }
 
     /// Play the video.

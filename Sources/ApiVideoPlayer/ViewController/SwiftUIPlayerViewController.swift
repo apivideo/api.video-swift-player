@@ -33,12 +33,14 @@ public class SwiftUIPlayerViewController: UIViewController {
         ])
     }
 
-    override public func viewDidAppear(_: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         self.playerView.viewController = self
+        super.viewDidAppear(animated)
     }
 
-    override public func viewDidDisappear(_: Bool) {
+    override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
+        super.viewDidDisappear(animated)
     }
 
     public func play() {
@@ -50,7 +52,7 @@ public class SwiftUIPlayerViewController: UIViewController {
     }
 
     public var isPlaying: Bool {
-        return self.playerView.isPlaying
+        self.playerView.isPlaying
     }
 
     public func replay() {
