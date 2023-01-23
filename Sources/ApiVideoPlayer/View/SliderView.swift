@@ -36,7 +36,7 @@ class SliderView: UIView {
             self.setUpLive()
         }
 
-        self.events.didPrepare = { () in
+        self.events.didReady = { () in
             if self.playerController.hasSubtitles {
                 DispatchQueue.main.async {
                     self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
@@ -60,7 +60,7 @@ class SliderView: UIView {
         // Subtitle
         addSubview(self.subtitleButton)
         self.subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
-
+        
         // Timer Label
         addSubview(self.controlTimerLabel)
         self.controlTimerLabel.textColor = UIColor.white
@@ -243,8 +243,8 @@ class SliderView: UIView {
     @objc
     func toggleSubtitleView() {
         self.timer.resetTimer()
-        let posX = self.subtitleButton.frame.origin.x - 120
-        let posY = frame.height - self.frame.height - 45
+        let posX = self.subtitleButton.frame.origin.x - 100
+        let posY = frame.height - self.frame.height - 40
 
         if let subtitleView = subtitleView,
            subtitleView.isDescendant(of: self)
@@ -254,8 +254,10 @@ class SliderView: UIView {
             subtitleView = {
                 let subtitleView = SubtitleView(
                     frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                    playerController: playerController
+                    playerController: self.playerController
                 )
+//                let window = UIApplication.shared.windows.last
+//                window!.addSubview(subtitleView)
                 addSubview(subtitleView)
                 bringSubviewToFront(subtitleView)
                 return subtitleView
