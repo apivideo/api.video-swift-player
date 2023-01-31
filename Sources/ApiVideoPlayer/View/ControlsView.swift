@@ -354,9 +354,9 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
             posX = self.subtitleButton.frame.origin.x - 100
             posY = self.frame.height - sliderV.frame.height - 40
         }
-
+        guard let superV = self.superview else { return }
         if let subtitleView = subtitleView,
-           subtitleView.isDescendant(of: self)
+           subtitleView.isDescendant(of: superV)
         {
             subtitleView.dismissView()
         } else {
@@ -368,7 +368,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
                 subtitleView.selectedLanguage = self.playerController.currentSubtitle
                 return subtitleView
             }()
-            guard let superV = self.superview else { return }
             guard let subtitleV = subtitleView else { return }
             superV.addSubview(subtitleV)
         }
