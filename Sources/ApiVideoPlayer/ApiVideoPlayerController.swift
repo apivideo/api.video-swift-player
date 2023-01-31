@@ -5,6 +5,7 @@ import Foundation
 
 public class ApiVideoPlayerController: NSObject {
     private var events = [PlayerEvents]()
+    private var playerControllerEvent = ApiVideoPlayerControllerEvent()
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
@@ -13,14 +14,22 @@ public class ApiVideoPlayerController: NSObject {
     private var isFirstPlay = true
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
+    private(set) var isLive = false
+    private(set) var isVod = false
     #if !os(macOS)
     public convenience init(
         videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
         autoplay: Bool = false,
-        events: PlayerEvents? = nil
+        events: PlayerEvents? = nil,
+        playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
     ) {
-        self.init(videoOptions: videoOptions, events: events, autoplay: autoplay)
+        self.init(
+            videoOptions: videoOptions,
+            events: events,
+            playerControllerEvent: playerControllerEvent,
+            autoplay: autoplay
+        )
         playerLayer.player = self.avPlayer
     }
     #endif
@@ -28,6 +37,7 @@ public class ApiVideoPlayerController: NSObject {
     public init(
         videoOptions: VideoOptions?,
         events: PlayerEvents?,
+        playerControllerEvent: ApiVideoPlayerControllerEvent?,
         autoplay: Bool = false,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
@@ -35,6 +45,15 @@ public class ApiVideoPlayerController: NSObject {
         super.init()
         defer {
             self.videoOptions = videoOptions
+        }
+        if videoOptions?.videoType == .vod {
+            playerControllerEvent?.videoTypeDidChange?()
+            self.isVod = true
+            self.isLive = false
+        } else {
+            playerControllerEvent?.videoTypeDidChange?()
+            self.isVod = false
+            self.isLive = true
         }
         self.autoplay = autoplay
         self.avPlayer.addObserver(

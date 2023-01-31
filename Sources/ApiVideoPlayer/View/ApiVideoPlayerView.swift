@@ -25,20 +25,23 @@ public class ApiVideoPlayerView: UIView {
     ///   - hideControls: true to hide video controls, false to show them
     ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     ///   - events: Callback to get all the player events.
+    ///   - playerControllerEvent: Callback to get controller event.
     public convenience init(
         frame: CGRect,
         videoId: String,
         videoType: VideoType,
         hideControls: Bool = false,
         autoplay: Bool = false,
-        events: PlayerEvents? = nil
+        events: PlayerEvents? = nil,
+        playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
     ) {
         self.init(
             frame: frame,
             videoOptions: VideoOptions(videoId: videoId, videoType: videoType),
             hideControls: hideControls,
             autoplay: autoplay,
-            events: events
+            events: events,
+            playerControllerEvent: playerControllerEvent
         )
     }
 
@@ -49,12 +52,14 @@ public class ApiVideoPlayerView: UIView {
     ///   - hideControls: true to hide video controls, false to show them
     ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     ///   - events: Callback to get all the player events.
+    ///   - playerControllerEvent: Callback to get controller event.
     public init(
         frame: CGRect,
         videoOptions: VideoOptions,
         hideControls: Bool = false,
         autoplay: Bool = false,
-        events: PlayerEvents? = nil
+        events: PlayerEvents? = nil,
+        playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
     ) {
         self.userEvents = events
         self.isHidenControls = hideControls
@@ -62,18 +67,34 @@ public class ApiVideoPlayerView: UIView {
             videoOptions: videoOptions,
             playerLayer: self.playerLayer,
             autoplay: autoplay,
-            events: events
+            events: events,
+            playerControllerEvent: playerControllerEvent
         )
         super.init(frame: frame)
         self.setupView()
-        if !hideControls {
-            self.controlsView = ControlsView(
-                frame: frame,
-                playerController: self.playerController,
-                videoOptions: videoOptions
-            )
+        let controlsViewOptions: ControlsViewOptions
+        if !self.isHidenControls {
+            if self.playerController.isVod {
+                controlsViewOptions = ControlsViewOptions(enableSubtitleButton: self.playerController.hasSubtitles)
+                self.controlsView = ControlsView.buildForVod(
+                    frame: frame,
+                    playerController: self.playerController,
+                    controlsViewOptions: controlsViewOptions
+                )
+            } else {
+                controlsViewOptions = ControlsViewOptions(
+                    enableLiveButton: true,
+                    enableForwardButton: false,
+                    enableBackwardButton: false,
+                    enableSubtitleButton: false
+                )
+                self.controlsView = ControlsView.buildForLive(
+                    frame: frame,
+                    playerController: self.playerController,
+                    controlsViewOptions: controlsViewOptions
+                )
+            }
         }
-
         self.setupSubviews()
     }
 
@@ -84,7 +105,6 @@ public class ApiVideoPlayerView: UIView {
 
     private func setupView() {
         backgroundColor = .clear
-
         layer.addSublayer(self.playerLayer)
     }
 
@@ -92,7 +112,6 @@ public class ApiVideoPlayerView: UIView {
         // Controls View
         if let controlsView = controlsView {
             addSubview(controlsView)
-
             controlsView.translatesAutoresizingMaskIntoConstraints = false
             controlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
             controlsView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
