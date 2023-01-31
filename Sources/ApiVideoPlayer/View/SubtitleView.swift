@@ -8,13 +8,17 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     private var subtitles: [SubtitleLanguage] = []
     private var tableview = UITableView()
     private let cellReuseIdentifier = "cell"
-    private let playerController: ApiVideoPlayerController
+    public var selectedLanguage: SubtitleLanguage? {
+        didSet {
+            self.tableview.reloadData()
+        }
+    }
 
-    public init(frame: CGRect, playerController: ApiVideoPlayerController) {
-        self.playerController = playerController
+    public weak var delegate: SubtitleViewDelegate?
+
+    public init(frame: CGRect, _ languages: [SubtitleLanguage]) {
+        self.subtitles = languages
         super.init(frame: frame)
-        self.subtitles = playerController.subtitles
-
         layer.cornerRadius = 15
         self.tableview.layer.cornerRadius = 15
         if self.subtitles.count < 3 {
@@ -42,6 +46,7 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         self.tableview.dataSource = self
         self.tableview.register(UITableViewCell.self, forCellReuseIdentifier: self.cellReuseIdentifier)
         addSubview(self.tableview)
+        bringSubviewToFront(self.tableview)
     }
 
     @available(*, unavailable)
@@ -54,7 +59,7 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
 
     private func isCurrentSubtitleLanguage(subtitleLanguage: SubtitleLanguage) -> Bool {
-        return self.playerController.currentSubtitle.code == subtitleLanguage.code
+        return self.selectedLanguage?.code == subtitleLanguage.code
     }
 
     // MARK: TableView
@@ -100,7 +105,7 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         }
 
         self.selectedRow = indexPath.row
-        self.playerController.currentSubtitle = selectedSubtitleRow
+        self.delegate?.languageSelected(language: selectedSubtitleRow)
 
         self.dismissView()
     }
