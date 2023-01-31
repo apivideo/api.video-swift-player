@@ -3,22 +3,36 @@ import AVFoundation
 import Foundation
 import UIKit
 class SliderView: UIView {
-    private let playerController: ApiVideoPlayerController
-    private let videoOptions: VideoOptions
-    private var subtitleView: SubtitleView?
-    private var timerLeadingConstraintWithSubtitleButton: NSLayoutConstraint?
-    private var timerLeadingConstraintWithoutSubtitleButton: NSLayoutConstraint?
     private let events = PlayerEvents()
     private var timer = SharedTimer.shared
-    private var sliderDidPauseVideo = false
+    public weak var delegate: SliderViewDelegate? {
+        didSet {
+            self.delegate?.addEvents(events: self.events)
+        }
+    }
 
-    init(frame: CGRect, playerController: ApiVideoPlayerController, videoOptions: VideoOptions) {
-        self.playerController = playerController
-        self.videoOptions = videoOptions
+    public var duration: CMTime = .init(seconds: 0.0, preferredTimescale: 1_000) {
+        didSet {
+            self.remainingTime = (self.duration - self.currentTime).prettyTime
+            self.controlTimerLabel.text = self.remainingTime
+            self.setLiveLabel()
+        }
+    }
+
+    public var currentTime: CMTime = .init(seconds: 0.0, preferredTimescale: 1_000) {
+        didSet {
+            self.remainingTime = (self.duration - self.currentTime).prettyTime
+            self.controlSlider.value = Float(self.currentTime.roundedSeconds / self.duration.roundedSeconds)
+            self.controlTimerLabel.text = self.remainingTime
+            self.setLiveLabel()
+        }
+    }
+
+    private var remainingTime: String = ""
+
+    init(frame: CGRect, _ displayLiveBtn: Bool) {
+
         super.init(frame: frame)
-        playerController.setTimerObserver(callback: { () in
-            self.updateTiming()
-        })
         self.backgroundColor = UIColor.darkGray.withAlphaComponent(0.25)
 
         addSubview(self.controlSlider)
@@ -30,23 +44,13 @@ class SliderView: UIView {
         self.controlSlider.tintColor = UIColor.orange.withAlphaComponent(0.7)
         self.controlSlider.thumbTintColor = UIColor.white
 
-        if videoOptions.videoType == .vod {
+        if !displayLiveBtn {
             self.setUpVod()
         } else {
             self.setUpLive()
         }
 
-        self.events.didReady = { () in
-            if self.playerController.hasSubtitles {
-                DispatchQueue.main.async {
-                    self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
-                    self.timerLeadingConstraintWithSubtitleButton?.isActive = true
-                    self.subtitleButton.isHidden = false
-                }
-            }
-        }
-
-        playerController.addEvents(events: self.events)
+        self.delegate?.addEvents(events: self.events)
         self.setUpGeneralConstraints()
     }
 
@@ -56,15 +60,31 @@ class SliderView: UIView {
     }
 
     private func setUpVod() {
-
-        // Subtitle
-        addSubview(self.subtitleButton)
-        self.subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
-        
         // Timer Label
         addSubview(self.controlTimerLabel)
         self.controlTimerLabel.textColor = UIColor.white
         self.setUpVodConstraints()
+    }
+
+    private func setLiveLabel() {
+        let currentTime = self.currentTime
+        let duration = self.duration
+        let remainingTime = duration - currentTime
+
+        var timeToLive = remainingTime.prettyTime
+        if remainingTime > CMTime(seconds: 0.0, preferredTimescale: 1_000) {
+            timeToLive = "-\(timeToLive)"
+        } else {
+            timeToLive = CMTime(seconds: 0.0, preferredTimescale: 1_000).prettyTime
+        }
+        if remainingTime >= CMTime(seconds: 3, preferredTimescale: 1_000) {
+            self.setLiveButtonTintColor(isLive: false)
+        } else {
+            self.setLiveButtonTintColor(isLive: true)
+        }
+        self.controlSlider.value = Float(currentTime.roundedSeconds / duration.roundedSeconds)
+        self.controlLiveCurrentTimerLabel.text = currentTime.prettyTime
+        self.controlTimeToLiveLabel.text = timeToLive
     }
 
     private func setUpLive() {
@@ -101,26 +121,6 @@ class SliderView: UIView {
         self.controlTimerLabel.translatesAutoresizingMaskIntoConstraints = false
         self.controlTimerLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
             .isActive = true
-
-        self.timerLeadingConstraintWithSubtitleButton = self.controlTimerLabel.trailingAnchor.constraint(
-            equalTo: self.subtitleButton.leadingAnchor,
-            constant: -10
-        )
-        self.timerLeadingConstraintWithoutSubtitleButton = self.controlTimerLabel.rightAnchor.constraint(
-            equalTo: self.rightAnchor,
-            constant: -10
-        )
-        self.timerLeadingConstraintWithoutSubtitleButton?.isActive = true
-
-        // subtitle
-        self.subtitleButton.translatesAutoresizingMaskIntoConstraints = false
-        self.subtitleButton.centerYAnchor.constraint(equalTo: self.centerYAnchor)
-            .isActive = true
-        self.subtitleButton.trailingAnchor.constraint(
-            equalTo: self.trailingAnchor,
-            constant: -10
-        ).isActive = true
-
     }
 
     private func setUpLiveContraints() {
@@ -175,14 +175,6 @@ class SliderView: UIView {
         return label
     }()
 
-    let subtitleButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
-        btn.tintColor = .white
-        btn.isHidden = true
-        return btn
-    }()
-
     let liveButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.tintColor = .white
@@ -203,7 +195,7 @@ class SliderView: UIView {
 
     @objc
     func goToLive() {
-        self.playerController.seek(to: self.playerController.duration)
+        self.delegate?.goBackToLive()
         self.setLiveButtonTintColor(isLive: true)
     }
 
@@ -214,54 +206,19 @@ class SliderView: UIView {
             switch touchEvent.phase {
             case .began:
                 // handle drag began
-                if self.playerController.isPlaying {
-                    // Avoid to trigger callbacks and analytics when the user uses the seek slider
-                    self.playerController.pauseBeforeSeek()
-                    self.sliderDidPauseVideo = true
-                }
+                self.delegate?.sliderValueChangeDidStart(position: Float64(slider.value))
 
             case .moved:
                 // handle drag moved
-                break
+                self.delegate?.sliderValueChangeDidMove(position: Float64(slider.value))
 
             case .ended:
                 // handle drag ended
-                let value = Float64(slider.value) * CMTimeGetSeconds(self.playerController.duration)
-                self.playerController.seek(to: CMTime(seconds: value, preferredTimescale: 1_000))
-                if self.sliderDidPauseVideo {
-                    self.playerController.play()
-                }
-                self.sliderDidPauseVideo = false
+                self.delegate?.sliderValueChangeDidStop(position: Float64(slider.value))
 
             default:
                 break
             }
-        }
-        self.timer.activateTimer()
-    }
-
-    @objc
-    func toggleSubtitleView() {
-        self.timer.resetTimer()
-        let posX = self.subtitleButton.frame.origin.x - 100
-        let posY = frame.height - self.frame.height - 40
-
-        if let subtitleView = subtitleView,
-           subtitleView.isDescendant(of: self)
-        {
-            subtitleView.dismissView()
-        } else {
-            subtitleView = {
-                let subtitleView = SubtitleView(
-                    frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                    playerController: self.playerController
-                )
-//                let window = UIApplication.shared.windows.last
-//                window!.addSubview(subtitleView)
-                addSubview(subtitleView)
-                bringSubviewToFront(subtitleView)
-                return subtitleView
-            }()
         }
         self.timer.activateTimer()
     }
@@ -273,36 +230,5 @@ class SliderView: UIView {
             self.liveButton.tintColor = .white
         }
     }
-
-    private func updateTiming() {
-        let currentTime = self.playerController.currentTime
-        let duration = self.playerController.duration
-        let remainingTime = duration - currentTime
-
-        if self.videoOptions.videoType == .vod {
-            self.controlSlider.value = Float(currentTime.roundedSeconds / duration.roundedSeconds)
-            self.controlTimerLabel.text = remainingTime.prettyTime
-        } else {
-            var timeToLive = remainingTime.prettyTime
-            if remainingTime > CMTime(seconds: 0.0, preferredTimescale: 1_000) {
-                timeToLive = "-\(timeToLive)"
-            } else {
-                timeToLive = CMTime(seconds: 0.0, preferredTimescale: 1_000).prettyTime
-            }
-            if remainingTime >= CMTime(seconds: 3, preferredTimescale: 1_000) {
-                self.setLiveButtonTintColor(isLive: false)
-            } else {
-                self.setLiveButtonTintColor(isLive: true)
-            }
-            self.controlSlider.value = Float(currentTime.roundedSeconds / duration.roundedSeconds)
-            self.controlLiveCurrentTimerLabel.text = currentTime.prettyTime
-            self.controlTimeToLiveLabel.text = timeToLive
-        }
-    }
-
-    func dismissSubtitleView() {
-        self.subtitleView?.dismissView()
-    }
-
 }
 #endif
