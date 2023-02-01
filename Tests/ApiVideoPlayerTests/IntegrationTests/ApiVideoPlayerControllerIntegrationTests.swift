@@ -23,9 +23,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            events: events,
+            playerControllerEvent: controllerEvent
         )
         wait(for: [completedExpectationPrepare], timeout: 10)
         controller.play()
@@ -52,9 +58,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            events: events
+            events: events,
+            playerControllerEvent: controllerEvent
         )
         controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
         wait(for: [completedExpectationPrepare], timeout: 10)
@@ -87,9 +99,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            events: events,
+            playerControllerEvent: controllerEvent
         )
         wait(for: [completedExpectationPrepare], timeout: 10)
         controller.play()
@@ -127,9 +145,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            events: events,
+            playerControllerEvent: controllerEvent
         )
         wait(for: [completedExpectationPrepare], timeout: 10)
         controller.play()
@@ -152,9 +176,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            events: events,
+            playerControllerEvent: controllerEvent
         )
         waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
@@ -174,9 +204,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            events: events
+            events: events,
+            playerControllerEvent: controllerEvent
         )
 
         controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
@@ -198,7 +234,16 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 errorExpectation.fulfill()
             }
         )
-        _ = ApiVideoPlayerController(videoOptions: VideoOptions(videoId: VideoId.invalidVideoId), events: events)
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
+        _ = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
+            events: events,
+            playerControllerEvent: controllerEvent
+        )
         waitForExpectations(timeout: 10, handler: nil)
     }
 }
