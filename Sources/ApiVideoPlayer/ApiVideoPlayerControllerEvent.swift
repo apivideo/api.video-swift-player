@@ -1,8 +1,8 @@
 import Foundation
 public class ApiVideoPlayerControllerEvent {
-    public var videoTypeDidChange: (() -> Void)?
+    public var videoTypeDidChanged: (() -> Void)?
 
-    public init(videoTypeDidChange: (() -> Void)? = nil) {
-        self.videoTypeDidChange = videoTypeDidChange
+    public init(videoTypeDidChanged: (() -> Void)? = nil) {
+        self.videoTypeDidChanged = videoTypeDidChanged
     }
 }

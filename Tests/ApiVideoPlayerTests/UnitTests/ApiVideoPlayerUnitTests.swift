@@ -38,6 +38,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
+            playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
         waitForExpectations(timeout: 5, handler: nil)
@@ -63,6 +64,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
+            playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
         waitForExpectations(timeout: 5, handler: nil)
@@ -87,6 +89,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             events: events,
+            playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
         waitForExpectations(timeout: 5, handler: nil)

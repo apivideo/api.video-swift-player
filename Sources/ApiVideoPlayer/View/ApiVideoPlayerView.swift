@@ -25,23 +25,20 @@ public class ApiVideoPlayerView: UIView {
     ///   - hideControls: true to hide video controls, false to show them
     ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     ///   - events: Callback to get all the player events.
-    ///   - playerControllerEvent: Callback to get controller event.
     public convenience init(
         frame: CGRect,
         videoId: String,
         videoType: VideoType,
         hideControls: Bool = false,
         autoplay: Bool = false,
-        events: PlayerEvents? = nil,
-        playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
+        events: PlayerEvents? = nil
     ) {
         self.init(
             frame: frame,
             videoOptions: VideoOptions(videoId: videoId, videoType: videoType),
             hideControls: hideControls,
             autoplay: autoplay,
-            events: events,
-            playerControllerEvent: playerControllerEvent
+            events: events
         )
     }
 
@@ -52,27 +49,29 @@ public class ApiVideoPlayerView: UIView {
     ///   - hideControls: true to hide video controls, false to show them
     ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     ///   - events: Callback to get all the player events.
-    ///   - playerControllerEvent: Callback to get controller event.
     public init(
         frame: CGRect,
         videoOptions: VideoOptions,
         hideControls: Bool = false,
         autoplay: Bool = false,
-        events: PlayerEvents? = nil,
-        playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
+        events: PlayerEvents? = nil
     ) {
         self.userEvents = events
         self.isHidenControls = hideControls
+        let controllerEvents = ApiVideoPlayerControllerEvent(videoTypeDidChanged: { () in
+            print("videoTypeDidChanged")
+        })
         self.playerController = ApiVideoPlayerController(
             videoOptions: videoOptions,
             playerLayer: self.playerLayer,
             autoplay: autoplay,
             events: events,
-            playerControllerEvent: playerControllerEvent
+            playerControllerEvent: controllerEvents
         )
         super.init(frame: frame)
         self.setupView()
         let controlsViewOptions: ControlsViewOptions
+
         if !self.isHidenControls {
             if self.playerController.isVod {
                 controlsViewOptions = ControlsViewOptions(enableSubtitleButton: self.playerController.hasSubtitles)

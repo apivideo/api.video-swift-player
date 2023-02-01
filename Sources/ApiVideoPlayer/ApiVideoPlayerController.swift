@@ -47,11 +47,11 @@ public class ApiVideoPlayerController: NSObject {
             self.videoOptions = videoOptions
         }
         if videoOptions?.videoType == .vod {
-            playerControllerEvent?.videoTypeDidChange?()
+            playerControllerEvent?.videoTypeDidChanged?()
             self.isVod = true
             self.isLive = false
         } else {
-            playerControllerEvent?.videoTypeDidChange?()
+            playerControllerEvent?.videoTypeDidChanged?()
             self.isVod = false
             self.isLive = true
         }
