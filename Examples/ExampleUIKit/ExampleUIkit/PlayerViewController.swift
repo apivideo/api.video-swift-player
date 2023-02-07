@@ -2,7 +2,57 @@ import ApiVideoPlayer
 import AVKit
 import UIKit
 
-class PlayerViewController: UIViewController {
+class PlayerViewController: UIViewController, PlayerEventsDelegate {
+    public func didPrepare() {
+        print("app didPrepare")
+    }
+
+    public func didReady() {
+        print("app didReady")
+    }
+
+    public func didPause() {
+        print("app didPause")
+    }
+
+    public func didPlay() {
+        print("app didPlay")
+    }
+
+    public func didReplay() {
+        print("app didReplay")
+    }
+
+    public func didMute() {
+        print("app didMute")
+    }
+
+    public func didUnMute() {
+        print("app didUnMute")
+    }
+
+    public func didLoop() {
+        print("app didLoop")
+    }
+
+    public func didSetVolume(_: Float) {
+        print("app didSetVolume")
+    }
+
+    public func didSeek(_: CMTime, _: CMTime) {
+        print("app didSeek")
+    }
+
+    public func didEnd() {
+        print("app didEnd")
+    }
+
+    public func didError(_: Error) {
+        print("app didError")
+    }
+
+    public func didVideoSizeChanged(_: CGSize) {}
+
     private var didFinish = false {
         didSet {
             self.replayVideo()
@@ -10,41 +60,11 @@ class PlayerViewController: UIViewController {
     }
 
     let playerView: ApiVideoPlayerView = {
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("didPrepare")
-            },
-            didReady: { () in
-                print("didReady")
-            },
-            didPause: { () in
-                print("paused")
-            },
-            didPlay: { () in
-                print("play")
-            },
-            didReplay: { () in
-                print("video replayed")
-            },
-            didLoop: { () in
-                print("video replayed from loop")
-            },
-            didSetVolume: { volume in
-                print("volume set to : \(volume)")
-            },
-            didSeek: { from, to in
-                print("seek from : \(from), to: \(to)")
-            },
-            didError: { error in
-                print("error \(error)")
-            }
-        )
+        let videoOptions = VideoOptions(videoId: "YOUR-VIDEO-ID")
 
         return ApiVideoPlayerView(
             frame: .zero,
-            videoId: "YOUR_VIDEO_ID",
-            videoType: VideoType.vod,
-            events: events
+            videoOptions: videoOptions
         )
     }()
 
@@ -166,11 +186,10 @@ class PlayerViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(self.scrollView)
         self.scrollView.addSubview(self.playerView)
-
+        self.playerView.addDelegate(self)
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         self.playerView.addGestureRecognizer(doubleTap)
-
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
         self.playerView.addGestureRecognizer(swipeGestureRecognizerRight)

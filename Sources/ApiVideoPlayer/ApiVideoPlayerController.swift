@@ -4,8 +4,8 @@ import AVKit
 import Foundation
 
 public class ApiVideoPlayerController: NSObject {
-    private var events = [PlayerEvents]()
-    private var playerControllerEvent = ApiVideoPlayerControllerEvent()
+    private var playerEventsDelegates = [PlayerEventsDelegate]()
+    private var playerControllerEvent: ApiVideoPlayerControllerEvent?
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
@@ -16,17 +16,20 @@ public class ApiVideoPlayerController: NSObject {
     private let taskExecutor: TasksExecutorProtocol.Type
     private(set) var isLive = false
     private(set) var isVod = false
+    public weak var delegate: PlayerEventsDelegate?
+    private var multicastDelegate: ApiVideoPlayerControllerMulticastDelegate
+
     #if !os(macOS)
     public convenience init(
         videoOptions: VideoOptions?,
+        mcDelegate: ApiVideoPlayerControllerMulticastDelegate,
         playerLayer: AVPlayerLayer,
         autoplay: Bool = false,
-        events: PlayerEvents? = nil,
         playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
     ) {
         self.init(
             videoOptions: videoOptions,
-            events: events,
+            mcDelegate: mcDelegate,
             playerControllerEvent: playerControllerEvent,
             autoplay: autoplay
         )
@@ -36,25 +39,19 @@ public class ApiVideoPlayerController: NSObject {
 
     public init(
         videoOptions: VideoOptions?,
-        events: PlayerEvents?,
+        mcDelegate: ApiVideoPlayerControllerMulticastDelegate,
         playerControllerEvent: ApiVideoPlayerControllerEvent?,
         autoplay: Bool = false,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
+        self.multicastDelegate = mcDelegate
         self.taskExecutor = taskExecutor
+        self.playerControllerEvent = playerControllerEvent
         super.init()
         defer {
             self.videoOptions = videoOptions
         }
-        if videoOptions?.videoType == .vod {
-            playerControllerEvent?.videoTypeDidChanged?()
-            self.isVod = true
-            self.isLive = false
-        } else {
-            playerControllerEvent?.videoTypeDidChanged?()
-            self.isVod = false
-            self.isLive = true
-        }
+
         self.autoplay = autoplay
         self.avPlayer.addObserver(
             self,
@@ -68,9 +65,6 @@ public class ApiVideoPlayerController: NSObject {
             options: NSKeyValueObservingOptions.new,
             context: nil
         )
-        if let events = events {
-            self.addEvents(events: events)
-        }
     }
 
     private func getVideoUrl(videoOptions: VideoOptions) -> String {
@@ -127,11 +121,13 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    func addDelegates(delegates: [PlayerEventsDelegate]) {
+        self.multicastDelegate.addDelegates(delegates)
+    }
+
     private func setUpPlayer(_ url: String) throws {
         if let url = URL(string: url) {
-            for event in self.events {
-                event.didPrepare?()
-            }
+            for delegate in self.playerEventsDelegates { delegate.didPrepare() }
             let item = AVPlayerItem(url: url)
             self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
             self.avPlayer.replaceCurrentItem(with: item)
@@ -148,9 +144,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func notifyError(error: Error) {
-        for events in self.events {
-            events.didError?(error)
-        }
+        self.delegate?.didError(error)
     }
 
     public func addOutput(output: AVPlayerItemOutput) {
@@ -165,14 +159,6 @@ public class ApiVideoPlayerController: NSObject {
             return
         }
         item.remove(output)
-    }
-
-    public func addEvents(events: PlayerEvents) {
-        self.events.append(events)
-    }
-
-    public func removeEvents(events: PlayerEvents) {
-        self.events.removeAll { $0 === events }
     }
 
     public func setTimerObserver(callback: @escaping (() -> Void)) {
@@ -227,7 +213,7 @@ public class ApiVideoPlayerController: NSObject {
     public func replay() {
         self.seekImpl(to: CMTime.zero, completion: { _ in
             self.play()
-            for events in self.events { events.didReplay?() }
+            self.delegate?.didReplay()
         })
 
     }
@@ -248,9 +234,7 @@ public class ApiVideoPlayerController: NSObject {
     public func seek(to: CMTime) {
         let from = self.currentTime
         self.seekImpl(to: to, completion: { _ in
-            for events in self.events {
-                events.didSeek?(from, self.currentTime)
-            }
+            self.delegate?.didSeek(from, self.currentTime)
         })
     }
 
@@ -259,11 +243,23 @@ public class ApiVideoPlayerController: NSObject {
             guard let videoOptions = videoOptions else {
                 return
             }
+            if videoOptions.videoType == .vod {
+                self.playerControllerEvent?.videoTypeDidChanged?()
+                self.isVod = true
+                self.isLive = false
+            } else {
+                self.playerControllerEvent?.videoTypeDidChanged?()
+                self.isVod = false
+                self.isLive = true
+            }
             self.getPlayerJSON(videoOptions: videoOptions) { error in
                 if let error = error {
                     self.notifyError(error: error)
                 }
             }
+        }
+        willSet {
+            print("video opt : \(String(describing: self.videoOptions?.videoType))")
         }
     }
 
@@ -274,13 +270,9 @@ public class ApiVideoPlayerController: NSObject {
         set(newValue) {
             self.avPlayer.isMuted = newValue
             if newValue {
-                for events in self.events {
-                    events.didMute?()
-                }
+                self.delegate?.didMute()
             } else {
-                for events in self.events {
-                    events.didUnMute?()
-                }
+                self.delegate?.didUnMute()
             }
         }
     }
@@ -292,9 +284,7 @@ public class ApiVideoPlayerController: NSObject {
         get { self.avPlayer.volume }
         set(newVolume) {
             self.avPlayer.volume = newVolume
-            for events in self.events {
-                events.didSetVolume?(volume)
-            }
+            self.delegate?.didSetVolume(volume)
         }
     }
 
@@ -388,9 +378,7 @@ public class ApiVideoPlayerController: NSObject {
     func playerDidFinishPlaying() {
         if self.isLooping {
             self.replay()
-            for events in self.events {
-                events.didLoop?()
-            }
+            self.delegate?.didLoop()
         }
         self.analytics?.end { result in
             switch result {
@@ -398,9 +386,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on ended event: \(error)")
             }
         }
-        for events in self.events {
-            events.didEnd?()
-        }
+        self.delegate?.didEnd()
     }
 
     private func doFallbackOnFailed() {
@@ -421,9 +407,7 @@ public class ApiVideoPlayerController: NSObject {
 
     private func doReadyToPlay() {
         if self.avPlayer.currentItem?.status == .readyToPlay {
-            for events in self.events {
-                events.didReady?()
-            }
+            self.delegate?.didReady()
             if self.autoplay {
                 self.play()
             }
@@ -445,9 +429,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on pause event: \(error)")
             }
         }
-        for events in self.events {
-            events.didPause?()
-        }
+        self.delegate?.didPause()
     }
 
     private func doPlayAction() {
@@ -471,9 +453,7 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         }
-        for events in self.events {
-            events.didPlay?()
-        }
+        self.delegate?.didPlay()
     }
 
     private func doTimeControlStatus() {
@@ -516,9 +496,7 @@ public class ApiVideoPlayerController: NSObject {
         if keyPath == "currentItem.presentationSize" {
             guard let change = change else { return }
             guard let newSize = change[.newKey] as? CGSize else { return }
-            for events in self.events {
-                events.didVideoSizeChanged?(newSize)
-            }
+            self.delegate?.didVideoSizeChanged(newSize)
         }
     }
 

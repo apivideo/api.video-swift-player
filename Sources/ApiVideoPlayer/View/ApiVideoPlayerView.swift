@@ -3,12 +3,63 @@ import AVKit
 import UIKit
 
 @available(tvOS 10.0, *)
-public class ApiVideoPlayerView: UIView {
+public class ApiVideoPlayerView: UIView, PlayerEventsDelegate {
+    public func didPrepare() {
+        print("ApiVideoPlayerView delegate didPrepare")
+    }
+
+    public func didReady() {
+        print("ApiVideoPlayerView delegate didReady")
+    }
+
+    public func didPause() {
+        print("ApiVideoPlayerView delegate didPause")
+    }
+
+    public func didPlay() {
+        print("ApiVideoPlayerView delegate didPlay")
+    }
+
+    public func didReplay() {
+        print("ApiVideoPlayerView delegate didReplay")
+    }
+
+    public func didMute() {
+        print("ApiVideoPlayerView delegate didMute")
+    }
+
+    public func didUnMute() {
+        print("ApiVideoPlayerView delegate didUnMute")
+    }
+
+    public func didLoop() {
+        print("ApiVideoPlayerView delegate didLoop")
+    }
+
+    public func didSetVolume(_: Float) {
+        print("ApiVideoPlayerView delegate didSetVolume")
+    }
+
+    public func didSeek(_: CMTime, _: CMTime) {
+        print("ApiVideoPlayerView delegate didSeek")
+    }
+
+    public func didEnd() {
+        print("ApiVideoPlayerView delegate didEnd")
+    }
+
+    public func didError(_: Error) {
+        print("ApiVideoPlayerView delegate didError")
+    }
+
+    public func didVideoSizeChanged(_: CGSize) {
+        // print("ApiVideoPlayerView delegate didVideoSizeChanged")
+    }
+
     private let playerLayer = AVPlayerLayer()
     private let videoPlayerView = UIView()
     private var controlsView: ControlsView?
     private var playerController: ApiVideoPlayerController
-    private var userEvents: PlayerEvents?
     private var isFirstPlay = true
     private var isHidenControls: Bool
     public var viewController: UIViewController? {
@@ -17,30 +68,29 @@ public class ApiVideoPlayerView: UIView {
         }
     }
 
-    /// Init method for PlayerView.
-    /// - Parameters:
-    ///   - frame: frame of theplayer view.
-    ///   - videoId: Need videoid to display the video.
-    ///   - videoType: VideoType object to display vod or live controls. Only vod is supported yet.
-    ///   - hideControls: true to hide video controls, false to show them
-    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
-    ///   - events: Callback to get all the player events.
-    public convenience init(
-        frame: CGRect,
-        videoId: String,
-        videoType: VideoType,
-        hideControls: Bool = false,
-        autoplay: Bool = false,
-        events: PlayerEvents? = nil
-    ) {
-        self.init(
-            frame: frame,
-            videoOptions: VideoOptions(videoId: videoId, videoType: videoType),
-            hideControls: hideControls,
-            autoplay: autoplay,
-            events: events
-        )
-    }
+//    /// Init method for PlayerView.
+//    /// - Parameters:
+//    ///   - frame: frame of theplayer view.
+//    ///   - videoId: Need videoid to display the video.
+//    ///   - videoType: VideoType object to display vod or live controls. Only vod is supported yet.
+//    ///   - hideControls: true to hide video controls, false to show them
+//    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
+//    ///   - events: Callback to get all the player events.
+//    public convenience init(
+//        frame: CGRect,
+//        videoOptions: VideoOptions,
+//        hideControls: Bool = false,
+//        autoplay: Bool = false,
+//        events: PlayerEvents? = nil
+//    ) {
+//        self.init(
+//            frame: frame,
+//            videoOptions: videoOptions,
+//            hideControls: hideControls,
+//            autoplay: autoplay,
+//            events: events
+//        )
+//    }
 
     /// Init method for PlayerView.
     /// - Parameters:
@@ -48,30 +98,25 @@ public class ApiVideoPlayerView: UIView {
     ///   - videoOption: The video option containing the videoId and the videoType
     ///   - hideControls: true to hide video controls, false to show them
     ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
-    ///   - events: Callback to get all the player events.
     public init(
         frame: CGRect,
         videoOptions: VideoOptions,
         hideControls: Bool = false,
-        autoplay: Bool = false,
-        events: PlayerEvents? = nil
+        autoplay: Bool = false
     ) {
-        self.userEvents = events
         self.isHidenControls = hideControls
-        let controllerEvents = ApiVideoPlayerControllerEvent(videoTypeDidChanged: { () in
-            print("videoTypeDidChanged")
-        })
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([])
         self.playerController = ApiVideoPlayerController(
             videoOptions: videoOptions,
+            mcDelegate: delegates,
             playerLayer: self.playerLayer,
-            autoplay: autoplay,
-            events: events,
-            playerControllerEvent: controllerEvents
+            autoplay: autoplay
         )
         super.init(frame: frame)
+        self.playerController.addDelegates(delegates: [self])
+        self.playerController.delegate = delegates
         self.setupView()
         let controlsViewOptions: ControlsViewOptions
-
         if !self.isHidenControls {
             if self.playerController.isVod {
                 controlsViewOptions = ControlsViewOptions(enableSubtitleButton: self.playerController.hasSubtitles)
@@ -93,6 +138,7 @@ public class ApiVideoPlayerView: UIView {
                     controlsViewOptions: controlsViewOptions
                 )
             }
+
         }
         self.setupSubviews()
     }
@@ -129,11 +175,16 @@ public class ApiVideoPlayerView: UIView {
         self.playerLayer.frame = bounds
     }
 
+    public func addDelegate(_ delegate: PlayerEventsDelegate) {
+        self.playerController.addDelegates(delegates: [delegate])
+    }
+
     public var videoOptions: VideoOptions? {
         get {
             self.playerController.videoOptions
         }
         set {
+            // TODO: set ui vod or live
             self.playerController.videoOptions = newValue
         }
     }
@@ -163,21 +214,6 @@ public class ApiVideoPlayerView: UIView {
     public var isMuted: Bool {
         get { self.playerController.isMuted }
         set(newValue) { self.playerController.isMuted = newValue }
-    }
-
-    /// Getter and Setter for player events callback.
-    /// Use it if you want to get netified on player events.
-    public var events: PlayerEvents? {
-        get { self.userEvents }
-        set(newValue) {
-            if let events = userEvents {
-                self.playerController.removeEvents(events: events)
-            }
-            if let events = events {
-                self.playerController.addEvents(events: events)
-            }
-            self.userEvents = newValue
-        }
     }
 
     /// Hide all the controls of the player.
@@ -260,12 +296,6 @@ public class ApiVideoPlayerView: UIView {
         }
         set(newValue) {
             self.playerController.isLooping = newValue
-        }
-    }
-
-    deinit {
-        if let events = self.userEvents {
-            playerController.removeEvents(events: events)
         }
     }
 }

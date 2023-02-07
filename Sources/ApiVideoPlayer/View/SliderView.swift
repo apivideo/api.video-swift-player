@@ -3,13 +3,8 @@ import AVFoundation
 import Foundation
 import UIKit
 class SliderView: UIView {
-    private let events = PlayerEvents()
     private var timer = SharedTimer.shared
-    public weak var delegate: SliderViewDelegate? {
-        didSet {
-            self.delegate?.addEvents(events: self.events)
-        }
-    }
+    public weak var delegate: SliderViewDelegate?
 
     public var duration: CMTime = .init(seconds: 0.0, preferredTimescale: 1_000) {
         didSet {
@@ -49,8 +44,6 @@ class SliderView: UIView {
         } else {
             self.setUpLive()
         }
-
-        self.delegate?.addEvents(events: self.events)
         self.setUpGeneralConstraints()
     }
 

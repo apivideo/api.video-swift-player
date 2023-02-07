@@ -3,7 +3,44 @@ import AVFoundation
 import Foundation
 import UIKit
 
-class ControlsView: UIView, UIGestureRecognizerDelegate {
+class ControlsView: UIView, UIGestureRecognizerDelegate, PlayerEventsDelegate {
+    func didPrepare() {
+        print("controlView didPrepare")
+    }
+
+    func didReady() {
+        if self.playerController.hasSubtitles {
+            self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
+            self.timerLeadingConstraintWithSubtitleButton?.isActive = true
+            self.subtitleButton.isHidden = false
+        }
+    }
+
+    func didPause() {
+        print("controlsView didPause")
+        self.setPlayBtnIcon(iconName: "play-primary")
+    }
+
+    func didPlay() {
+        print("controlsView didPlay")
+        self.setPlayBtnIcon(iconName: "pause-primary")
+    }
+
+    func didReplay() {}
+    func didMute() {}
+    func didUnMute() {}
+    func didLoop() {}
+    func didSetVolume(_: Float) {}
+    func didSeek(_: CMTime, _: CMTime) {}
+    func didEnd() {
+        if self.playerController.isVod {
+            self.setPlayBtnIcon(iconName: "replay-primary")
+        }
+    }
+
+    func didError(_: Error) {}
+    func didVideoSizeChanged(_: CGSize) {}
+
     private let playerController: ApiVideoPlayerController
     private let controlsViewOptions: ControlsViewOptions
     private var timer = SharedTimer.shared
@@ -22,7 +59,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    private let events = PlayerEvents()
     private var sliderView: SliderView?
 
     required init(frame: CGRect, playerController: ApiVideoPlayerController, controlsViewOptions: ControlsViewOptions) {
@@ -41,7 +77,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
             self.setLiveView()
         }
 
-        self.setupGeneralEvents()
         self.timer.didTimerActivated = { () in
             self.hideControls()
         }
@@ -50,10 +85,10 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
             self.sliderView?.currentTime = self.playerController.currentTime
         })
 
-        playerController.addEvents(events: self.events)
         if let sliderV = self.sliderView {
             insertSubview(sliderV, aboveSubview: self)
         }
+        self.playerController.addDelegates(delegates: [self])
     }
 
     @available(*, unavailable)
@@ -175,7 +210,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func setVodView() {
-        self.setupVodEvents()
         // Go Forward Button
         addSubview(self.vodControlGoForward15Button)
         self.vodControlGoForward15Button.addTarget(
@@ -196,28 +230,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         self.sliderView?.addSubview(self.subtitleButton)
         self.subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
         self.setupVodConstraints()
-    }
-
-    private func setupGeneralEvents() {
-        self.events.didReady = { () in
-            if self.playerController.hasSubtitles {
-                self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
-                self.timerLeadingConstraintWithSubtitleButton?.isActive = true
-                self.subtitleButton.isHidden = false
-            }
-        }
-        self.events.didPlay = { () in
-            self.setPlayBtnIcon(iconName: "pause-primary")
-        }
-        self.events.didPause = { () in
-            self.setPlayBtnIcon(iconName: "play-primary")
-        }
-    }
-
-    private func setupVodEvents() {
-        self.events.didEnd = { () in
-            self.setPlayBtnIcon(iconName: "replay-primary")
-        }
     }
 
     let playPauseButton: UIButton = {
@@ -376,6 +388,7 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 }
 
 extension ControlsView: SliderViewDelegate, SubtitleViewDelegate {
+
     func goBackToLive() {
         self.playerController.seek(to: self.playerController.duration)
     }
@@ -396,10 +409,6 @@ extension ControlsView: SliderViewDelegate, SubtitleViewDelegate {
             self.playerController.play()
         }
         self.sliderDidPauseVideo = false
-    }
-
-    func addEvents(events: PlayerEvents) {
-        self.playerController.addEvents(events: events)
     }
 
     func languageSelected(language: SubtitleLanguage) {
