@@ -11,11 +11,10 @@ public class SwiftUIPlayerViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
+    init(videoOptions: VideoOptions) {
         self.playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoOptions: videoOptions,
-            events: events
+            videoOptions: videoOptions
         )
         super.init(nibName: nil, bundle: nil)
     }

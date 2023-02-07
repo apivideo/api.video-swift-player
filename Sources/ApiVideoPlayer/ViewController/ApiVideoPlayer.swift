@@ -5,12 +5,8 @@ import SwiftUI
 public struct ApiVideoPlayer: UIViewControllerRepresentable {
     private let playerViewController: SwiftUIPlayerViewController
 
-    public init(videoId: String, videoType: VideoType, events: PlayerEvents? = nil) {
-        self.init(videoOptions: VideoOptions(videoId: videoId, videoType: videoType), events: events)
-    }
-
-    public init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
-        self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions, events: events)
+    public init(videoOptions: VideoOptions) {
+        self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions)
     }
 
     public func makeUIViewController(context _: Context) -> SwiftUIPlayerViewController {
@@ -94,7 +90,7 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        ApiVideoPlayer(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod)
+        ApiVideoPlayer(videoOptions: VideoOptions(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc"))
     }
 }
 #endif
