@@ -3,7 +3,32 @@ import XCTest
 
 /// Unit tests on PlayerController without connection to api.video
 /// The connection is mocked with MockedTasksExecutor
-class ApiVideoPlayerUnitTests: XCTestCase {
+class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
+    func didPrepare() {}
+
+    func didReady() {}
+
+    func didPause() {}
+
+    func didPlay() {}
+
+    func didReplay() {}
+
+    func didMute() {}
+
+    func didUnMute() {}
+
+    func didLoop() {}
+
+    func didSetVolume(_: Float) {}
+
+    func didSeek(_: CMTime, _: CMTime) {}
+
+    func didEnd() {}
+
+    func didError(_: Error) {}
+
+    func didVideoSizeChanged(_: CGSize) {}
 
     func generateRessource(ressource: String) {
         guard let resourceUrl = Bundle.module.url(forResource: ressource, withExtension: "json") else {
@@ -23,21 +48,12 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let prepareExpectation = self.expectation(description: "didPrepare is called")
         let errorExpectation = self.expectation(description: "didError is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("didPrepare")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+
         self.generateRessource(ressource: "responseSuccess")
 
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
@@ -49,21 +65,11 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let prepareExpectation = self.expectation(description: "didPrepare is called")
         prepareExpectation.isInverted = true
         let errorExpectation = self.expectation(description: "didError is called")
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("didPrepare")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error \(error)")
-                errorExpectation.fulfill()
-            }
-        )
         self.generateRessource(ressource: "responseError")
 
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
@@ -76,20 +82,10 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         prepareExpectation.isInverted = true
         let errorExpectation = self.expectation(description: "didError is called")
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("didPrepare")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error \(error)")
-                errorExpectation.fulfill()
-            }
-        )
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            events: events,
-            playerControllerEvent: nil,
+            mcDelegate: self playerControllerEvent: nil,
+
             taskExecutor: MockedTasksExecutor.self
         )
         waitForExpectations(timeout: 5, handler: nil)

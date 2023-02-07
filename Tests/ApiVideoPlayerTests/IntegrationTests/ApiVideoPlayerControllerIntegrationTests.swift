@@ -2,27 +2,14 @@
 import CoreMedia
 import XCTest
 
-final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
+final class ApiVideoPlayerControllerIntegrationTests: XCTestCase, PlayerEventsDelegate {
 
     func testValidVideoIdPlay() throws {
         let completedExpectationPrepare = expectation(description: "Completed Prepare")
         let completedExpectationPlay = expectation(description: "Completed Play")
         let errorExpectation = expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
@@ -30,7 +17,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
         wait(for: [completedExpectationPrepare], timeout: 10)
@@ -44,20 +31,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let completedExpectationPlay = expectation(description: "Completed Play")
         let errorExpectation = expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
@@ -65,7 +39,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         )
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
         controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
@@ -81,24 +55,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let completedExpectationPause = expectation(description: "Completed Pause")
         let errorExpectation = expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPause: { () in
-                print("paused")
-                completedExpectationPause.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
@@ -106,7 +63,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
         wait(for: [completedExpectationPrepare], timeout: 10)
@@ -125,26 +82,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         secondExpectationPause.isInverted = true
         let errorExpectation = expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPause: { () in
-                print("paused")
-                if !didCalled {
-                    didCalled = true
-                    expectationPause.fulfill()
-                } else {
-                    secondExpectationPause.fulfill()
-                }
 
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
@@ -152,7 +90,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         )
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
         wait(for: [completedExpectationPrepare], timeout: 10)
@@ -166,24 +104,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let prepareExpectation = self.expectation(description: "prepare is called")
         let errorExpectation = self.expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
-        )
-        let controllerEvent = ApiVideoPlayerControllerEvent(
-            videoTypeDidChanged: { () in
-                print("test videoTypeDidChanged")
-            }
-        )
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
         waitForExpectations(timeout: 10, handler: nil)
@@ -194,16 +118,6 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let prepareExpectation = self.expectation(description: "prepare is called")
         let errorExpectation = self.expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
-        )
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
@@ -211,7 +125,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         )
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
 
@@ -224,16 +138,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let prepareExpectation = expectation(description: "prepare is called")
         prepareExpectation.isInverted = true
         let errorExpectation = expectation(description: "error is called")
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
-        )
+
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
@@ -241,7 +146,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         )
         _ = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
-            events: events,
+            mcDelegate: self,
             playerControllerEvent: controllerEvent
         )
         waitForExpectations(timeout: 10, handler: nil)

@@ -4,7 +4,32 @@ import XCTest
 #if !os(macOS)
 
 /// Integration tests with connection to api.video
-final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
+final class ApiVideoPlayerViewIntegrationTests: XCTestCase, PlayerEventsDelegate {
+    func didPrepare() {}
+
+    func didReady() {}
+
+    func didPause() {}
+
+    func didPlay() {}
+
+    func didReplay() {}
+
+    func didMute() {}
+
+    func didUnMute() {}
+
+    func didLoop() {}
+
+    func didSetVolume(_: Float) {}
+
+    func didSeek(_: CMTime, _: CMTime) {}
+
+    func didEnd() {}
+
+    func didError(_: Error) {}
+
+    func didVideoSizeChanged(_: CGSize) {}
 
     /// Assert that a valid video id is correctly played
     /// Check that the PlayerEvents are correctly called: didPrepare, didPlay
@@ -13,25 +38,10 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
         let completedExpectationPlay = expectation(description: "Completed Play")
         let errorExpectation = expectation(description: "error is called")
         errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+
         let playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoId: VideoId.validVideoId,
-            videoType: VideoType.vod /* only .vod is supported */,
-            events: events
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId)
         )
         playerView.play()
         waitForExpectations(timeout: 15, handler: nil)
@@ -42,21 +52,9 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
         let prepareExpectation = expectation(description: "prepare is called")
         prepareExpectation.isInverted = true
         let errorExpectation = expectation(description: "error is called")
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
-        )
         let playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoId: VideoId.invalidVideoId,
-            videoType: VideoType.vod /* only .vod is supported */,
-            events: events
+            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId)
         )
         waitForExpectations(timeout: 10, handler: nil)
     }
