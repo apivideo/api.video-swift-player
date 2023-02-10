@@ -2,153 +2,165 @@
 import CoreMedia
 import XCTest
 
-final class ApiVideoPlayerControllerIntegrationTests: XCTestCase, PlayerEventsDelegate {
-
+final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testValidVideoIdPlay() throws {
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let completedExpectationPlay = expectation(description: "Completed Play")
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
             }
         )
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        wait(for: [completedExpectationPrepare], timeout: 10)
+        controller.delegate = delegates
+        guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let error = mockDelegate.expectationError(true) else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        wait(for: [ready], timeout: 10)
         controller.play()
-        wait(for: [completedExpectationPlay], timeout: 2)
-        wait(for: [errorExpectation], timeout: 5)
+        wait(for: [play], timeout: 2)
+        wait(for: [error], timeout: 5)
     }
 
-    func testValidVideoIdWithSetterPlay() throws {
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let completedExpectationPlay = expectation(description: "Completed Play")
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-
-        let controllerEvent = ApiVideoPlayerControllerEvent(
-            videoTypeDidChanged: { () in
-                print("test videoTypeDidChanged")
-            }
-        )
-        let controller = ApiVideoPlayerController(
-            videoOptions: nil,
-            mcDelegate: self,
-            playerControllerEvent: controllerEvent
-        )
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-        wait(for: [completedExpectationPrepare], timeout: 10)
-        controller.play()
-        wait(for: [completedExpectationPlay], timeout: 2)
-        wait(for: [errorExpectation], timeout: 5)
+    func testValidVideoIdWithSetterPlay() throws { let controllerEvent = ApiVideoPlayerControllerEvent(
+        videoTypeDidChanged: { () in
+            print("test videoTypeDidChanged")
+        }
+    )
+    let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+    let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
+    let controller = ApiVideoPlayerController(
+        videoOptions: nil,
+        mcDelegate: delegates,
+        playerControllerEvent: controllerEvent
+    )
+    controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
+    controller.delegate = delegates
+    guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+    guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+    guard let error = mockDelegate.expectationError(true) else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+    wait(for: [ready], timeout: 10)
+    controller.play()
+    wait(for: [play], timeout: 2)
+    wait(for: [error], timeout: 5)
     }
 
     func testValidVideoIdPause() throws {
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let completedExpectationPlay = expectation(description: "Completed Play")
-        let completedExpectationPause = expectation(description: "Completed Pause")
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
             }
         )
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        wait(for: [completedExpectationPrepare], timeout: 10)
+        controller.delegate = delegates
+
+        guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let pause = mockDelegate.expectationPause() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let error = mockDelegate.expectationError(true) else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        wait(for: [ready], timeout: 10)
         controller.play()
-        wait(for: [completedExpectationPlay], timeout: 2)
+        wait(for: [play], timeout: 2)
         controller.pause()
-        wait(for: [completedExpectationPause], timeout: 2)
-        wait(for: [errorExpectation], timeout: 5)
+        wait(for: [pause], timeout: 2)
+        wait(for: [error], timeout: 5)
     }
 
     func testReturnOneEventOnMultiplePause() throws {
-        var didCalled = false
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let expectationPause = self.expectation(description: "pause is called")
-        let secondExpectationPause = self.expectation(description: "2nd pause is called")
-        secondExpectationPause.isInverted = true
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
             }
         )
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        wait(for: [completedExpectationPrepare], timeout: 10)
+        controller.delegate = delegates
+        guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationPause() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationMultiplePause() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationError(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        wait(for: [ready], timeout: 5)
         controller.play()
+        wait(for: [play], timeout: 2)
         controller.pause()
         controller.pause()
+
         waitForExpectations(timeout: 15, handler: nil)
     }
 
     func testDuration() throws {
-        let prepareExpectation = self.expectation(description: "prepare is called")
-        let errorExpectation = self.expectation(description: "error is called")
-        errorExpectation.isInverted = true
-
+        let controllerEvent = ApiVideoPlayerControllerEvent(
+            videoTypeDidChanged: { () in
+                print("test videoTypeDidChanged")
+            }
+        )
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
+        controller.delegate = delegates
+        guard mockDelegate.expectationReady() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationError(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
         waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
 
     func testWithVideoOptionsWithSetterDuration() throws {
-        let prepareExpectation = self.expectation(description: "prepare is called")
-        let errorExpectation = self.expectation(description: "error is called")
-        errorExpectation.isInverted = true
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
             }
         )
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-
+        controller.delegate = delegates
         controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-        waitForExpectations(timeout: 10, handler: nil)
+        guard mockDelegate.expectationReady() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationError(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        waitForExpectations(timeout: 5, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
 
     func testInvalidVideoId() throws {
-        let prepareExpectation = expectation(description: "prepare is called")
-        prepareExpectation.isInverted = true
-        let errorExpectation = expectation(description: "error is called")
-
         let controllerEvent = ApiVideoPlayerControllerEvent(
             videoTypeDidChanged: { () in
                 print("test videoTypeDidChanged")
             }
         )
-        _ = ApiVideoPlayerController(
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        waitForExpectations(timeout: 10, handler: nil)
+        controller.delegate = delegates
+        guard mockDelegate.expectationReady(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationError() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }

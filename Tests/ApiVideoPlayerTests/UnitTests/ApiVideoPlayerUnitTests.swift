@@ -1,6 +1,6 @@
 @testable import ApiVideoPlayer
+import CoreMedia
 import XCTest
-
 /// Unit tests on PlayerController without connection to api.video
 /// The connection is mocked with MockedTasksExecutor
 class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
@@ -45,50 +45,54 @@ class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
 
     /// Assert that didError is not called if the JSON is valid
     func testWithValidPlayerManifestJson() throws {
-        let prepareExpectation = self.expectation(description: "didPrepare is called")
-        let errorExpectation = self.expectation(description: "didError is called")
-        errorExpectation.isInverted = true
-
         self.generateRessource(ressource: "responseSuccess")
-
-        _ = ApiVideoPlayerController(
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
+        controller.delegate = delegates
+
+        _ = mockDelegate.expectationReady()
+        _ = mockDelegate.expectationError(true)
         waitForExpectations(timeout: 5, handler: nil)
     }
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
     func testWithInvalidPlayerManifestJson() throws {
-        let prepareExpectation = self.expectation(description: "didPrepare is called")
-        prepareExpectation.isInverted = true
-        let errorExpectation = self.expectation(description: "didError is called")
         self.generateRessource(ressource: "responseError")
-
-        _ = ApiVideoPlayerController(
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            mcDelegate: self,
+            mcDelegate: delegates,
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
+        controller.delegate = delegates
+        _ = mockDelegate.expectationReady(true)
+        _ = mockDelegate.expectationError()
         waitForExpectations(timeout: 5, handler: nil)
     }
 
     /// Assert didError is called if the server returns an error
     func testWithServerError() throws {
-        let prepareExpectation = self.expectation(description: "didPrepare is called")
-        prepareExpectation.isInverted = true
-        let errorExpectation = self.expectation(description: "didError is called")
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
-        _ = ApiVideoPlayerController(
+        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
+        let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            mcDelegate: self playerControllerEvent: nil,
-
+            mcDelegate: delegates,
+            playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
-        waitForExpectations(timeout: 5, handler: nil)
+        controller.delegate = delegates
+        _ = mockDelegate.expectationReady(true)
+        _ = mockDelegate.expectationError()
+        waitForExpectations(timeout: 10, handler: nil)
     }
 }
 
