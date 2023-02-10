@@ -16,7 +16,6 @@ public class ApiVideoPlayerController: NSObject {
     private let taskExecutor: TasksExecutorProtocol.Type
     private(set) var isLive = false
     private(set) var isVod = false
-    public weak var delegate: PlayerEventsDelegate?
     private var multicastDelegate: ApiVideoPlayerControllerMulticastDelegate
 
     #if !os(macOS)
@@ -127,7 +126,7 @@ public class ApiVideoPlayerController: NSObject {
 
     private func setUpPlayer(_ url: String) throws {
         if let url = URL(string: url) {
-            for delegate in self.playerEventsDelegates { delegate.didPrepare() }
+            self.multicastDelegate.didPrepare()
             let item = AVPlayerItem(url: url)
             self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
             self.avPlayer.replaceCurrentItem(with: item)
@@ -144,7 +143,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func notifyError(error: Error) {
-        self.delegate?.didError(error)
+        self.multicastDelegate.didError(error)
     }
 
     public func addOutput(output: AVPlayerItemOutput) {
@@ -213,7 +212,7 @@ public class ApiVideoPlayerController: NSObject {
     public func replay() {
         self.seekImpl(to: CMTime.zero, completion: { _ in
             self.play()
-            self.delegate?.didReplay()
+            self.multicastDelegate.didReplay()
         })
 
     }
@@ -234,7 +233,7 @@ public class ApiVideoPlayerController: NSObject {
     public func seek(to: CMTime) {
         let from = self.currentTime
         self.seekImpl(to: to, completion: { _ in
-            self.delegate?.didSeek(from, self.currentTime)
+            self.multicastDelegate.didSeek(from, self.currentTime)
         })
     }
 
@@ -270,9 +269,9 @@ public class ApiVideoPlayerController: NSObject {
         set(newValue) {
             self.avPlayer.isMuted = newValue
             if newValue {
-                self.delegate?.didMute()
+                self.multicastDelegate.didMute()
             } else {
-                self.delegate?.didUnMute()
+                self.multicastDelegate.didUnMute()
             }
         }
     }
@@ -284,7 +283,7 @@ public class ApiVideoPlayerController: NSObject {
         get { self.avPlayer.volume }
         set(newVolume) {
             self.avPlayer.volume = newVolume
-            self.delegate?.didSetVolume(volume)
+            self.multicastDelegate.didSetVolume(volume)
         }
     }
 
@@ -378,7 +377,7 @@ public class ApiVideoPlayerController: NSObject {
     func playerDidFinishPlaying() {
         if self.isLooping {
             self.replay()
-            self.delegate?.didLoop()
+            self.multicastDelegate.didLoop()
         }
         self.analytics?.end { result in
             switch result {
@@ -386,7 +385,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on ended event: \(error)")
             }
         }
-        self.delegate?.didEnd()
+        self.multicastDelegate.didEnd()
     }
 
     private func doFallbackOnFailed() {
@@ -407,7 +406,7 @@ public class ApiVideoPlayerController: NSObject {
 
     private func doReadyToPlay() {
         if self.avPlayer.currentItem?.status == .readyToPlay {
-            self.delegate?.didReady()
+            self.multicastDelegate.didReady()
             if self.autoplay {
                 self.play()
             }
@@ -429,7 +428,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on pause event: \(error)")
             }
         }
-        self.delegate?.didPause()
+        self.multicastDelegate.didPause()
     }
 
     private func doPlayAction() {
@@ -453,7 +452,7 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         }
-        self.delegate?.didPlay()
+        self.multicastDelegate.didPlay()
     }
 
     private func doTimeControlStatus() {
@@ -496,7 +495,7 @@ public class ApiVideoPlayerController: NSObject {
         if keyPath == "currentItem.presentationSize" {
             guard let change = change else { return }
             guard let newSize = change[.newKey] as? CGSize else { return }
-            self.delegate?.didVideoSizeChanged(newSize)
+            self.multicastDelegate.didVideoSizeChanged(newSize)
         }
     }
 

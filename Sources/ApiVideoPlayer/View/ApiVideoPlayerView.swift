@@ -68,30 +68,6 @@ public class ApiVideoPlayerView: UIView, PlayerEventsDelegate {
         }
     }
 
-//    /// Init method for PlayerView.
-//    /// - Parameters:
-//    ///   - frame: frame of theplayer view.
-//    ///   - videoId: Need videoid to display the video.
-//    ///   - videoType: VideoType object to display vod or live controls. Only vod is supported yet.
-//    ///   - hideControls: true to hide video controls, false to show them
-//    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
-//    ///   - events: Callback to get all the player events.
-//    public convenience init(
-//        frame: CGRect,
-//        videoOptions: VideoOptions,
-//        hideControls: Bool = false,
-//        autoplay: Bool = false,
-//        events: PlayerEvents? = nil
-//    ) {
-//        self.init(
-//            frame: frame,
-//            videoOptions: videoOptions,
-//            hideControls: hideControls,
-//            autoplay: autoplay,
-//            events: events
-//        )
-//    }
-
     /// Init method for PlayerView.
     /// - Parameters:
     ///   - frame: frame of theplayer view.
@@ -114,7 +90,6 @@ public class ApiVideoPlayerView: UIView, PlayerEventsDelegate {
         )
         super.init(frame: frame)
         self.playerController.addDelegates(delegates: [self])
-        self.playerController.delegate = delegates
         self.setupView()
         let controlsViewOptions: ControlsViewOptions
         if !self.isHidenControls {
