@@ -16,10 +16,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        controller.delegate = delegates
-        guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard let error = mockDelegate.expectationError(true) else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let ready = mockDelegate.expectationReady() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let play = mockDelegate.expectationPlay() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let error = mockDelegate.expectationError(true) else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
         wait(for: [ready], timeout: 10)
         controller.play()
         wait(for: [play], timeout: 2)
@@ -39,10 +44,15 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         playerControllerEvent: controllerEvent
     )
     controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-    controller.delegate = delegates
-    guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-    guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-    guard let error = mockDelegate.expectationError(true) else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+    guard let ready = mockDelegate.expectationReady() else {
+        throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+    }
+    guard let play = mockDelegate.expectationPlay() else {
+        throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+    }
+    guard let error = mockDelegate.expectationError(true) else {
+        throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+    }
     wait(for: [ready], timeout: 10)
     controller.play()
     wait(for: [play], timeout: 2)
@@ -62,12 +72,19 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        controller.delegate = delegates
 
-        guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard let pause = mockDelegate.expectationPause() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard let error = mockDelegate.expectationError(true) else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let ready = mockDelegate.expectationReady() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let play = mockDelegate.expectationPlay() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let pause = mockDelegate.expectationPause() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let error = mockDelegate.expectationError(true) else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
         wait(for: [ready], timeout: 10)
         controller.play()
         wait(for: [play], timeout: 2)
@@ -89,12 +106,21 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        controller.delegate = delegates
-        guard let ready = mockDelegate.expectationReady() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard let play = mockDelegate.expectationPlay() else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard mockDelegate.expectationPause() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard mockDelegate.expectationMultiplePause() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard mockDelegate.expectationError(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard let ready = mockDelegate.expectationReady() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let play = mockDelegate.expectationPlay() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard mockDelegate.expectationPause() != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard mockDelegate.expectationMultiplePause() != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard mockDelegate.expectationError(true) != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
         wait(for: [ready], timeout: 5)
         controller.play()
         wait(for: [play], timeout: 2)
@@ -117,9 +143,12 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        controller.delegate = delegates
-        guard mockDelegate.expectationReady() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard mockDelegate.expectationError(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationReady() != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard mockDelegate.expectationError(true) != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
         waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
@@ -137,10 +166,13 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        controller.delegate = delegates
         controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-        guard mockDelegate.expectationReady() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard mockDelegate.expectationError(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationReady() != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard mockDelegate.expectationError(true) != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
         waitForExpectations(timeout: 5, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
@@ -158,9 +190,12 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             mcDelegate: delegates,
             playerControllerEvent: controllerEvent
         )
-        controller.delegate = delegates
-        guard mockDelegate.expectationReady(true) != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
-        guard mockDelegate.expectationError() != nil else { throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate") }
+        guard mockDelegate.expectationReady(true) != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard mockDelegate.expectationError() != nil else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
         waitForExpectations(timeout: 5, handler: nil)
     }
 }

@@ -8,10 +8,8 @@ class MulticastDelegate<T> {
     }
 
     func remove(_ delegateToRemove: T) {
-        for delegate in self.delegates.allObjects.reversed() {
-            if delegate === delegateToRemove as AnyObject {
-                self.delegates.remove(delegate)
-            }
+        for delegate in self.delegates.allObjects.reversed() where delegate === delegateToRemove as AnyObject {
+            self.delegates.remove(delegate)
         }
     }
 
