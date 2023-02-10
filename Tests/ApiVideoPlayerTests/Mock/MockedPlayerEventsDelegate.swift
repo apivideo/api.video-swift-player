@@ -3,6 +3,7 @@ import CoreMedia
 import Foundation
 import XCTest
 class MockedPlayerEventsDelegate: PlayerEventsDelegate {
+    private var completedExpectationPrepare: XCTestExpectation?
     private var completedExpectationReady: XCTestExpectation?
     private var completedExpectationPlay: XCTestExpectation?
     private var completedExpectationPause: XCTestExpectation?
@@ -14,6 +15,14 @@ class MockedPlayerEventsDelegate: PlayerEventsDelegate {
 
     init(testCase: XCTestCase) {
         self.testCase = testCase
+    }
+
+    func expectationPrepare(_ isInverted: Bool = false) -> XCTestExpectation? {
+        self.completedExpectationPrepare = self.testCase.expectation(description: "Completed Prepare")
+        if isInverted {
+            self.completedExpectationPrepare?.isInverted = true
+        }
+        return self.completedExpectationPrepare
     }
 
     func expectationReady(_ isInverted: Bool = false) -> XCTestExpectation? {
@@ -48,7 +57,13 @@ class MockedPlayerEventsDelegate: PlayerEventsDelegate {
         return self.errorExpectation
     }
 
-    func didPrepare() {}
+    func didPrepare() {
+        print("test didPrepare")
+        if self.completedExpectationPrepare != nil {
+            self.completedExpectationPrepare?.fulfill()
+        }
+        self.completedExpectationPrepare = nil
+    }
 
     func didReady() {
         print("test didReady")
