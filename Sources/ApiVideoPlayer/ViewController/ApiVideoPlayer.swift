@@ -15,6 +15,10 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
     public func updateUIViewController(_: SwiftUIPlayerViewController, context _: Context) {}
 
+    public func addDelegate(delegate: PlayerEventsDelegate) {
+        self.playerViewController.addDelegate(delegate: delegate)
+    }
+
     public func play() {
         self.playerViewController.play()
     }

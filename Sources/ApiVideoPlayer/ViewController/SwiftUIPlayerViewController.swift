@@ -21,7 +21,6 @@ public class SwiftUIPlayerViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
         view.addSubview(self.playerView)
         self.playerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -40,6 +39,10 @@ public class SwiftUIPlayerViewController: UIViewController {
     override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
         super.viewDidDisappear(animated)
+    }
+
+    public func addDelegate(delegate: PlayerEventsDelegate) {
+        self.playerView.addDelegate(delegate)
     }
 
     public func play() {
