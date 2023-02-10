@@ -17,12 +17,10 @@ class ControlsView: UIView, UIGestureRecognizerDelegate, PlayerEventsDelegate {
     }
 
     func didPause() {
-        print("controlsView didPause")
         self.setPlayBtnIcon(iconName: "play-primary")
     }
 
     func didPlay() {
-        print("controlsView didPlay")
         self.setPlayBtnIcon(iconName: "pause-primary")
     }
 
