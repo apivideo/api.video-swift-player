@@ -3,59 +3,7 @@ import AVKit
 import UIKit
 
 @available(tvOS 10.0, *)
-public class ApiVideoPlayerView: UIView, PlayerDelegate {
-    public func didPrepare() {
-        print("ApiVideoPlayerView delegate didPrepare")
-    }
-
-    public func didReady() {
-        print("ApiVideoPlayerView delegate didReady")
-    }
-
-    public func didPause() {
-        print("ApiVideoPlayerView delegate didPause")
-    }
-
-    public func didPlay() {
-        print("ApiVideoPlayerView delegate didPlay")
-    }
-
-    public func didReplay() {
-        print("ApiVideoPlayerView delegate didReplay")
-    }
-
-    public func didMute() {
-        print("ApiVideoPlayerView delegate didMute")
-    }
-
-    public func didUnMute() {
-        print("ApiVideoPlayerView delegate didUnMute")
-    }
-
-    public func didLoop() {
-        print("ApiVideoPlayerView delegate didLoop")
-    }
-
-    public func didSetVolume(_: Float) {
-        print("ApiVideoPlayerView delegate didSetVolume")
-    }
-
-    public func didSeek(_: CMTime, _: CMTime) {
-        print("ApiVideoPlayerView delegate didSeek")
-    }
-
-    public func didEnd() {
-        print("ApiVideoPlayerView delegate didEnd")
-    }
-
-    public func didError(_: Error) {
-        print("ApiVideoPlayerView delegate didError")
-    }
-
-    public func didVideoSizeChanged(_: CGSize) {
-        // print("ApiVideoPlayerView delegate didVideoSizeChanged")
-    }
-
+public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let videoPlayerView = UIView()
     private var controlsView: ControlsView?
