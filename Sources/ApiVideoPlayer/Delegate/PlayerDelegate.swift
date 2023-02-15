@@ -1,6 +1,6 @@
 import AVFoundation
 import Foundation
-public protocol PlayerEventsDelegate: AnyObject {
+public protocol PlayerDelegate: AnyObject {
     /// Events called when the player is preparing for a video
     func didPrepare()
     /// Events called when the player is ready to play video

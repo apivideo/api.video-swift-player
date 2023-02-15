@@ -4,7 +4,6 @@ import AVKit
 import Foundation
 
 public class ApiVideoPlayerController: NSObject {
-    private var playerEventsDelegates = [PlayerEventsDelegate]()
     private var playerControllerEvent: ApiVideoPlayerControllerEvent?
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
@@ -120,7 +119,7 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
-    func addDelegates(delegates: [PlayerEventsDelegate]) {
+    func addDelegates(delegates: [PlayerDelegate]) {
         self.multicastDelegate.addDelegates(delegates)
     }
 

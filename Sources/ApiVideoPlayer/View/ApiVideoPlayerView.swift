@@ -3,7 +3,7 @@ import AVKit
 import UIKit
 
 @available(tvOS 10.0, *)
-public class ApiVideoPlayerView: UIView, PlayerEventsDelegate {
+public class ApiVideoPlayerView: UIView, PlayerDelegate {
     public func didPrepare() {
         print("ApiVideoPlayerView delegate didPrepare")
     }
@@ -150,7 +150,7 @@ public class ApiVideoPlayerView: UIView, PlayerEventsDelegate {
         self.playerLayer.frame = bounds
     }
 
-    public func addDelegate(_ delegate: PlayerEventsDelegate) {
+    public func addDelegate(_ delegate: PlayerDelegate) {
         self.playerController.addDelegates(delegates: [delegate])
     }
 

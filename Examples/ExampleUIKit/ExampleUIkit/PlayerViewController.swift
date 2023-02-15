@@ -2,7 +2,7 @@ import ApiVideoPlayer
 import AVKit
 import UIKit
 
-class PlayerViewController: UIViewController, PlayerEventsDelegate {
+class PlayerViewController: UIViewController, PlayerDelegate {
     public func didPrepare() {
         print("app didPrepare")
     }

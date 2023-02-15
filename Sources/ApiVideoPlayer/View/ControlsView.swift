@@ -3,7 +3,7 @@ import AVFoundation
 import Foundation
 import UIKit
 
-class ControlsView: UIView, UIGestureRecognizerDelegate, PlayerEventsDelegate {
+class ControlsView: UIView, UIGestureRecognizerDelegate, PlayerDelegate {
     func didPrepare() {
         print("controlView didPrepare")
     }

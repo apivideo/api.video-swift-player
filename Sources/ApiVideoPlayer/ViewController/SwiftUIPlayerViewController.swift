@@ -5,7 +5,7 @@ import UIKit
 public class SwiftUIPlayerViewController: UIViewController {
     let playerView: ApiVideoPlayerView
     private var events: PlayerEvents?
-    var del: PlayerEventsDelegate?
+    var del: PlayerDelegate?
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -44,7 +44,7 @@ public class SwiftUIPlayerViewController: UIViewController {
         super.viewDidDisappear(animated)
     }
 
-    public func addDelegate(delegate: PlayerEventsDelegate) {
+    public func addDelegate(delegate: PlayerDelegate) {
         self.playerView.addDelegate(delegate)
     }
 
@@ -121,7 +121,7 @@ public class SwiftUIPlayerViewController: UIViewController {
 
 }
 
-extension SwiftUIPlayerViewController: PlayerEventsDelegate {
+extension SwiftUIPlayerViewController: PlayerDelegate {
     public func didPrepare() {
         self.events?.didPrepare?()
     }
