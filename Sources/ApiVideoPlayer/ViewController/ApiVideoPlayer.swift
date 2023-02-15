@@ -5,8 +5,8 @@ import SwiftUI
 public struct ApiVideoPlayer: UIViewControllerRepresentable {
     private let playerViewController: SwiftUIPlayerViewController
 
-    public init(videoOptions: VideoOptions) {
-        self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions)
+    public init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
+        self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions, events: events)
     }
 
     public func makeUIViewController(context _: Context) -> SwiftUIPlayerViewController {

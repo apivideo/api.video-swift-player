@@ -1,18 +1,38 @@
 import ApiVideoPlayer
 import CoreMedia
 import SwiftUI
-struct ContentView: View, PlayerEventsDelegate {
+struct ContentView: View {
     private var player: ApiVideoPlayer
     init() {
-        self.player = ApiVideoPlayer(videoOptions: VideoOptions(videoId: "YOUR-VIDEO-ID"))
+        let events = PlayerEvents(
+            didPrepare: { () in
+                print("swiftui app did prepare")
+            },
+            didPause: { () in
+                print("swiftui app paused")
+            },
+            didPlay: { () in
+                print("swiftui app play")
+            },
+            didReplay: { () in
+                print("swiftui app video replayed")
+            },
+            didLoop: { () in
+                print("swiftui app video replayed from loop")
+            },
+            didSeek: { from, to in
+                print("swiftui app seek from : \(from), to: \(to)")
+            },
+            didError: { error in
+                print("swiftui app error \(error)")
+            }
+        )
+        self.player = ApiVideoPlayer(videoOptions: VideoOptions(videoId: "YOUR-VIDEO-ID"), events: events)
     }
 
     var body: some View {
         VStack {
             player
-                .onAppear {
-                    self.player.addDelegate(delegate: self)
-                }
                 .frame(height: 250)
                 .padding(.bottom)
             HStack {
