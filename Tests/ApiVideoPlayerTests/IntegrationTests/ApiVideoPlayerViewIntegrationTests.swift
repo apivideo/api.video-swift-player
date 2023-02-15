@@ -8,7 +8,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
     /// Assert that a valid video id is correctly played
     /// Check that the PlayerEvents are correctly called: didPrepare, didPlay
     func testValidVideoIdPlay() throws {
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let playerView = ApiVideoPlayerView(
             frame: .zero,
             videoOptions: VideoOptions(videoId: VideoId.validVideoId)
@@ -24,7 +24,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
 
     /// Assert that didError is triggered when an invalid video id is passed
     func testInvalidVideoId() throws {
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let playerView = ApiVideoPlayerView(
             frame: .zero,
             videoOptions: VideoOptions(videoId: VideoId.invalidVideoId)

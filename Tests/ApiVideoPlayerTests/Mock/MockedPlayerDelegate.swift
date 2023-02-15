@@ -2,7 +2,7 @@ import ApiVideoPlayer
 import CoreMedia
 import Foundation
 import XCTest
-class MockedPlayerEventsDelegate: PlayerEventsDelegate {
+class MockedPlayerDelegate: PlayerDelegate {
     private var completedExpectationPrepare: XCTestExpectation?
     private var completedExpectationReady: XCTestExpectation?
     private var completedExpectationPlay: XCTestExpectation?

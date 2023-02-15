@@ -9,7 +9,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 print("test videoTypeDidChanged")
             }
         )
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
@@ -36,7 +36,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             print("test videoTypeDidChanged")
         }
     )
-    let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+    let mockDelegate = MockedPlayerDelegate(testCase: self)
     let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
     let controller = ApiVideoPlayerController(
         videoOptions: nil,
@@ -65,7 +65,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 print("test videoTypeDidChanged")
             }
         )
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
@@ -99,7 +99,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 print("test videoTypeDidChanged")
             }
         )
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
@@ -136,7 +136,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 print("test videoTypeDidChanged")
             }
         )
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
@@ -159,7 +159,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 print("test videoTypeDidChanged")
             }
         )
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
@@ -183,7 +183,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
                 print("test videoTypeDidChanged")
             }
         )
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
