@@ -37,7 +37,6 @@ public class ApiVideoPlayerView: UIView {
             autoplay: autoplay
         )
         super.init(frame: frame)
-        self.playerController.addDelegates(delegates: [self])
         self.setupView()
         let controlsViewOptions: ControlsViewOptions
         if !self.isHidenControls {
