@@ -7,7 +7,7 @@ public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let videoPlayerView = UIView()
     private var controlsView: ControlsView?
-    private var playerController: ApiVideoPlayerController
+    private var playerController: ApiVideoPlayerController!
     private var isFirstPlay = true
     private var isHidenControls: Bool
     public var viewController: UIViewController? {
@@ -29,38 +29,14 @@ public class ApiVideoPlayerView: UIView {
         autoplay: Bool = false
     ) {
         self.isHidenControls = hideControls
-        self.playerController = ApiVideoPlayerController(
-            videoOptions: videoOptions,
-            playerLayer: self.playerLayer,
-            autoplay: autoplay
-        )
         super.init(frame: frame)
+        self.playerController = ApiVideoPlayerController(
+                videoOptions: videoOptions,
+                playerLayer: self.playerLayer,
+                delegates: [self],
+                autoplay: autoplay
+        )
         self.setupView()
-        let controlsViewOptions: ControlsViewOptions
-        if !self.isHidenControls {
-            if self.playerController.isVod {
-                controlsViewOptions = ControlsViewOptions(enableSubtitleButton: self.playerController.hasSubtitles)
-                self.controlsView = ControlsView.buildForVod(
-                    frame: frame,
-                    playerController: self.playerController,
-                    controlsViewOptions: controlsViewOptions
-                )
-            } else {
-                controlsViewOptions = ControlsViewOptions(
-                    enableLiveButton: true,
-                    enableForwardButton: false,
-                    enableBackwardButton: false,
-                    enableSubtitleButton: false
-                )
-                self.controlsView = ControlsView.buildForLive(
-                    frame: frame,
-                    playerController: self.playerController,
-                    controlsViewOptions: controlsViewOptions
-                )
-            }
-
-        }
-        self.setupSubviews()
     }
 
     @available(*, unavailable)
@@ -74,15 +50,17 @@ public class ApiVideoPlayerView: UIView {
     }
 
     private func setupSubviews() {
-        // Controls View
-        if let controlsView = controlsView {
-            addSubview(controlsView)
-            controlsView.translatesAutoresizingMaskIntoConstraints = false
-            controlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-            controlsView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-            controlsView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-            controlsView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        guard let controlsView = self.controlsView else {
+            return
         }
+
+        // Controls View
+        addSubview(controlsView)
+        controlsView.translatesAutoresizingMaskIntoConstraints = false
+        controlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        controlsView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        controlsView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        controlsView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
 
     override public func layoutSubviews() {
@@ -229,6 +207,70 @@ public class ApiVideoPlayerView: UIView {
         set(newValue) {
             self.playerController.isLooping = newValue
         }
+    }
+}
+
+extension ApiVideoPlayerView: PlayerDelegate {
+    public func didPrepare() {
+    }
+
+    public func didReady() {
+        if !isHidenControls {
+            if playerController.isVod {
+                let controlsViewOptions = ControlsViewOptions(enableSubtitleButton: playerController.hasSubtitles)
+                controlsView = ControlsView.buildForVod(
+                        frame: frame,
+                        playerController: playerController,
+                        controlsViewOptions: controlsViewOptions
+                )
+            } else {
+                let controlsViewOptions = ControlsViewOptions(
+                        enableLiveButton: true,
+                        enableForwardButton: false,
+                        enableBackwardButton: false,
+                        enableSubtitleButton: false
+                )
+                controlsView = ControlsView.buildForLive(
+                        frame: frame,
+                        playerController: playerController,
+                        controlsViewOptions: controlsViewOptions
+                )
+            }
+        }
+        setupSubviews()
+    }
+
+    public func didPause() {
+    }
+
+    public func didPlay() {
+    }
+
+    public func didReplay() {
+    }
+
+    public func didMute() {
+    }
+
+    public func didUnMute() {
+    }
+
+    public func didLoop() {
+    }
+
+    public func didSetVolume(_ volume: Float) {
+    }
+
+    public func didSeek(_ from: CMTime, _ to: CMTime) {
+    }
+
+    public func didEnd() {
+    }
+
+    public func didError(_ error: Error) {
+    }
+
+    public func didVideoSizeChanged(_ size: CGSize) {
     }
 }
 

@@ -4,7 +4,6 @@ import AVKit
 import Foundation
 
 public class ApiVideoPlayerController: NSObject {
-    private var playerControllerEvent: ApiVideoPlayerControllerEvent?
     private let avPlayer = AVPlayer(playerItem: nil)
     private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
@@ -13,8 +12,6 @@ public class ApiVideoPlayerController: NSObject {
     private var isFirstPlay = true
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
-    private(set) var isLive = false
-    private(set) var isVod = false
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
 
     #if !os(macOS)
@@ -22,12 +19,10 @@ public class ApiVideoPlayerController: NSObject {
         videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
         delegates: [PlayerDelegate] = [],
-        autoplay: Bool = false,
-        playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
+        autoplay: Bool = false
     ) {
         self.init(
             videoOptions: videoOptions,
-            playerControllerEvent: playerControllerEvent,
             delegates: delegates,
             autoplay: autoplay
         )
@@ -37,14 +32,12 @@ public class ApiVideoPlayerController: NSObject {
 
     public init(
         videoOptions: VideoOptions?,
-        playerControllerEvent: ApiVideoPlayerControllerEvent?,
         delegates: [PlayerDelegate] = [],
         autoplay: Bool = false,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
         multicastDelegate.addDelegates(delegates)
         self.taskExecutor = taskExecutor
-        self.playerControllerEvent = playerControllerEvent
         super.init()
         defer {
             self.videoOptions = videoOptions
@@ -195,6 +188,20 @@ public class ApiVideoPlayerController: NSObject {
         } catch { print("error with the url") }
     }
 
+    public var isLive: Bool {
+        guard let currentItem = avPlayer.currentItem else {
+            return false
+        }
+        return currentItem.duration.isIndefinite
+    }
+
+    public var isVod: Bool {
+        guard let currentItem = avPlayer.currentItem else {
+            return false
+        }
+        return !currentItem.duration.isIndefinite
+    }
+
     public var isPlaying: Bool {
         self.avPlayer.isPlaying
     }
@@ -253,15 +260,7 @@ public class ApiVideoPlayerController: NSObject {
             guard let videoOptions = videoOptions else {
                 return
             }
-            if videoOptions.videoType == .vod {
-                self.playerControllerEvent?.videoTypeDidChanged?()
-                self.isVod = true
-                self.isLive = false
-            } else {
-                self.playerControllerEvent?.videoTypeDidChanged?()
-                self.isVod = false
-                self.isLive = true
-            }
+
             self.getPlayerJSON(videoOptions: videoOptions) { error in
                 if let error = error {
                     self.notifyError(error: error)

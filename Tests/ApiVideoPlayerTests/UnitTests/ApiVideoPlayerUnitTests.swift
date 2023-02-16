@@ -23,7 +23,6 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi2H6m1D23s0lGQnYZJyIp7e"),
-            playerControllerEvent: nil,
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
@@ -38,7 +37,6 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            playerControllerEvent: nil,
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
@@ -53,7 +51,6 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            playerControllerEvent: nil,
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
