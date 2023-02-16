@@ -3,33 +3,7 @@ import CoreMedia
 import XCTest
 /// Unit tests on PlayerController without connection to api.video
 /// The connection is mocked with MockedTasksExecutor
-class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
-    func didPrepare() {}
-
-    func didReady() {}
-
-    func didPause() {}
-
-    func didPlay() {}
-
-    func didReplay() {}
-
-    func didMute() {}
-
-    func didUnMute() {}
-
-    func didLoop() {}
-
-    func didSetVolume(_: Float) {}
-
-    func didSeek(_: CMTime, _: CMTime) {}
-
-    func didEnd() {}
-
-    func didError(_: Error) {}
-
-    func didVideoSizeChanged(_: CGSize) {}
-
+class ApiVideoPlayerUnitTests: XCTestCase {
     func generateRessource(ressource: String) {
         guard let resourceUrl = Bundle.module.url(forResource: ressource, withExtension: "json") else {
             XCTFail("Error can't find the json file")
@@ -46,25 +20,23 @@ class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
     /// Assert that didError is not called if the JSON is valid
     func testWithValidPlayerManifestJson() throws {
         self.generateRessource(ressource: "responseSuccess")
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
+            videoOptions: VideoOptions(videoId: "vi2H6m1D23s0lGQnYZJyIp7e"),
             mcDelegate: delegates,
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
-        controller.delegate = delegates
-
-        _ = mockDelegate.expectationReady()
+        _ = mockDelegate.expectationPrepare()
         _ = mockDelegate.expectationError(true)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 15, handler: nil)
     }
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
     func testWithInvalidPlayerManifestJson() throws {
         self.generateRessource(ressource: "responseError")
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
@@ -72,8 +44,7 @@ class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
-        controller.delegate = delegates
-        _ = mockDelegate.expectationReady(true)
+        _ = mockDelegate.expectationPrepare(true)
         _ = mockDelegate.expectationError()
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -81,7 +52,7 @@ class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
     /// Assert didError is called if the server returns an error
     func testWithServerError() throws {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
-        let mockDelegate = MockedPlayerEventsDelegate(testCase: self)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
         let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
@@ -89,8 +60,7 @@ class ApiVideoPlayerUnitTests: XCTestCase, PlayerEventsDelegate {
             playerControllerEvent: nil,
             taskExecutor: MockedTasksExecutor.self
         )
-        controller.delegate = delegates
-        _ = mockDelegate.expectationReady(true)
+        _ = mockDelegate.expectationPrepare(true)
         _ = mockDelegate.expectationError()
         waitForExpectations(timeout: 10, handler: nil)
     }

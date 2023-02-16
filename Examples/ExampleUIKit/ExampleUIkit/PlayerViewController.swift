@@ -2,57 +2,7 @@ import ApiVideoPlayer
 import AVKit
 import UIKit
 
-class PlayerViewController: UIViewController, PlayerDelegate {
-    public func didPrepare() {
-        print("app didPrepare")
-    }
-
-    public func didReady() {
-        print("app didReady")
-    }
-
-    public func didPause() {
-        print("app didPause")
-    }
-
-    public func didPlay() {
-        print("app didPlay")
-    }
-
-    public func didReplay() {
-        print("app didReplay")
-    }
-
-    public func didMute() {
-        print("app didMute")
-    }
-
-    public func didUnMute() {
-        print("app didUnMute")
-    }
-
-    public func didLoop() {
-        print("app didLoop")
-    }
-
-    public func didSetVolume(_: Float) {
-        print("app didSetVolume")
-    }
-
-    public func didSeek(_: CMTime, _: CMTime) {
-        print("app didSeek")
-    }
-
-    public func didEnd() {
-        print("app didEnd")
-    }
-
-    public func didError(_: Error) {
-        print("app didError")
-    }
-
-    public func didVideoSizeChanged(_: CGSize) {}
-
+class PlayerViewController: UIViewController {
     private var didFinish = false {
         didSet {
             self.replayVideo()
@@ -344,4 +294,58 @@ class PlayerViewController: UIViewController, PlayerDelegate {
     private func didSwipe(_: UISwipeGestureRecognizer) {
         self.playerView.goToFullScreen()
     }
+}
+
+// MARK: PlayerDelegate
+
+extension PlayerViewController: PlayerDelegate {
+    public func didPrepare() {
+        print("app didPrepare")
+    }
+
+    public func didReady() {
+        print("app didReady")
+    }
+
+    public func didPause() {
+        print("app didPause")
+    }
+
+    public func didPlay() {
+        print("app didPlay")
+    }
+
+    public func didReplay() {
+        print("app didReplay")
+    }
+
+    public func didMute() {
+        print("app didMute")
+    }
+
+    public func didUnMute() {
+        print("app didUnMute")
+    }
+
+    public func didLoop() {
+        print("app didLoop")
+    }
+
+    public func didSetVolume(_: Float) {
+        print("app didSetVolume")
+    }
+
+    public func didSeek(_: CMTime, _: CMTime) {
+        print("app didSeek")
+    }
+
+    public func didEnd() {
+        print("app didEnd")
+    }
+
+    public func didError(_: Error) {
+        print("app didError")
+    }
+
+    public func didVideoSizeChanged(_: CGSize) {}
 }

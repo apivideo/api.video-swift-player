@@ -2,7 +2,7 @@ import ApiVideoPlayer
 import CoreMedia
 import Foundation
 import XCTest
-class MockedPlayerDelegate: PlayerDelegate {
+class MockedPlayerDelegate {
     private var completedExpectationPrepare: XCTestExpectation?
     private var completedExpectationReady: XCTestExpectation?
     private var completedExpectationPlay: XCTestExpectation?
@@ -56,7 +56,11 @@ class MockedPlayerDelegate: PlayerDelegate {
         }
         return self.errorExpectation
     }
+}
 
+// MARK: PlayerDelegate
+
+extension MockedPlayerDelegate: PlayerDelegate {
     func didPrepare() {
         print("test didPrepare")
         if self.completedExpectationPrepare != nil {

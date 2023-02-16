@@ -3,42 +3,7 @@ import AVFoundation
 import Foundation
 import UIKit
 
-class ControlsView: UIView, UIGestureRecognizerDelegate, PlayerDelegate {
-    func didPrepare() {
-        print("controlView didPrepare")
-    }
-
-    func didReady() {
-        if self.playerController.hasSubtitles {
-            self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
-            self.timerLeadingConstraintWithSubtitleButton?.isActive = true
-            self.subtitleButton.isHidden = false
-        }
-    }
-
-    func didPause() {
-        self.setPlayBtnIcon(iconName: "play-primary")
-    }
-
-    func didPlay() {
-        self.setPlayBtnIcon(iconName: "pause-primary")
-    }
-
-    func didReplay() {}
-    func didMute() {}
-    func didUnMute() {}
-    func didLoop() {}
-    func didSetVolume(_: Float) {}
-    func didSeek(_: CMTime, _: CMTime) {}
-    func didEnd() {
-        if self.playerController.isVod {
-            self.setPlayBtnIcon(iconName: "replay-primary")
-        }
-    }
-
-    func didError(_: Error) {}
-    func didVideoSizeChanged(_: CGSize) {}
-
+class ControlsView: UIView, UIGestureRecognizerDelegate {
     private let playerController: ApiVideoPlayerController
     private let controlsViewOptions: ControlsViewOptions
     private var timer = SharedTimer.shared
@@ -385,8 +350,44 @@ class ControlsView: UIView, UIGestureRecognizerDelegate, PlayerDelegate {
     }
 }
 
-extension ControlsView: SliderViewDelegate, SubtitleViewDelegate {
+extension ControlsView: PlayerDelegate {
+    func didPrepare() {
+        print("controlView didPrepare")
+    }
 
+    func didReady() {
+        if self.playerController.hasSubtitles {
+            self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
+            self.timerLeadingConstraintWithSubtitleButton?.isActive = true
+            self.subtitleButton.isHidden = false
+        }
+    }
+
+    func didPause() {
+        self.setPlayBtnIcon(iconName: "play-primary")
+    }
+
+    func didPlay() {
+        self.setPlayBtnIcon(iconName: "pause-primary")
+    }
+
+    func didReplay() {}
+    func didMute() {}
+    func didUnMute() {}
+    func didLoop() {}
+    func didSetVolume(_: Float) {}
+    func didSeek(_: CMTime, _: CMTime) {}
+    func didEnd() {
+        if self.playerController.isVod {
+            self.setPlayBtnIcon(iconName: "replay-primary")
+        }
+    }
+
+    func didError(_: Error) {}
+    func didVideoSizeChanged(_: CGSize) {}
+}
+
+extension ControlsView: SliderViewDelegate {
     func goBackToLive() {
         self.playerController.seek(to: self.playerController.duration)
     }
@@ -399,7 +400,6 @@ extension ControlsView: SliderViewDelegate, SubtitleViewDelegate {
     }
 
     func sliderValueChangeDidMove(position _: Float64) {}
-
     func sliderValueChangeDidStop(position: Float64) {
         let value = position * CMTimeGetSeconds(self.playerController.duration)
         self.playerController.seek(to: CMTime(seconds: value, preferredTimescale: 1_000))
@@ -408,7 +408,9 @@ extension ControlsView: SliderViewDelegate, SubtitleViewDelegate {
         }
         self.sliderDidPauseVideo = false
     }
+}
 
+extension ControlsView: SubtitleViewDelegate {
     func languageSelected(language: SubtitleLanguage) {
         self.playerController.currentSubtitle = language
     }

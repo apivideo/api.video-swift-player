@@ -1,6 +1,6 @@
 import CoreMedia
 import Foundation
-public class ApiVideoPlayerControllerMulticastDelegate: PlayerDelegate {
+public class ApiVideoPlayerControllerMulticastDelegate {
     private let multicast = MulticastDelegate<PlayerDelegate>()
 
     init(_ delegates: [PlayerDelegate]) {
@@ -10,6 +10,11 @@ public class ApiVideoPlayerControllerMulticastDelegate: PlayerDelegate {
     func addDelegates(_ delegates: [PlayerDelegate]) {
         delegates.forEach(self.multicast.add)
     }
+}
+
+// MARK: PlayerDelegate
+
+extension ApiVideoPlayerControllerMulticastDelegate: PlayerDelegate {
 
     public func didPrepare() {
         self.multicast.invoke { $0.didPrepare() }
