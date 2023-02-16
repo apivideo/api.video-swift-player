@@ -90,7 +90,7 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        ApiVideoPlayer(videoOptions: VideoOptions(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc"))
+        ApiVideoPlayer(videoOptions: VideoOptions(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod))
     }
 }
 #endif

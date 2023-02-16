@@ -27,7 +27,10 @@ struct ContentView: View {
                 print("swiftui app error \(error)")
             }
         )
-        self.player = ApiVideoPlayer(videoOptions: VideoOptions(videoId: "YOUR-VIDEO-ID"), events: events)
+        self.player = ApiVideoPlayer(
+            videoOptions: VideoOptions(videoId: "YOUR-VIDEO-ID", videoType = .vod),
+            events: events
+        )
     }
 
     var body: some View {
