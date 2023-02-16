@@ -51,12 +51,16 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         if let sliderV = self.sliderView {
             insertSubview(sliderV, aboveSubview: self)
         }
-        self.playerController.addDelegates(delegates: [self])
+        self.playerController.addDelegate(delegate: self)
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        playerController.removeDelegate(delegate: self)
     }
 
     public static func buildForLive(

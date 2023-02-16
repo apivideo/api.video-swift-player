@@ -5,7 +5,6 @@ import UIKit
 public class SwiftUIPlayerViewController: UIViewController {
     let playerView: ApiVideoPlayerView
     private var events: PlayerEvents?
-    var del: PlayerDelegate?
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -19,7 +18,11 @@ public class SwiftUIPlayerViewController: UIViewController {
         )
         self.events = events
         super.init(nibName: nil, bundle: nil)
-        self.playerView.addDelegate(self)
+        playerView.addDelegate(self)
+    }
+
+    deinit {
+        playerView.removeDelegate(self)
     }
 
     override public func viewDidLoad() {
@@ -42,10 +45,6 @@ public class SwiftUIPlayerViewController: UIViewController {
     override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
         super.viewDidDisappear(animated)
-    }
-
-    public func addDelegate(delegate: PlayerDelegate) {
-        self.playerView.addDelegate(delegate)
     }
 
     public func play() {
@@ -123,55 +122,55 @@ public class SwiftUIPlayerViewController: UIViewController {
 
 extension SwiftUIPlayerViewController: PlayerDelegate {
     public func didPrepare() {
-        self.events?.didPrepare?()
+        events?.didPrepare?()
     }
 
     public func didReady() {
-        self.events?.didReady?()
+        events?.didReady?()
     }
 
     public func didPause() {
-        self.events?.didPause?()
+        events?.didPause?()
     }
 
     public func didPlay() {
-        self.events?.didPlay?()
+        events?.didPlay?()
     }
 
     public func didReplay() {
-        self.events?.didReplay?()
+        events?.didReplay?()
     }
 
     public func didMute() {
-        self.events?.didMute?()
+        events?.didMute?()
     }
 
     public func didUnMute() {
-        self.events?.didUnMute?()
+        events?.didUnMute?()
     }
 
     public func didLoop() {
-        self.events?.didLoop?()
+        events?.didLoop?()
     }
 
     public func didSetVolume(_ volume: Float) {
-        self.events?.didSetVolume?(volume)
+        events?.didSetVolume?(volume)
     }
 
     public func didSeek(_ from: CMTime, _ to: CMTime) {
-        self.events?.didSeek?(from, to)
+        events?.didSeek?(from, to)
     }
 
     public func didEnd() {
-        self.events?.didEnd?()
+        events?.didEnd?()
     }
 
     public func didError(_ error: Error) {
-        self.events?.didError?(error)
+        events?.didError?(error)
     }
 
     public func didVideoSizeChanged(_ size: CGSize) {
-        self.events?.didVideoSizeChanged?(size)
+        events?.didVideoSizeChanged?(size)
     }
 }
 #endif

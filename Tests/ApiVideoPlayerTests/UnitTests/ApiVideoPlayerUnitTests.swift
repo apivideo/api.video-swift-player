@@ -21,11 +21,10 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithValidPlayerManifestJson() throws {
         self.generateRessource(ressource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi2H6m1D23s0lGQnYZJyIp7e"),
-            mcDelegate: delegates,
             playerControllerEvent: nil,
+            delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
         _ = mockDelegate.expectationPrepare()
@@ -37,11 +36,10 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithInvalidPlayerManifestJson() throws {
         self.generateRessource(ressource: "responseError")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            mcDelegate: delegates,
             playerControllerEvent: nil,
+            delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
         _ = mockDelegate.expectationPrepare(true)
@@ -53,11 +51,10 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithServerError() throws {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
-            mcDelegate: delegates,
             playerControllerEvent: nil,
+            delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
         _ = mockDelegate.expectationPrepare(true)

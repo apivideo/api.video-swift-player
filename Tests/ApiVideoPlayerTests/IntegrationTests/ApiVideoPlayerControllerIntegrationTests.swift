@@ -10,11 +10,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             }
         )
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: delegates,
-            playerControllerEvent: controllerEvent
+            playerControllerEvent: controllerEvent,
+            delegates: [mockDelegate]
         )
         guard let ready = mockDelegate.expectationReady() else {
             throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
@@ -37,11 +36,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         }
     )
     let mockDelegate = MockedPlayerDelegate(testCase: self)
-    let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
     let controller = ApiVideoPlayerController(
         videoOptions: nil,
-        mcDelegate: delegates,
-        playerControllerEvent: controllerEvent
+        playerControllerEvent: controllerEvent,
+        delegates: [mockDelegate]
     )
     controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
     guard let ready = mockDelegate.expectationReady() else {
@@ -66,11 +64,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             }
         )
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: delegates,
-            playerControllerEvent: controllerEvent
+            playerControllerEvent: controllerEvent,
+            delegates: [mockDelegate]
         )
 
         guard let ready = mockDelegate.expectationReady() else {
@@ -100,11 +97,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             }
         )
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: delegates,
-            playerControllerEvent: controllerEvent
+            playerControllerEvent: controllerEvent,
+            delegates: [mockDelegate]
         )
         guard let ready = mockDelegate.expectationReady() else {
             throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
@@ -137,11 +133,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             }
         )
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            mcDelegate: delegates,
-            playerControllerEvent: controllerEvent
+            playerControllerEvent: controllerEvent,
+            delegates: [mockDelegate]
         )
         guard mockDelegate.expectationReady() != nil else {
             throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
@@ -160,11 +155,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             }
         )
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            mcDelegate: delegates,
-            playerControllerEvent: controllerEvent
+            playerControllerEvent: controllerEvent,
+            delegates: [mockDelegate]
         )
         controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
         guard mockDelegate.expectationReady() != nil else {
@@ -184,11 +178,10 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             }
         )
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([mockDelegate])
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
-            mcDelegate: delegates,
-            playerControllerEvent: controllerEvent
+            playerControllerEvent: controllerEvent,
+            delegates: [mockDelegate]
         )
         guard mockDelegate.expectationReady(true) != nil else {
             throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")

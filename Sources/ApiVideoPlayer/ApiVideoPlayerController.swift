@@ -15,20 +15,20 @@ public class ApiVideoPlayerController: NSObject {
     private let taskExecutor: TasksExecutorProtocol.Type
     private(set) var isLive = false
     private(set) var isVod = false
-    private var multicastDelegate: ApiVideoPlayerControllerMulticastDelegate
+    private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
 
     #if !os(macOS)
     public convenience init(
         videoOptions: VideoOptions?,
-        mcDelegate: ApiVideoPlayerControllerMulticastDelegate,
         playerLayer: AVPlayerLayer,
+        delegates: [PlayerDelegate] = [],
         autoplay: Bool = false,
         playerControllerEvent: ApiVideoPlayerControllerEvent? = nil
     ) {
         self.init(
             videoOptions: videoOptions,
-            mcDelegate: mcDelegate,
             playerControllerEvent: playerControllerEvent,
+            delegates: delegates,
             autoplay: autoplay
         )
         playerLayer.player = self.avPlayer
@@ -37,12 +37,12 @@ public class ApiVideoPlayerController: NSObject {
 
     public init(
         videoOptions: VideoOptions?,
-        mcDelegate: ApiVideoPlayerControllerMulticastDelegate,
         playerControllerEvent: ApiVideoPlayerControllerEvent?,
+        delegates: [PlayerDelegate] = [],
         autoplay: Bool = false,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
-        self.multicastDelegate = mcDelegate
+        multicastDelegate.addDelegates(delegates)
         self.taskExecutor = taskExecutor
         self.playerControllerEvent = playerControllerEvent
         super.init()
@@ -120,7 +120,19 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     func addDelegates(delegates: [PlayerDelegate]) {
-        self.multicastDelegate.addDelegates(delegates)
+        multicastDelegate.addDelegates(delegates)
+    }
+
+    func addDelegate(delegate: PlayerDelegate) {
+        multicastDelegate.addDelegate(delegate)
+    }
+
+    func removeDelegate(delegate: PlayerDelegate) {
+        multicastDelegate.removeDelegate(delegate)
+    }
+
+    func removeDelegates(delegates: [PlayerDelegate]) {
+        multicastDelegate.removeDelegates(delegates)
     }
 
     private func setUpPlayer(_ url: String) throws {

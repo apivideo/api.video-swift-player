@@ -18,8 +18,8 @@ public class ApiVideoPlayerView: UIView {
 
     /// Init method for PlayerView.
     /// - Parameters:
-    ///   - frame: frame of theplayer view.
-    ///   - videoOption: The video option containing the videoId and the videoType
+    ///   - frame: frame of the player view.
+    ///   - videoOptions: The video option containing the videoId and the videoType
     ///   - hideControls: true to hide video controls, false to show them
     ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
     public init(
@@ -29,10 +29,8 @@ public class ApiVideoPlayerView: UIView {
         autoplay: Bool = false
     ) {
         self.isHidenControls = hideControls
-        let delegates = ApiVideoPlayerControllerMulticastDelegate([])
         self.playerController = ApiVideoPlayerController(
             videoOptions: videoOptions,
-            mcDelegate: delegates,
             playerLayer: self.playerLayer,
             autoplay: autoplay
         )
@@ -98,7 +96,19 @@ public class ApiVideoPlayerView: UIView {
     }
 
     public func addDelegate(_ delegate: PlayerDelegate) {
-        self.playerController.addDelegates(delegates: [delegate])
+        playerController.addDelegate(delegate: delegate)
+    }
+
+    public func addDelegates(_ delegates: [PlayerDelegate]) {
+        playerController.addDelegates(delegates: delegates)
+    }
+
+    public func removeDelegate(_ delegate: PlayerDelegate) {
+        playerController.removeDelegate(delegate: delegate)
+    }
+
+    public func removeDelegates(_ delegates: [PlayerDelegate]) {
+        playerController.removeDelegates(delegates: delegates)
     }
 
     public var videoOptions: VideoOptions? {
