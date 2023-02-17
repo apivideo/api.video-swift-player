@@ -25,25 +25,25 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     }
 
     func testValidVideoIdWithSetterPlay() throws {
-    let mockDelegate = MockedPlayerDelegate(testCase: self)
-    let controller = ApiVideoPlayerController(
-        videoOptions: nil,
-        delegates: [mockDelegate]
-    )
-    controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-    guard let ready = mockDelegate.expectationReady() else {
-        throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
-    }
-    guard let play = mockDelegate.expectationPlay() else {
-        throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
-    }
-    guard let error = mockDelegate.expectationError(true) else {
-        throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
-    }
-    wait(for: [ready], timeout: 10)
-    controller.play()
-    wait(for: [play], timeout: 2)
-    wait(for: [error], timeout: 5)
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        let controller = ApiVideoPlayerController(
+            videoOptions: nil,
+            delegates: [mockDelegate]
+        )
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
+        guard let ready = mockDelegate.expectationReady() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let play = mockDelegate.expectationPlay() else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        guard let error = mockDelegate.expectationError(true) else {
+            throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
+        }
+        wait(for: [ready], timeout: 10)
+        controller.play()
+        wait(for: [play], timeout: 2)
+        wait(for: [error], timeout: 5)
     }
 
     func testValidVideoIdPause() throws {

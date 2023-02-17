@@ -31,10 +31,10 @@ public class ApiVideoPlayerView: UIView {
         self.isHidenControls = hideControls
         super.init(frame: frame)
         self.playerController = ApiVideoPlayerController(
-                videoOptions: videoOptions,
-                playerLayer: self.playerLayer,
-                delegates: [self],
-                autoplay: autoplay
+            videoOptions: videoOptions,
+            playerLayer: self.playerLayer,
+            delegates: [self],
+            autoplay: autoplay
         )
         self.setupView()
     }
@@ -208,67 +208,55 @@ public class ApiVideoPlayerView: UIView {
 }
 
 extension ApiVideoPlayerView: PlayerDelegate {
-    public func didPrepare() {
-    }
+    public func didPrepare() {}
 
     public func didReady() {
         if !isHidenControls {
             if playerController.isVod {
                 let controlsViewOptions = ControlsViewOptions(enableSubtitleButton: playerController.hasSubtitles)
                 controlsView = ControlsView.buildForVod(
-                        frame: frame,
-                        playerController: playerController,
-                        controlsViewOptions: controlsViewOptions
+                    frame: frame,
+                    playerController: playerController,
+                    controlsViewOptions: controlsViewOptions
                 )
             } else {
                 let controlsViewOptions = ControlsViewOptions(
-                        enableLiveButton: true,
-                        enableForwardButton: false,
-                        enableBackwardButton: false,
-                        enableSubtitleButton: false
+                    enableLiveButton: true,
+                    enableForwardButton: false,
+                    enableBackwardButton: false,
+                    enableSubtitleButton: false
                 )
                 controlsView = ControlsView.buildForLive(
-                        frame: frame,
-                        playerController: playerController,
-                        controlsViewOptions: controlsViewOptions
+                    frame: frame,
+                    playerController: playerController,
+                    controlsViewOptions: controlsViewOptions
                 )
             }
         }
         setupSubviews()
     }
 
-    public func didPause() {
-    }
+    public func didPause() {}
 
-    public func didPlay() {
-    }
+    public func didPlay() {}
 
-    public func didReplay() {
-    }
+    public func didReplay() {}
 
-    public func didMute() {
-    }
+    public func didMute() {}
 
-    public func didUnMute() {
-    }
+    public func didUnMute() {}
 
-    public func didLoop() {
-    }
+    public func didLoop() {}
 
-    public func didSetVolume(_ volume: Float) {
-    }
+    public func didSetVolume(_: Float) {}
 
-    public func didSeek(_ from: CMTime, _ to: CMTime) {
-    }
+    public func didSeek(_: CMTime, _: CMTime) {}
 
-    public func didEnd() {
-    }
+    public func didEnd() {}
 
-    public func didError(_ error: Error) {
-    }
+    public func didError(_: Error) {}
 
-    public func didVideoSizeChanged(_ size: CGSize) {
-    }
+    public func didVideoSizeChanged(_: CGSize) {}
 }
 
 #else
