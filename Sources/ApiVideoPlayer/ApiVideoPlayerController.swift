@@ -295,15 +295,17 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public var duration: CMTime {
-        if self.videoOptions?.videoType == .vod {
-            if let duration = avPlayer.currentItem?.asset.duration {
-                return duration
-            } else { return CMTime(seconds: 0.0, preferredTimescale: 1_000) }
+        guard let videoOptions = self.videoOptions else {
+            return CMTime(seconds: 0.0, preferredTimescale: 1_000)
+        }
+        guard let currentItem = avPlayer.currentItem else {
+            return CMTime(seconds: 0.0, preferredTimescale: 1_000)
+
+        }
+        if videoOptions.videoType == .vod {
+            return currentItem.asset.duration
         } else {
-            guard let item = avPlayer.currentItem else {
-                return CMTime(seconds: 0.0, preferredTimescale: 1_000)
-            }
-            let seekableDuration = item.seekableTimeRanges.last?.timeRangeValue.end.seconds ?? 0.0
+            let seekableDuration = currentItem.seekableTimeRanges.last?.timeRangeValue.end.seconds ?? 0.0
             return CMTime(seconds: seekableDuration, preferredTimescale: 1_000)
         }
     }
