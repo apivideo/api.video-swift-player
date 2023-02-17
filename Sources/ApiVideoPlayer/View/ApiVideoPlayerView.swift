@@ -94,7 +94,6 @@ public class ApiVideoPlayerView: UIView {
             self.playerController.videoOptions
         }
         set {
-            // TODO: set ui vod or live
             self.playerController.videoOptions = newValue
         }
     }
@@ -129,14 +128,12 @@ public class ApiVideoPlayerView: UIView {
     /// Hide all the controls of the player.
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func hideControls() {
-//        self.vodControlsView?.isHidden = true
         self.controlsView?.isHidden = true
     }
 
     /// Show all the controls of the player.
     /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
     public func showControls() {
-//        self.vodControlsView?.isHidden = false
         self.controlsView?.isHidden = false
     }
 

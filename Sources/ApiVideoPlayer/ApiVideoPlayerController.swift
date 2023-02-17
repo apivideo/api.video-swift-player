@@ -267,9 +267,6 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         }
-        willSet {
-            print("video opt : \(String(describing: self.videoOptions?.videoType))")
-        }
     }
 
     public var isMuted: Bool {
