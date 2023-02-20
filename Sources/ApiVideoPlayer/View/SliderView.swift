@@ -3,7 +3,6 @@ import AVFoundation
 import Foundation
 import UIKit
 class SliderView: UIView {
-    private var timer = SharedTimer.shared
     public weak var delegate: SliderViewDelegate?
 
     public var duration: CMTime = .init(seconds: 0.0, preferredTimescale: 1_000) {
@@ -194,7 +193,6 @@ class SliderView: UIView {
 
     @objc
     func playbackSliderValueChanged(slider: UISlider, event: UIEvent) {
-        self.timer.resetTimer()
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
             case .began:
@@ -213,7 +211,6 @@ class SliderView: UIView {
                 break
             }
         }
-        self.timer.activateTimer()
     }
 
     private func setLiveButtonTintColor(isLive: Bool) {
