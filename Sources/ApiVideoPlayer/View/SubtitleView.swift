@@ -14,11 +14,7 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    public weak var delegate: SubtitleViewDelegate? {
-        didSet {
-            print("delegate SubtitleView did set")
-        }
-    }
+    public weak var delegate: SubtitleViewDelegate?
 
     public init(frame: CGRect, _ languages: [SubtitleLanguage]) {
         self.subtitles = languages
