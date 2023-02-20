@@ -6,7 +6,7 @@ import UIKit
 class ControlsView: UIView, UIGestureRecognizerDelegate {
     private let playerController: ApiVideoPlayerController
     private let controlsViewOptions: ControlsViewOptions
-    private var timer = SharedTimer.shared
+    private let timer = ScheduleTimer()
     private var timeObserver: Any?
     private var sliderDidPauseVideo = false
     private var subtitleView: SubtitleView?
@@ -28,6 +28,7 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         self.playerController = playerController
         self.controlsViewOptions = controlsViewOptions
         super.init(frame: frame)
+        self.timer.delegate = self
         self.sliderView = SliderView(
             frame: CGRect(x: 0, y: 0, width: frame.width, height: 50), controlsViewOptions.enableLiveButton
         )
@@ -40,9 +41,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
             self.setLiveView()
         }
 
-        self.timer.didTimerActivated = { () in
-            self.hideControls()
-        }
         playerController.setTimerObserver(callback: { () in
             self.sliderView?.duration = self.playerController.duration
             self.sliderView?.currentTime = self.playerController.currentTime
@@ -397,6 +395,7 @@ extension ControlsView: SliderViewDelegate {
     }
 
     func sliderValueChangeDidStart(position _: Float64) {
+        self.timer.resetTimer()
         if self.playerController.isPlaying {
             self.playerController.pauseBeforeSeek()
             self.sliderDidPauseVideo = true
@@ -411,12 +410,19 @@ extension ControlsView: SliderViewDelegate {
             self.playerController.play()
         }
         self.sliderDidPauseVideo = false
+        self.timer.activateTimer()
     }
 }
 
 extension ControlsView: SubtitleViewDelegate {
     func languageSelected(language: SubtitleLanguage) {
         self.playerController.currentSubtitle = language
+    }
+}
+
+extension ControlsView: ScheduleTimerDelegate {
+    func didTimerActivated() {
+        self.hideControls()
     }
 }
 #endif

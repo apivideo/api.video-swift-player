@@ -1,15 +1,7 @@
 import Foundation
-class SharedTimer {
-    static let shared = SharedTimer()
-
-    // TODO: utiliser les events au lieu de la completion
-    public var didTimerActivated: (() -> Void)?
-
+class ScheduleTimer {
+    public weak var delegate: ScheduleTimerDelegate?
     private var timer: Timer?
-
-    private init(didTimerActivated: (() -> Void)? = nil) {
-        self.didTimerActivated = didTimerActivated
-    }
 
     func resetTimer() {
         self.timer?.invalidate()
@@ -29,8 +21,11 @@ class SharedTimer {
     }
 
     @objc
-    func activatedTimer() {
-        self.didTimerActivated?()
+    private func activatedTimer() {
+        delegate?.didTimerActivated()
     }
+}
 
+public protocol ScheduleTimerDelegate: AnyObject {
+    func didTimerActivated()
 }
