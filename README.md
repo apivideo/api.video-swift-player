@@ -78,46 +78,83 @@ your [dashboard](https://dashboard.api.video).
 ```
 import ApiVideoPlayer
 ```
-2. Instantiate the Player view with the player events:
+2. Instantiate the Player view:
 
 ```swift
     let playerView: ApiVideoPlayerView = {
-        let events = PlayerEvents(
-            didPause: {() in
-                print("paused")
-            },
-            didPlay: {() in
-                print("play")
-            },
-            didReplay: {() in
-                print("video replayed")
-            },
-            didLoop: {() in
-                print("video replayed from loop")
-            },
-            didSetVolume: {(volume) in
-                print("volume set to : \(volume)")
-            },
-            didSeek: {(from, to)in
-                print("seek from : \(from), to: \(to)")
-            }
-            
-        )
-        
-        return ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", videoType: VideoType.vod /* only .vod is supported */, events: events)
+        let videoOptions = VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)
+        return ApiVideoPlayerView(frame: .zero, videoOptions: videoOptions)
     }()
 ```
+3. Add heritance to PlayerDelegate
+you must implement all the methods to avoid error
+```swift
+extension YourViewController: PlayerDelegate {
+    public func didPrepare() {
+        // Do what you whant when didPrepare is called
+    }
 
-3. Implement it in your view controller
+    public func didReady() {
+        // Do what you whant when didReady is called
+    }
+
+    public func didPause() {
+        // Do what you whant when didPause is called
+    }
+
+    public func didPlay() {
+        // Do what you whant when didPlay is called
+    }
+
+    public func didReplay() {
+        // Do what you whant when didReplay is called
+    }
+
+    public func didMute() {
+        // Do what you whant when didMute is called
+    }
+
+    public func didUnMute() {
+        // Do what you whant when didUnMute is called
+    }
+
+    public func didLoop() {
+        // Do what you whant when didLoop is called
+    }
+
+    public func didSetVolume(_: Float) {
+        // Do what you whant when didSetVolume is called
+    }
+
+    public func didSeek(_: CMTime, _: CMTime) {
+        // Do what you whant when didSeek is called
+    }
+
+    public func didEnd() {
+        // Do what you whant when didEnd is called
+    }
+
+    public func didError(_: Error) {
+        // Do what you whant when didError is called
+    }
+
+    public func didVideoSizeChanged(_: CGSize) {
+        // Do what you whant when didVideoSizeChanged is called
+    }
+}
+```
+
+4. Implement playerView and delegate in your view controller
 
 ```swift
     override func viewDidLoad() {
         ...
         self.addSubview(playerView)
+        self.playerView.addDelegate(self)
         ...
     }
 ```
-4. To use full screen and subtitle
+5. To use full screen and subtitle
 ```swift
     override func viewDidAppear(_ animated: Bool) {
         ...
