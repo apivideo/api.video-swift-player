@@ -10,11 +10,9 @@ class PlayerViewController: UIViewController {
     }
 
     let playerView: ApiVideoPlayerView = {
-        let videoOptions = VideoOptions(videoId: "vi4LEPFaRT5h4MlXE3FYyih8", videoType: .vod)
-
-        return ApiVideoPlayerView(
+        ApiVideoPlayerView(
             frame: .zero,
-            videoOptions: videoOptions
+            videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)
         )
     }()
 
