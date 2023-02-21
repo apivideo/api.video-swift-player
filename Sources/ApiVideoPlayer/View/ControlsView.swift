@@ -249,9 +249,9 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
     @objc
     func handleTap(_: UIGestureRecognizer) {
         print("tap gesture recognised")
-        self.timer.resetTimer()
-        self.showControls()
-        self.timer.activateTimer()
+        self.timer.reset() {
+            self.showControls()
+        }
         self.dismissSubtitleView()
         self.subtitleView?.dismissView()
     }
@@ -262,18 +262,18 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 
     @objc
     func playPauseAction() {
-        self.timer.resetTimer()
-        if !self.playerController.isPlaying {
-            // Detects end of playing
-            if self.playerController.isAtEnd {
-                self.playerController.replay()
+        self.timer.reset() {
+            if !self.playerController.isPlaying {
+                // Detects end of playing
+                if self.playerController.isAtEnd {
+                    self.playerController.replay()
+                } else {
+                    self.playerController.play()
+                }
             } else {
-                self.playerController.play()
+                self.playerController.pause()
             }
-        } else {
-            self.playerController.pause()
         }
-        self.timer.activateTimer()
     }
 
     @objc
@@ -286,69 +286,70 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 
     @objc
     func goForward15Action() {
-        self.timer.resetTimer()
-        self.playerController.seek(offset: CMTime(seconds: 15, preferredTimescale: 1_000))
-        self.timer.activateTimer()
+        self.timer.reset() {
+            self.playerController.seek(offset: CMTime(seconds: 15, preferredTimescale: 1_000))
+        }
     }
 
     @objc
     func goBackward15Action() {
-        self.timer.resetTimer()
-        if self.playerController.isAtEnd {
-            self.setPlayBtnIcon(iconName: "play-primary")
+        self.timer.reset() {
+            if self.playerController.isAtEnd {
+                self.setPlayBtnIcon(iconName: "play-primary")
+            }
+            self.playerController.seek(offset: CMTime(seconds: -15, preferredTimescale: 1_000))
+            self.timer.activate()
         }
-        self.playerController.seek(offset: CMTime(seconds: -15, preferredTimescale: 1_000))
-        self.timer.activateTimer()
+    }
+
+    private func showHideControls(_ isHidden: Bool) {
+        self.playPauseButton.isHidden = isHidden
+        if self.playerController.videoOptions?.videoType == .vod {
+            self.vodControlGoForward15Button.isHidden = isHidden
+            self.vodControlGoBackward15Button.isHidden = isHidden
+        }
+        self.sliderView?.isHidden = isHidden
+        self.fullScreenButton.isHidden = isHidden
     }
 
     private func showControls() {
-        self.playPauseButton.isHidden = false
-        if self.playerController.videoOptions?.videoType == .vod {
-            self.vodControlGoForward15Button.isHidden = false
-            self.vodControlGoBackward15Button.isHidden = false
-        }
-        self.sliderView?.isHidden = false
-        self.fullScreenButton.isHidden = false
+        showHideControls(false)
     }
 
     private func hideControls() {
-        self.playPauseButton.isHidden = true
-        if self.playerController.videoOptions?.videoType == .vod {
-            self.vodControlGoForward15Button.isHidden = true
-            self.vodControlGoBackward15Button.isHidden = true
-        }
-        self.sliderView?.isHidden = true
-        self.fullScreenButton.isHidden = true
-        self.subtitleView?.isHidden = true
+        showHideControls(true)
     }
 
     @objc
     private func toggleSubtitleView() {
-        self.timer.resetTimer()
-        var posX = CGFloat(0)
-        var posY = CGFloat(0)
-        if let sliderV = self.sliderView {
-            posX = self.subtitleButton.frame.origin.x - 100
-            posY = self.frame.height - sliderV.frame.height - 40
+        self.timer.reset() {
+            var posX = CGFloat(0)
+            var posY = CGFloat(0)
+            if let sliderV = self.sliderView {
+                posX = self.subtitleButton.frame.origin.x - 100
+                posY = self.frame.height - sliderV.frame.height - 40
+            }
+            guard let superV = self.superview else {
+                return
+            }
+            if let subtitleView = subtitleView,
+               subtitleView.isDescendant(of: superV) {
+                subtitleView.dismissView()
+            } else {
+                subtitleView = {
+                    let subtitleView = SubtitleView(
+                            frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), self.playerController.subtitles
+                    )
+                    subtitleView.delegate = self
+                    subtitleView.selectedLanguage = self.playerController.currentSubtitle
+                    return subtitleView
+                }()
+                guard let subtitleV = subtitleView else {
+                    return
+                }
+                superV.addSubview(subtitleV)
+            }
         }
-        guard let superV = self.superview else { return }
-        if let subtitleView = subtitleView,
-           subtitleView.isDescendant(of: superV)
-        {
-            subtitleView.dismissView()
-        } else {
-            subtitleView = {
-                let subtitleView = SubtitleView(
-                    frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), self.playerController.subtitles
-                )
-                subtitleView.delegate = self
-                subtitleView.selectedLanguage = self.playerController.currentSubtitle
-                return subtitleView
-            }()
-            guard let subtitleV = subtitleView else { return }
-            superV.addSubview(subtitleV)
-        }
-        self.timer.activateTimer()
     }
 }
 
@@ -395,7 +396,7 @@ extension ControlsView: SliderViewDelegate {
     }
 
     func sliderValueChangeDidStart(position _: Float64) {
-        self.timer.resetTimer()
+        self.timer.clear()
         if self.playerController.isPlaying {
             self.playerController.pauseBeforeSeek()
             self.sliderDidPauseVideo = true
@@ -410,7 +411,7 @@ extension ControlsView: SliderViewDelegate {
             self.playerController.play()
         }
         self.sliderDidPauseVideo = false
-        self.timer.activateTimer()
+        self.timer.activate()
     }
 }
 
@@ -421,7 +422,7 @@ extension ControlsView: SubtitleViewDelegate {
 }
 
 extension ControlsView: ScheduledTimerDelegate {
-    func didTimerActivated() {
+    func didTimerFired() {
         self.hideControls()
     }
 }

@@ -1,31 +1,47 @@
 import Foundation
+
 class ScheduledTimer {
     public weak var delegate: ScheduledTimerDelegate?
     private var timer: Timer?
+    private let timeInterval: TimeInterval
 
-    func resetTimer() {
-        self.timer?.invalidate()
-        self.timer = nil
+    init(timeInterval: TimeInterval = 5) {
+        self.timeInterval = timeInterval
     }
 
-    @objc
-    func activateTimer() {
-        guard self.timer == nil else { return }
-        self.timer = Timer.scheduledTimer(
-            timeInterval: 5,
+    /// Launch or re-launch the timer
+    func activate() {
+        guard timer == nil else {
+            return
+        }
+        timer = Timer.scheduledTimer(
+            timeInterval: timeInterval,
             target: self,
-            selector: #selector(self.activatedTimer),
+            selector: #selector(didFired),
             userInfo: nil,
             repeats: false
         )
     }
 
+    /// Invalidate the timer
+    func clear() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    /// Invalidate the timer, run the action and launch it again
+    func reset(action: () -> Void) {
+        clear()
+        action()
+        activate()
+    }
+
     @objc
-    private func activatedTimer() {
-        delegate?.didTimerActivated()
+    private func didFired() {
+        delegate?.didTimerFired()
     }
 }
 
 public protocol ScheduledTimerDelegate: AnyObject {
-    func didTimerActivated()
+    func didTimerFired()
 }
