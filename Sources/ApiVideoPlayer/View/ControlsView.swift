@@ -6,7 +6,7 @@ import UIKit
 class ControlsView: UIView, UIGestureRecognizerDelegate {
     private let playerController: ApiVideoPlayerController
     private let controlsViewOptions: ControlsViewOptions
-    private let timer = ScheduleTimer()
+    private let timer = ScheduledTimer()
     private var timeObserver: Any?
     private var sliderDidPauseVideo = false
     private var subtitleView: SubtitleView?
@@ -420,7 +420,7 @@ extension ControlsView: SubtitleViewDelegate {
     }
 }
 
-extension ControlsView: ScheduleTimerDelegate {
+extension ControlsView: ScheduledTimerDelegate {
     func didTimerActivated() {
         self.hideControls()
     }

@@ -1,6 +1,6 @@
 import Foundation
-class ScheduleTimer {
-    public weak var delegate: ScheduleTimerDelegate?
+class ScheduledTimer {
+    public weak var delegate: ScheduledTimerDelegate?
     private var timer: Timer?
 
     func resetTimer() {
@@ -26,6 +26,6 @@ class ScheduleTimer {
     }
 }
 
-public protocol ScheduleTimerDelegate: AnyObject {
+public protocol ScheduledTimerDelegate: AnyObject {
     func didTimerActivated()
 }
