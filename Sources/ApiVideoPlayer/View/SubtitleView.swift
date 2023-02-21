@@ -110,4 +110,8 @@ class SubtitleView: UIView, UITableViewDelegate, UITableViewDataSource {
         self.dismissView()
     }
 }
+
+public protocol SubtitleViewDelegate: AnyObject {
+    func languageSelected(language: SubtitleLanguage)
+}
 #endif
