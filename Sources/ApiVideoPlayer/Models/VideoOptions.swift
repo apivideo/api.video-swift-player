@@ -1,10 +1,10 @@
 import Foundation
 
 public struct VideoOptions {
-    public var videoId: String
-    public var videoType: VideoType
+    public let videoId: String
+    public let videoType: VideoType
 
-    public init(videoId: String, videoType: VideoType) {
+    public init(videoId: String, videoType: VideoType = VideoType.vod) {
         self.videoId = videoId
         self.videoType = videoType
     }
