@@ -91,55 +91,55 @@ you must implement all the methods to avoid error
 ```swift
 extension YourViewController: PlayerDelegate {
     public func didPrepare() {
-        // Do what you whant when didPrepare is called
+        // Do what you want when didPrepare is called
     }
 
     public func didReady() {
-        // Do what you whant when didReady is called
+        // Do what you want when didReady is called
     }
 
     public func didPause() {
-        // Do what you whant when didPause is called
+        // Do what you want when didPause is called
     }
 
     public func didPlay() {
-        // Do what you whant when didPlay is called
+        // Do what you want when didPlay is called
     }
 
     public func didReplay() {
-        // Do what you whant when didReplay is called
+        // Do what you want when didReplay is called
     }
 
     public func didMute() {
-        // Do what you whant when didMute is called
+        // Do what you want when didMute is called
     }
 
     public func didUnMute() {
-        // Do what you whant when didUnMute is called
+        // Do what you want when didUnMute is called
     }
 
     public func didLoop() {
-        // Do what you whant when didLoop is called
+        // Do what you want when didLoop is called
     }
 
     public func didSetVolume(_: Float) {
-        // Do what you whant when didSetVolume is called
+        // Do what you want when didSetVolume is called
     }
 
     public func didSeek(_: CMTime, _: CMTime) {
-        // Do what you whant when didSeek is called
+        // Do what you want when didSeek is called
     }
 
     public func didEnd() {
-        // Do what you whant when didEnd is called
+        // Do what you want when didEnd is called
     }
 
     public func didError(_: Error) {
-        // Do what you whant when didError is called
+        // Do what you want when didError is called
     }
 
     public func didVideoSizeChanged(_: CGSize) {
-        // Do what you whant when didVideoSizeChanged is called
+        // Do what you want when didVideoSizeChanged is called
     }
 }
 ```
