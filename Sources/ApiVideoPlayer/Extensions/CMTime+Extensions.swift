@@ -10,8 +10,8 @@ extension CMTime {
     var minute: Int { Int(self.roundedSeconds.truncatingRemainder(dividingBy: 3_600) / 60) }
     var second: Int { Int(self.roundedSeconds.truncatingRemainder(dividingBy: 60)) }
 
-    var prettyTime: String {
-        self.hours > 0 ?
+    var stringRepresentation: String {
+        return self.hours > 0 ?
             String(
                 format: "%d:%02d:%02d",
                 self.hours,

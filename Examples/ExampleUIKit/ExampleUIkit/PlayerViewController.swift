@@ -9,12 +9,10 @@ class PlayerViewController: UIViewController {
         }
     }
 
-    let playerView: ApiVideoPlayerView = {
-        ApiVideoPlayerView(
-            frame: .zero,
-            videoOptions: VideoOptions(videoId: "vi4LEPFaRT5h4MlXE3FYyih8", videoType: .vod)
-        )
-    }()
+    let playerView: ApiVideoPlayerView = .init(
+        frame: .zero,
+        videoOptions: VideoOptions(videoId: "vi4LEPFaRT5h4MlXE3FYyih8", videoType: .vod)
+    )
 
     let scrollView: UIScrollView = {
         let scrlview = UIScrollView()

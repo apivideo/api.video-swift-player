@@ -5,51 +5,69 @@ import UIKit
 
 class ControlsView: UIView, UIGestureRecognizerDelegate {
     private let playerController: ApiVideoPlayerController
-    private let controlsViewOptions: ControlsViewOptions
+
+    private let actionBarView: ActionBarView
     private let timer = ScheduledTimer()
-    private var timeObserver: Any?
-    private var sliderDidPauseVideo = false
-    private var subtitleView: SubtitleView?
-    private var timerLeadingConstraintWithSubtitleButton: NSLayoutConstraint?
-    private var timerLeadingConstraintWithoutSubtitleButton: NSLayoutConstraint?
+
+    private var subtitleView: SubtitleListView?
+
     public var viewController: UIViewController? {
         didSet {
-            if self.viewController != nil {
-                self.fullScreenButton.isHidden = false
+            if viewController != nil {
+                fullScreenButton.isHidden = false
             } else {
-                self.fullScreenButton.isHidden = true
+                fullScreenButton.isHidden = true
             }
         }
     }
 
-    private var sliderView: SliderView?
+    private let playPauseButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.tintColor = .white
+        btn.contentHorizontalAlignment = .fill
+        btn.contentVerticalAlignment = .fill
+        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        return btn
+    }()
 
-    required init(frame: CGRect, playerController: ApiVideoPlayerController, controlsViewOptions: ControlsViewOptions) {
+    private let forward15Button: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
+        btn.tintColor = .white
+        return btn
+    }()
+
+    private let backward15Button: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
+        btn.tintColor = .white
+        return btn
+    }()
+
+    private let fullScreenButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
+        btn.tintColor = .white
+        return btn
+    }()
+
+    required init(frame: CGRect, playerController: ApiVideoPlayerController) {
         self.playerController = playerController
-        self.controlsViewOptions = controlsViewOptions
+
+        actionBarView = ActionBarView(frame: frame, playerController: playerController)
+
         super.init(frame: frame)
-        self.timer.delegate = self
-        self.sliderView = SliderView(
-            frame: CGRect(x: 0, y: 0, width: frame.width, height: 50), controlsViewOptions.enableLiveButton
-        )
-        self.sliderView?.delegate = self
-        self.setGenericButtons()
 
-        if playerController.videoOptions?.videoType == .vod {
-            self.setVodView()
-        } else {
-            self.setLiveView()
-        }
-
-        playerController.setTimerObserver(callback: { () in
-            self.sliderView?.duration = self.playerController.duration
-            self.sliderView?.currentTime = self.playerController.currentTime
-        })
-
-        if let sliderV = self.sliderView {
-            insertSubview(sliderV, aboveSubview: self)
-        }
+        // Add delegates
+        timer.delegate = self
+        actionBarView.delegate = self
         self.playerController.addDelegate(delegate: self)
+
+        // Add subviews
+        addSubview()
+
+        // Hide view in few seconds
+        timer.activate()
     }
 
     @available(*, unavailable)
@@ -61,255 +79,159 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         playerController.removeDelegate(delegate: self)
     }
 
-    public static func buildForLive(
-        frame: CGRect,
-        playerController: ApiVideoPlayerController,
-        controlsViewOptions: ControlsViewOptions
-    ) -> ControlsView {
-        self.init(frame: frame, playerController: playerController, controlsViewOptions: controlsViewOptions)
+    private func addSubview() {
+        addSubview(fullScreenButton)
+        addSubview(playPauseButton)
+        addSubview(forward15Button)
+        addSubview(backward15Button)
+
+        addSubview(actionBarView)
+
+        addActions()
+        addConstraints()
     }
 
-    public static func buildForVod(
-        frame: CGRect,
-        playerController: ApiVideoPlayerController,
-        controlsViewOptions: ControlsViewOptions
-    ) -> ControlsView {
-        self.init(frame: frame, playerController: playerController, controlsViewOptions: controlsViewOptions)
-    }
-
-    private func setGenericButtons() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTap))
+    private func addActions() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         tapGestureRecognizer.delegate = self
         addGestureRecognizer(tapGestureRecognizer)
         isUserInteractionEnabled = true
 
+        fullScreenButton.addTarget(self, action: #selector(goToFullScreenAction), for: .touchUpInside)
+        fullScreenButton.isHidden = true
+
+        // Play/Pause button
+        playPauseButton.addTarget(self, action: #selector(playPauseAction), for: .touchUpInside)
+        setPlayBtnIcon(iconName: "play-primary")
+
+        // Forward Button
+        forward15Button.addTarget(
+                self,
+                action: #selector(goForward15Action),
+                for: .touchUpInside
+        )
+
+        // Backward Button
+        backward15Button.addTarget(
+                self,
+                action: #selector(goBackward15Action),
+                for: .touchUpInside
+        )
+    }
+
+    private func addConstraints() {
+        // FullScreen Button
+        fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
+        fullScreenButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        fullScreenButton.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
+        fullScreenButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        fullScreenButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+
         // Play Pause Button
-        addSubview(self.playPauseButton)
-        self.playPauseButton.addTarget(self, action: #selector(self.playPauseAction), for: .touchUpInside)
-        self.setPlayBtnIcon(iconName: "play-primary")
+        playPauseButton.translatesAutoresizingMaskIntoConstraints = false
+        playPauseButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        playPauseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        playPauseButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        playPauseButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
+
+        // Forward Button
+        forward15Button.translatesAutoresizingMaskIntoConstraints = false
+        forward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        forward15Button.leftAnchor.constraint(
+                equalTo: playPauseButton.rightAnchor,
+                constant: frame.width / 16
+        ).isActive = true
+        forward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        forward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
+
+        // Backward Button
+        backward15Button.translatesAutoresizingMaskIntoConstraints = false
+        backward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        backward15Button.rightAnchor.constraint(
+                equalTo: playPauseButton.leftAnchor,
+                constant: -(frame.width / 16)
+        ).isActive = true
+        backward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        backward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
 
         // Slider View
-        guard let view = sliderView else { return }
-        addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        view.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-
-        addSubview(self.fullScreenButton)
-        self.fullScreenButton.addTarget(self, action: #selector(self.goToFullScreenAction), for: .touchUpInside)
-        self.fullScreenButton.isHidden = true
-        self.setupGeneralConstraints()
+        actionBarView.translatesAutoresizingMaskIntoConstraints = false
+        actionBarView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        actionBarView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        actionBarView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        actionBarView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
-
-    private func setupGeneralConstraints() {
-        // Play Pause Button
-        self.playPauseButton.translatesAutoresizingMaskIntoConstraints = false
-        self.playPauseButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        self.playPauseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        self.playPauseButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        self.playPauseButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
-
-        // FullScreen Button
-        self.fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
-        self.fullScreenButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        self.fullScreenButton.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
-        self.fullScreenButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        self.fullScreenButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-    }
-
-    private func setupVodConstraints() {
-        self.sliderView?.heightAnchor.constraint(equalToConstant: 50).isActive = true
-
-        // Go Forward Button
-        self.vodControlGoForward15Button.translatesAutoresizingMaskIntoConstraints = false
-        self.vodControlGoForward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        self.vodControlGoForward15Button.leadingAnchor.constraint(
-            equalTo: self.playPauseButton.trailingAnchor,
-            constant: frame.width / 16
-        ).isActive = true
-        self.vodControlGoForward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        self.vodControlGoForward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
-
-        // Go Backward Button
-        self.vodControlGoBackward15Button.translatesAutoresizingMaskIntoConstraints = false
-        self.vodControlGoBackward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        self.vodControlGoBackward15Button.trailingAnchor.constraint(
-            equalTo: self.playPauseButton.leadingAnchor,
-            constant: -(frame.width / 16)
-        ).isActive = true
-        self.vodControlGoBackward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        self.vodControlGoBackward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        self.timerLeadingConstraintWithSubtitleButton = self.sliderView?.controlTimerLabel.trailingAnchor.constraint(
-            equalTo: self.subtitleButton.leadingAnchor,
-            constant: -10
-        )
-        self.timerLeadingConstraintWithoutSubtitleButton = self.sliderView?.controlTimerLabel.rightAnchor.constraint(
-            equalTo: self.rightAnchor,
-            constant: -10
-        )
-        self.timerLeadingConstraintWithoutSubtitleButton?.isActive = true
-
-        // subtitle
-        self.subtitleButton.translatesAutoresizingMaskIntoConstraints = false
-        if let sliderV = self.sliderView {
-            self.subtitleButton.centerYAnchor.constraint(equalTo: sliderV.centerYAnchor)
-                .isActive = true
-            self.subtitleButton.trailingAnchor.constraint(
-                equalTo: sliderV.trailingAnchor,
-                constant: -10
-            ).isActive = true
-        }
-    }
-
-    private func setupLiveConstraints() {
-        // sliderview height
-        self.sliderView?.heightAnchor.constraint(equalToConstant: 60).isActive = true
-    }
-
-    private func setLiveView() {
-        self.sliderView?.addSubview(self.subtitleButton)
-        self.subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
-        self.setupLiveConstraints()
-    }
-
-    private func setVodView() {
-        // Go Forward Button
-        addSubview(self.vodControlGoForward15Button)
-        self.vodControlGoForward15Button.addTarget(
-            self,
-            action: #selector(self.goForward15Action),
-            for: .touchUpInside
-        )
-
-        // Go Backward Button
-        addSubview(self.vodControlGoBackward15Button)
-        self.vodControlGoBackward15Button.addTarget(
-            self,
-            action: #selector(self.goBackward15Action),
-            for: .touchUpInside
-        )
-
-        // Subtitle
-        self.sliderView?.addSubview(self.subtitleButton)
-        self.subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
-        self.setupVodConstraints()
-    }
-
-    let playPauseButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.tintColor = .white
-        btn.contentHorizontalAlignment = .fill
-        btn.contentVerticalAlignment = .fill
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        return btn
-    }()
-
-    let vodControlGoForward15Button: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
-        btn.tintColor = .white
-        return btn
-    }()
-
-    let vodControlGoBackward15Button: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
-        btn.tintColor = .white
-        return btn
-    }()
-
-    let fullScreenButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
-        btn.tintColor = .white
-        return btn
-    }()
-
-    let subtitleButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
-        btn.tintColor = .white
-        btn.isHidden = true
-        return btn
-    }()
 
     private func setPlayBtnIcon(iconName: String) {
-        if #available(tvOS 13.0, *) {
-            playPauseButton.setImage(
+        playPauseButton.setImage(
                 UIImage(named: iconName, in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
                 for: .normal
-            )
-        } else {
-            // Fallback on earlier versions
-        }
+        )
     }
 
     @objc
     func handleTap(_: UIGestureRecognizer) {
-        print("tap gesture recognised")
-        self.timer.reset() {
-            self.showControls()
+        removeSubtitleView()
+        timer.reset {
+            showControls()
         }
-        self.dismissSubtitleView()
-        self.subtitleView?.dismissView()
     }
 
-    private func dismissSubtitleView() {
-        self.subtitleView?.dismissView()
+    private func removeSubtitleView() {
+        subtitleView?.removeFromSuperview()
+        subtitleView = nil
     }
 
     @objc
     func playPauseAction() {
-        self.timer.reset() {
-            if !self.playerController.isPlaying {
+        timer.reset {
+            if !playerController.isPlaying {
                 // Detects end of playing
-                if self.playerController.isAtEnd {
-                    self.playerController.replay()
+                if playerController.isAtEnd {
+                    playerController.replay()
                 } else {
-                    self.playerController.play()
+                    playerController.play()
                 }
             } else {
-                self.playerController.pause()
+                playerController.pause()
             }
         }
     }
 
     @objc
     func goToFullScreenAction() {
-        guard let vc = viewController else {
+        guard let viewController = viewController else {
             return
         }
-        self.playerController.goToFullScreen(viewController: vc)
+        playerController.goToFullScreen(viewController: viewController)
     }
 
     @objc
     func goForward15Action() {
-        self.timer.reset() {
-            self.playerController.seek(offset: CMTime(seconds: 15, preferredTimescale: 1_000))
+        timer.reset {
+            playerController.seek(offset: CMTime(seconds: 15, preferredTimescale: 1_000))
         }
     }
 
     @objc
     func goBackward15Action() {
-        self.timer.reset() {
-            if self.playerController.isAtEnd {
-                self.setPlayBtnIcon(iconName: "play-primary")
+        timer.reset {
+            if playerController.isAtEnd {
+                setPlayBtnIcon(iconName: "play-primary")
             }
-            self.playerController.seek(offset: CMTime(seconds: -15, preferredTimescale: 1_000))
-            self.timer.activate()
+            playerController.seek(offset: CMTime(seconds: -15, preferredTimescale: 1_000))
+            timer.activate()
         }
     }
 
     private func showHideControls(_ isHidden: Bool) {
-        self.playPauseButton.isHidden = isHidden
-        if self.playerController.videoOptions?.videoType == .vod {
-            self.vodControlGoForward15Button.isHidden = isHidden
-            self.vodControlGoBackward15Button.isHidden = isHidden
+        playPauseButton.isHidden = isHidden
+        if playerController.videoOptions?.videoType == .vod {
+            forward15Button.isHidden = isHidden
+            backward15Button.isHidden = isHidden
         }
-        self.sliderView?.isHidden = isHidden
-        self.fullScreenButton.isHidden = isHidden
+        actionBarView.isHidden = isHidden
+        fullScreenButton.isHidden = isHidden
     }
 
     private func showControls() {
@@ -319,38 +241,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
     private func hideControls() {
         showHideControls(true)
     }
-
-    @objc
-    private func toggleSubtitleView() {
-        self.timer.reset() {
-            var posX = CGFloat(0)
-            var posY = CGFloat(0)
-            if let sliderV = self.sliderView {
-                posX = self.subtitleButton.frame.origin.x - 100
-                posY = self.frame.height - sliderV.frame.height - 40
-            }
-            guard let superV = self.superview else {
-                return
-            }
-            if let subtitleView = subtitleView,
-               subtitleView.isDescendant(of: superV) {
-                subtitleView.dismissView()
-            } else {
-                subtitleView = {
-                    let subtitleView = SubtitleView(
-                            frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45), self.playerController.subtitles
-                    )
-                    subtitleView.delegate = self
-                    subtitleView.selectedLanguage = self.playerController.currentSubtitle
-                    return subtitleView
-                }()
-                guard let subtitleV = subtitleView else {
-                    return
-                }
-                superV.addSubview(subtitleV)
-            }
-        }
-    }
 }
 
 extension ControlsView: PlayerDelegate {
@@ -359,71 +249,106 @@ extension ControlsView: PlayerDelegate {
     }
 
     func didReady() {
-        if self.playerController.hasSubtitles {
-            self.timerLeadingConstraintWithoutSubtitleButton?.isActive = false
-            self.timerLeadingConstraintWithSubtitleButton?.isActive = true
-            self.subtitleButton.isHidden = false
+        if playerController.isVod {
+            forward15Button.isHidden = false
+            backward15Button.isHidden = false
+        } else if playerController.isLive {
+            forward15Button.isHidden = true
+            backward15Button.isHidden = true
+        } else {
+            print("Error: unexpected video type")
         }
+
+        // remove subtitle view if it is present when loading another video to force user to reload it
+        removeSubtitleView()
     }
 
     func didPause() {
-        self.setPlayBtnIcon(iconName: "play-primary")
+        setPlayBtnIcon(iconName: "play-primary")
     }
 
     func didPlay() {
-        self.setPlayBtnIcon(iconName: "pause-primary")
+        setPlayBtnIcon(iconName: "pause-primary")
     }
 
-    func didReplay() {}
-    func didMute() {}
-    func didUnMute() {}
-    func didLoop() {}
-    func didSetVolume(_: Float) {}
-    func didSeek(_: CMTime, _: CMTime) {}
+    func didReplay() {
+    }
+
+    func didMute() {
+    }
+
+    func didUnMute() {
+    }
+
+    func didLoop() {
+    }
+
+    func didSetVolume(_: Float) {
+    }
+
+    func didSeek(_: CMTime, _: CMTime) {
+    }
+
     func didEnd() {
-        if self.playerController.isVod {
-            self.setPlayBtnIcon(iconName: "replay-primary")
+        if playerController.isVod {
+            setPlayBtnIcon(iconName: "replay-primary")
         }
     }
 
-    func didError(_: Error) {}
-    func didVideoSizeChanged(_: CGSize) {}
+    func didError(_: Error) {
+    }
+
+    func didVideoSizeChanged(_: CGSize) {
+    }
 }
 
-extension ControlsView: SliderViewDelegate {
-    func goBackToLive() {
-        self.playerController.seek(to: self.playerController.duration)
+extension ControlsView: ActionBarViewDelegate {
+    private func toggleSubtitleView(subtitleButton: UIButton) {
+        timer.clear()
+        let posX = subtitleButton.frame.origin.x - 100
+        let posY = self.frame.height - 40
+
+        if let subtitleView = subtitleView,
+            subtitleView.isDescendant(of: self) {
+            removeSubtitleView()
+        } else {
+            subtitleView = SubtitleListView(
+                    frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
+                    languages: self.playerController.subtitles,
+                    selectedLanguage: self.playerController.currentSubtitle
+            )
+            subtitleView!.delegate = self
+            addSubview(subtitleView!)
+        }
+        timer.activate()
     }
 
-    func sliderValueChangeDidStart(position _: Float64) {
-        self.timer.clear()
-        if self.playerController.isPlaying {
-            self.playerController.pauseBeforeSeek()
-            self.sliderDidPauseVideo = true
-        }
+    func subtitleButtonTapped(subtitleButton: UIButton) {
+        toggleSubtitleView(subtitleButton: subtitleButton)
     }
 
-    func sliderValueChangeDidMove(position _: Float64) {}
-    func sliderValueChangeDidStop(position: Float64) {
-        let value = position * CMTimeGetSeconds(self.playerController.duration)
-        self.playerController.seek(to: CMTime(seconds: value, preferredTimescale: 1_000))
-        if self.sliderDidPauseVideo {
-            self.playerController.play()
-        }
-        self.sliderDidPauseVideo = false
-        self.timer.activate()
+    func sliderValueChangedDidStart(position: Float64) {
+        timer.clear()
+    }
+
+    func sliderValueChangedDidMove(position: Float64) {
+        // Nothing to do
+    }
+
+    func sliderValueChangedDidStop(position: Float64) {
+        timer.activate()
     }
 }
 
 extension ControlsView: SubtitleViewDelegate {
     func languageSelected(language: SubtitleLanguage) {
-        self.playerController.currentSubtitle = language
+        playerController.currentSubtitle = language
     }
 }
 
 extension ControlsView: ScheduledTimerDelegate {
     func didTimerFired() {
-        self.hideControls()
+        hideControls()
     }
 }
 #endif

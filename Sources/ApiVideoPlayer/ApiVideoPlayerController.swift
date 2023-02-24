@@ -164,9 +164,9 @@ public class ApiVideoPlayerController: NSObject {
         item.remove(output)
     }
 
-    public func setTimerObserver(callback: @escaping (() -> Void)) {
-        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        self.timeObserver = self.avPlayer.addPeriodicTimeObserver(
+    public func addTimerObserver(callback: @escaping () -> Void) -> Any {
+        let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        return avPlayer.addPeriodicTimeObserver(
             forInterval: interval,
             queue: DispatchQueue.main,
             using: { _ in
@@ -175,10 +175,8 @@ public class ApiVideoPlayerController: NSObject {
         )
     }
 
-    public func removeTimeObserver() {
-        if let timeObserver = timeObserver {
-            self.avPlayer.removeTimeObserver(timeObserver)
-        }
+    public func removeTimeObserver(_ observer: Any) {
+        avPlayer.removeTimeObserver(observer)
     }
 
     private func setUpAnalytics(url: String) {
@@ -212,7 +210,7 @@ public class ApiVideoPlayerController: NSObject {
 
     private func seekImpl(to time: CMTime, completion: @escaping (Bool) -> Void) {
         let from = self.currentTime
-        self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
+        self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
             self.analytics?
                 .seek(
                     from: Float(CMTimeGetSeconds(from)),
@@ -223,7 +221,7 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
-            completion(finished)
+            completion(completed)
         }
     }
 
@@ -244,13 +242,14 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.pause()
     }
 
-    public func seek(offset: CMTime) {
-        self.seek(to: self.currentTime + offset)
+    public func seek(offset: CMTime, completion: @escaping (Bool) -> Void = { _ in }) {
+        self.seek(to: self.currentTime + offset, completion: completion)
     }
 
-    public func seek(to: CMTime) {
+    public func seek(to: CMTime, completion: @escaping (Bool) -> Void = { _ in }) {
         let from = self.currentTime
-        self.seekImpl(to: to, completion: { _ in
+        self.seekImpl(to: to, completion: { completed in
+            completion(completed)
             self.multicastDelegate.didSeek(from, self.currentTime)
         })
     }
