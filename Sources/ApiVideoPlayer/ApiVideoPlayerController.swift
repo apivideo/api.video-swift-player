@@ -13,6 +13,7 @@ public class ApiVideoPlayerController: NSObject {
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
+    private var playerItemFactory: ApiVideoPlayerItemFactory!
 
     #if !os(macOS)
     public convenience init(
@@ -74,41 +75,9 @@ public class ApiVideoPlayerController: NSObject {
         return url
     }
 
-    private func getPlayerJSON(videoOptions: VideoOptions, completion: @escaping (Error?) -> Void) {
-        let url = self.getVideoUrl(videoOptions: videoOptions)
-        guard let path = URL(string: url) else {
-            completion(PlayerError.urlError("Couldn't set up url from this videoId"))
-            return
-        }
-        let request = RequestsBuilder().getPlayerData(path: path)
-        let session = RequestsBuilder().buildUrlSession()
-        self.taskExecutor.execute(session: session, request: request) { data, error in
-            if let data = data {
-                do {
-                    self.playerManifest = try JSONDecoder().decode(PlayerManifest.self, from: data)
-                    self.setUpAnalytics(url: self.playerManifest.video.src)
-                    try self.setUpPlayer(self.playerManifest.video.src)
-                    completion(nil)
-                } catch {
-                    completion(error)
-                    return
-                }
-            } else {
-                completion(error)
-            }
-        }
-    }
-
     private func retrySetUpPlayerUrlWithMp4() {
-        guard let mp4 = playerManifest.video.mp4 else {
-            print("Error there is no mp4")
-            self.notifyError(error: PlayerError.mp4Error("There is no mp4"))
-            return
-        }
-        do {
-            try self.setUpPlayer(mp4)
-        } catch {
-            self.notifyError(error: error)
+        self.playerItemFactory.getMp4PlayerItem { currentItem in
+            self.preparePlayer(playerItem: currentItem)
         }
     }
 
@@ -128,22 +97,17 @@ public class ApiVideoPlayerController: NSObject {
         multicastDelegate.removeDelegates(delegates)
     }
 
-    private func setUpPlayer(_ url: String) throws {
-        if let url = URL(string: url) {
-            self.multicastDelegate.didPrepare()
-            let item = AVPlayerItem(url: url)
-            self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
-            self.avPlayer.replaceCurrentItem(with: item)
-            item.addObserver(self, forKeyPath: "status", options: .new, context: nil)
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(self.playerDidFinishPlaying),
-                name: .AVPlayerItemDidPlayToEndTime,
-                object: item
-            )
-        } else {
-            throw PlayerError.urlError("bad url")
-        }
+    private func preparePlayer(playerItem: AVPlayerItem) {
+        self.multicastDelegate.didPrepare()
+        self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
+        self.avPlayer.replaceCurrentItem(with: playerItem)
+        playerItem.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.playerDidFinishPlaying),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: playerItem
+        )
     }
 
     private func notifyError(error: Error) {
@@ -260,11 +224,10 @@ public class ApiVideoPlayerController: NSObject {
             guard let videoOptions = videoOptions else {
                 return
             }
-
-            self.getPlayerJSON(videoOptions: videoOptions) { error in
-                if let error = error {
-                    self.notifyError(error: error)
-                }
+            playerItemFactory = ApiVideoPlayerItemFactory(videoOptions: videoOptions)
+            playerItemFactory.delegate = self
+            playerItemFactory.getHlsPlayerItem { currentItem in
+                self.preparePlayer(playerItem: currentItem)
             }
         }
     }
@@ -516,6 +479,14 @@ public class ApiVideoPlayerController: NSObject {
     }
 }
 
+// MARK: ApiVideoPlayerItemFactoryDelegate
+
+extension ApiVideoPlayerController: ApiVideoPlayerItemFactoryDelegate {
+    func didError(_ error: Error) {
+        notifyError(error: error)
+    }
+}
+
 extension AVPlayer {
     @available(iOS 10.0, *)
     var isPlaying: Bool {
@@ -534,4 +505,5 @@ enum PlayerError: Error {
     case mp4Error(String)
     case urlError(String)
     case videoIdError(String)
+    case sessionTokenError(String)
 }
