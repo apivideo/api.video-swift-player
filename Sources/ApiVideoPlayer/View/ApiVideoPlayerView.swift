@@ -232,6 +232,10 @@ extension ApiVideoPlayerView: PlayerDelegate {
                     controlsViewOptions: controlsViewOptions
                 )
             }
+
+            if controlsView?.viewController == nil, self.viewController != nil {
+                self.controlsView?.viewController = self.viewController
+            }
         }
         setupSubviews()
     }
