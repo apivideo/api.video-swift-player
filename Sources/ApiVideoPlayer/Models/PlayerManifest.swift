@@ -12,3 +12,7 @@ public struct Video: Codable {
     var src: String
     var mp4: String?
 }
+
+public struct TokenSession: Codable {
+    var session_token: String
+}
