@@ -21,6 +21,9 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithValidSessionRequest() throws {
         generateResource(resource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare()
+        _ = mockDelegate.expectationError() // We expect an error as it can't get the video
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
                 videoId: "vi2H6m1D23s0lGQnYZJyIp7e",
@@ -30,8 +33,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
-        _ = mockDelegate.expectationPrepare()
-        _ = mockDelegate.expectationError(true)
+
         waitForExpectations(timeout: 5, handler: nil)
     }
 
@@ -39,6 +41,9 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithInvalidSessionRequestResponse() throws {
         generateResource(resource: "responseError")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare(true)
+        _ = mockDelegate.expectationError()
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
                 videoId: "vi18RL1kvZlDRdzk7Mas59HT",
@@ -48,8 +53,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
-        _ = mockDelegate.expectationPrepare(true)
-        _ = mockDelegate.expectationError()
+
         waitForExpectations(timeout: 5, handler: nil)
     }
 
@@ -57,6 +61,9 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithServerError() throws {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare(true)
+        _ = mockDelegate.expectationError()
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
                 videoId: "vi18RL1kvZlDRdzk7Mas59HT",
@@ -66,8 +73,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
-        _ = mockDelegate.expectationPrepare(true)
-        _ = mockDelegate.expectationError()
+
         waitForExpectations(timeout: 5, handler: nil)
     }
 }

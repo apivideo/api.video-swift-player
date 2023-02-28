@@ -62,7 +62,7 @@ class MockedPlayerDelegate {
 
 extension MockedPlayerDelegate: PlayerDelegate {
     func didPrepare() {
-        print("test didPrepare")
+        print("didPrepare")
         if self.completedExpectationPrepare != nil {
             self.completedExpectationPrepare?.fulfill()
         }
@@ -70,7 +70,7 @@ extension MockedPlayerDelegate: PlayerDelegate {
     }
 
     func didReady() {
-        print("test didReady")
+        print("didReady")
         if self.completedExpectationReady != nil {
             self.completedExpectationReady?.fulfill()
         }
@@ -78,7 +78,7 @@ extension MockedPlayerDelegate: PlayerDelegate {
     }
 
     func didPause() {
-        print("test didPause")
+        print("didPause")
         if !self.didPauseCalled {
             self.didPauseCalled = true
             if self.completedExpectationPause != nil {
@@ -95,7 +95,7 @@ extension MockedPlayerDelegate: PlayerDelegate {
     }
 
     func didPlay() {
-        print("test didPlay")
+        print("didPlay")
         if self.completedExpectationPlay != nil {
             self.completedExpectationPlay?.fulfill()
         }
@@ -116,8 +116,8 @@ extension MockedPlayerDelegate: PlayerDelegate {
 
     func didEnd() {}
 
-    func didError(_: Error) {
-        print("test didError")
+    func didError(_ error: Error) {
+        print("didError: \(error)")
         if self.errorExpectation != nil {
             self.errorExpectation?.fulfill()
         }
