@@ -41,11 +41,11 @@ public struct VideoOptions {
     }
 
     public var mp4Url: String {
-        return "\(vodUrl)/mp4/source.mp4"
+        "\(vodUrl)/mp4/source.mp4"
     }
 
     public var thumbnailUrl: String {
-        return "\(vodUrl)/thumbnail.jpg"
+        "\(vodUrl)/thumbnail.jpg"
     }
 
 }
