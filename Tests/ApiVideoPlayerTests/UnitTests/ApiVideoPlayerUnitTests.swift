@@ -4,8 +4,8 @@ import XCTest
 /// Unit tests on PlayerController without connection to api.video
 /// The connection is mocked with MockedTasksExecutor
 class ApiVideoPlayerUnitTests: XCTestCase {
-    func generateRessource(ressource: String) {
-        guard let resourceUrl = Bundle.module.url(forResource: ressource, withExtension: "json") else {
+    func generateResource(resource: String) {
+        guard let resourceUrl = Bundle.module.url(forResource: resource, withExtension: "json") else {
             XCTFail("Error can't find the json file")
             return
         }
@@ -18,9 +18,8 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     }
 
     /// Assert that didError is not called if the JSON is valid
-    func testWithValidPlayerManifestJson() throws {
-        self.generateRessource(ressource: "responseSuccess")
-
+    func testWithValidSessionRequest() throws {
+        generateResource(resource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         _ = mockDelegate.expectationPrepare()
         _ = mockDelegate.expectationError() // We expect an error as it can't get the video
@@ -39,9 +38,8 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     }
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
-    func testWithInvalidPlayerManifestJson() throws {
-        self.generateRessource(ressource: "responseError")
-
+    func testWithInvalidSessionRequestResponse() throws {
+        generateResource(resource: "responseError")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         _ = mockDelegate.expectationPrepare(true)
         _ = mockDelegate.expectationError()
