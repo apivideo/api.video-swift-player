@@ -6,7 +6,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testValidVideoIdPlay() throws {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
         guard let ready = mockDelegate.expectationReady() else {
@@ -30,7 +30,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             videoOptions: nil,
             delegates: [mockDelegate]
         )
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
         guard let ready = mockDelegate.expectationReady() else {
             throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
         }
@@ -49,7 +49,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testValidVideoIdPause() throws {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
 
@@ -76,7 +76,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testReturnOneEventOnMultiplePause() throws {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
         guard let ready = mockDelegate.expectationReady() else {
@@ -106,7 +106,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testDuration() throws {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
         guard mockDelegate.expectationReady() != nil else {
@@ -125,7 +125,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             videoOptions: nil,
             delegates: [mockDelegate]
         )
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
         guard mockDelegate.expectationReady() != nil else {
             throw MockDelegateError.playerEventDelegateError("Something whent wrong with mocked delegate")
         }
@@ -139,7 +139,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testInvalidVideoId() throws {
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
         guard mockDelegate.expectationReady(true) != nil else {

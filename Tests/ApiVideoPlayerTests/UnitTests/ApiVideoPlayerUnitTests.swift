@@ -22,7 +22,11 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         self.generateRessource(ressource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: "vi2H6m1D23s0lGQnYZJyIp7e"),
+            videoOptions: VideoOptions(
+                videoId: "vi2H6m1D23s0lGQnYZJyIp7e",
+                videoType: .vod,
+                token: "729d939a-b546-4e39-bd15-4dc8123e5ee3"
+            ),
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
@@ -36,7 +40,11 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         self.generateRessource(ressource: "responseError")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
+            videoOptions: VideoOptions(
+                videoId: "vi18RL1kvZlDRdzk7Mas59HT",
+                videoType: .vod,
+                token: "729d939a-b546-4e39-bd15-4dc8123e5ee3"
+            ),
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
@@ -50,7 +58,11 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
+            videoOptions: VideoOptions(
+                videoId: "vi18RL1kvZlDRdzk7Mas59HT",
+                videoType: .vod,
+                token: "729d939a-b546-4e39-bd15-4dc8123e5ee3"
+            ),
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
