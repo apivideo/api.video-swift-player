@@ -47,7 +47,7 @@ class ApiVideoUrlFactory {
                     delegate?.didError(PlayerError.urlError("Couldn't set up url from this videoId"))
                     return
                 }
-                let request = RequestsBuilder().getPlayerData(path: path)
+                let request = RequestsBuilder().getSessionToken(path: path)
                 let session = RequestsBuilder().buildUrlSession()
                 self.taskExecutor.execute(session: session, request: request) { data, error in
                     if let data = data {
