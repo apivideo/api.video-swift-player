@@ -222,7 +222,7 @@ public class ApiVideoPlayerController: NSObject {
             guard let videoOptions = videoOptions else {
                 return
             }
-            playerItemFactory = ApiVideoPlayerItemFactory(videoOptions: videoOptions)
+            playerItemFactory = ApiVideoPlayerItemFactory(videoOptions: videoOptions, taskExecutor: taskExecutor)
             playerItemFactory.delegate = self
             playerItemFactory.getHlsPlayerItem { currentItem in
                 self.preparePlayer(playerItem: currentItem)
@@ -362,11 +362,11 @@ public class ApiVideoPlayerController: NSObject {
                 return
             }
             if url.absoluteString.contains(".mp4") {
-                print("Error with video mp4")
-                self.notifyError(error: PlayerError.mp4Error("Tryed mp4 but failed"))
+                print("Failed to read MP4 video")
+                self.notifyError(error: PlayerError.videoError("Failed to read video"))
                 return
             } else {
-                print("Error with video url, trying with mp4")
+                print("Failed to read HLS video, retrying with mp4")
                 self.retrySetUpPlayerUrlWithMp4()
             }
         }
@@ -508,7 +508,7 @@ extension AVPlayer {
 }
 
 enum PlayerError: Error {
-    case mp4Error(String)
+    case videoError(String)
     case urlError(String)
     case videoIdError(String)
     case sessionTokenError(String)

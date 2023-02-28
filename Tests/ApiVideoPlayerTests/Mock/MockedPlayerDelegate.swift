@@ -112,8 +112,8 @@ extension MockedPlayerDelegate: PlayerDelegate {
 
     func didEnd() {}
 
-    func didError(_: Error) {
-        print("test didError")
+    func didError(_ error: Error) {
+        print("didError: \(error)")
         errorExpectation?.fulfill()
         errorExpectation = nil
     }

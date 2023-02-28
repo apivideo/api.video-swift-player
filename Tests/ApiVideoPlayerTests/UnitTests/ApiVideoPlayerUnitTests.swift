@@ -34,7 +34,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
             taskExecutor: MockedTasksExecutor.self
         )
 
-        waitForExpectations(timeout: 15, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
@@ -75,7 +75,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
             taskExecutor: MockedTasksExecutor.self
         )
 
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }
 

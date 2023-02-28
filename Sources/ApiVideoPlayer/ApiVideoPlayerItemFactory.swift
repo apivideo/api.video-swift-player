@@ -5,9 +5,9 @@ class ApiVideoPlayerItemFactory {
     weak var delegate: ApiVideoPlayerItemFactoryDelegate?
     private var urlFactory: ApiVideoUrlFactory!
 
-    init(videoOptions: VideoOptions) {
+    init(videoOptions: VideoOptions, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
         self.videoOptions = videoOptions
-        self.urlFactory = ApiVideoUrlFactory(videoOptions: videoOptions)
+        self.urlFactory = ApiVideoUrlFactory(videoOptions: videoOptions, taskExecutor: taskExecutor)
         self.urlFactory.delegate = self
     }
 
