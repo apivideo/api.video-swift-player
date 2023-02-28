@@ -15,7 +15,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
 
         let playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId)
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
         )
         playerView.addDelegate(mockDelegate)
         playerView.play()
@@ -31,7 +31,7 @@ final class ApiVideoPlayerViewIntegrationTests: XCTestCase {
 
         let playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId)
+            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId, videoType: .vod)
         )
         playerView.addDelegate(mockDelegate)
 

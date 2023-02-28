@@ -10,7 +10,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let error = mockDelegate.expectationError(true)
 
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
 
@@ -30,7 +30,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             videoOptions: nil,
             delegates: [mockDelegate]
         )
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
 
         wait(for: [ready], timeout: 10)
         controller.play()
@@ -46,7 +46,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         let error = mockDelegate.expectationError(true)
 
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
 
@@ -67,7 +67,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         _ = mockDelegate.expectationError(true)
 
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
 
@@ -86,7 +86,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         _ = mockDelegate.expectationError(true)
 
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
 
@@ -103,7 +103,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             videoOptions: nil,
             delegates: [mockDelegate]
         )
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
 
         waitForExpectations(timeout: 5, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
@@ -115,7 +115,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         _ = mockDelegate.expectationError()
 
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId),
+            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId, videoType: .vod),
             delegates: [mockDelegate]
         )
 
