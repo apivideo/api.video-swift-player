@@ -106,16 +106,16 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 
         // Forward Button
         forward15Button.addTarget(
-                self,
-                action: #selector(goForward15Action),
-                for: .touchUpInside
+            self,
+            action: #selector(goForward15Action),
+            for: .touchUpInside
         )
 
         // Backward Button
         backward15Button.addTarget(
-                self,
-                action: #selector(goBackward15Action),
-                for: .touchUpInside
+            self,
+            action: #selector(goBackward15Action),
+            for: .touchUpInside
         )
     }
 
@@ -138,8 +138,8 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         forward15Button.translatesAutoresizingMaskIntoConstraints = false
         forward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         forward15Button.leftAnchor.constraint(
-                equalTo: playPauseButton.rightAnchor,
-                constant: frame.width / 16
+            equalTo: playPauseButton.rightAnchor,
+            constant: frame.width / 16
         ).isActive = true
         forward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
         forward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
@@ -148,8 +148,8 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         backward15Button.translatesAutoresizingMaskIntoConstraints = false
         backward15Button.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         backward15Button.rightAnchor.constraint(
-                equalTo: playPauseButton.leftAnchor,
-                constant: -(frame.width / 16)
+            equalTo: playPauseButton.leftAnchor,
+            constant: -(frame.width / 16)
         ).isActive = true
         backward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
         backward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
@@ -164,8 +164,8 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 
     private func setPlayBtnIcon(iconName: String) {
         playPauseButton.setImage(
-                UIImage(named: iconName, in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
+            UIImage(named: iconName, in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+            for: .normal
         )
     }
 
@@ -271,23 +271,17 @@ extension ControlsView: PlayerDelegate {
         setPlayBtnIcon(iconName: "pause-primary")
     }
 
-    func didReplay() {
-    }
+    func didReplay() {}
 
-    func didMute() {
-    }
+    func didMute() {}
 
-    func didUnMute() {
-    }
+    func didUnMute() {}
 
-    func didLoop() {
-    }
+    func didLoop() {}
 
-    func didSetVolume(_: Float) {
-    }
+    func didSetVolume(_: Float) {}
 
-    func didSeek(_: CMTime, _: CMTime) {
-    }
+    func didSeek(_: CMTime, _: CMTime) {}
 
     func didEnd() {
         if playerController.isVod {
@@ -295,31 +289,31 @@ extension ControlsView: PlayerDelegate {
         }
     }
 
-    func didError(_: Error) {
-    }
+    func didError(_: Error) {}
 
-    func didVideoSizeChanged(_: CGSize) {
-    }
+    func didVideoSizeChanged(_: CGSize) {}
 }
 
 extension ControlsView: ActionBarViewDelegate {
     private func toggleSubtitleView(subtitleButton: UIButton) {
         timer.clear()
-        let posX = subtitleButton.frame.origin.x - 100
-        let posY = self.frame.height - 40
+        let posX = subtitleButton.frame.origin.x + 6
+        let posY = self.frame.height - 90
 
         if let subtitleView = subtitleView,
-            subtitleView.isDescendant(of: self) {
+           subtitleView.isDescendant(of: self)
+        {
             removeSubtitleView()
         } else {
             subtitleView = SubtitleListView(
-                    frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                    languages: self.playerController.subtitles,
-                    selectedLanguage: self.playerController.currentSubtitle
+                frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
+                languages: self.playerController.subtitles,
+                selectedLanguage: self.playerController.currentSubtitle
             )
             subtitleView!.delegate = self
             addSubview(subtitleView!)
         }
+        self.bringSubviewToFront(subtitleView!)
         timer.activate()
     }
 
@@ -327,15 +321,15 @@ extension ControlsView: ActionBarViewDelegate {
         toggleSubtitleView(subtitleButton: subtitleButton)
     }
 
-    func sliderValueChangedDidStart(position: Float64) {
+    func sliderValueChangedDidStart(position _: Float64) {
         timer.clear()
     }
 
-    func sliderValueChangedDidMove(position: Float64) {
+    func sliderValueChangedDidMove(position _: Float64) {
         // Nothing to do
     }
 
-    func sliderValueChangedDidStop(position: Float64) {
+    func sliderValueChangedDidStop(position _: Float64) {
         timer.activate()
     }
 }
