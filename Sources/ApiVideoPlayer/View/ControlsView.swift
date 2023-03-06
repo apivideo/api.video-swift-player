@@ -21,6 +21,11 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
+    private let tapView: UIView = {
+        let view = UIView()
+        return view
+    }()
+
     private let playPauseButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.tintColor = .white
@@ -80,6 +85,7 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func addSubview() {
+        addSubview(tapView)
         addSubview(fullScreenButton)
         addSubview(playPauseButton)
         addSubview(forward15Button)
@@ -94,8 +100,8 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
     private func addActions() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         tapGestureRecognizer.delegate = self
-        addGestureRecognizer(tapGestureRecognizer)
-        isUserInteractionEnabled = true
+        tapView.addGestureRecognizer(tapGestureRecognizer)
+        tapView.isUserInteractionEnabled = true
 
         fullScreenButton.addTarget(self, action: #selector(goToFullScreenAction), for: .touchUpInside)
         fullScreenButton.isHidden = true
@@ -120,6 +126,12 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
     }
 
     private func addConstraints() {
+        tapView.translatesAutoresizingMaskIntoConstraints = false
+        tapView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        tapView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        tapView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        tapView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+
         // FullScreen Button
         fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
         fullScreenButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
@@ -232,6 +244,7 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         }
         actionBarView.isHidden = isHidden
         fullScreenButton.isHidden = isHidden
+        removeSubtitleView()
     }
 
     private func showControls() {
@@ -338,6 +351,7 @@ extension ControlsView: ActionBarViewDelegate {
 extension ControlsView: SubtitleViewDelegate {
     func languageSelected(language: SubtitleLanguage) {
         playerController.currentSubtitle = language
+        removeSubtitleView()
     }
 }
 
