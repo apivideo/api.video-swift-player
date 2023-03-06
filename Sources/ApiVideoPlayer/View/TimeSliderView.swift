@@ -5,9 +5,8 @@ import UIKit
 
 /*
  * TODO: the slider move when the time labels are updated (bad UX) - warning: text label could be 5 characters long or more
- * TODO: the slider does not response to user events
  */
-class TimeSliderView: UIView {
+class TimeSliderView: UIStackView {
     public weak var delegate: TimeSliderViewDelegate?
 
     private let hStackView: UIStackView = {
@@ -60,19 +59,23 @@ class TimeSliderView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.axis = .horizontal
+        self.distribution = .fill
+        self.alignment = .fill
+        self.spacing = 6
         addSubviews()
     }
 
     @available(*, unavailable)
-    required init?(coder _: NSCoder) {
+    required init(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func addSubviews() {
-        addSubview(hStackView)
-        hStackView.addArrangedSubview(elapsedTimeLabel)
-        hStackView.addArrangedSubview(playbackSlider)
-        hStackView.addArrangedSubview(remainingTimeLabel)
+
+        addArrangedSubview(elapsedTimeLabel)
+        addArrangedSubview(playbackSlider)
+        addArrangedSubview(remainingTimeLabel)
 
         playbackSlider.addTarget(
             self,
@@ -82,15 +85,6 @@ class TimeSliderView: UIView {
         playbackSlider.tintColor = UIColor.orange.withAlphaComponent(0.7)
         playbackSlider.thumbTintColor = UIColor.white
 
-        addConstraints()
-    }
-
-    private func addConstraints() {
-        // StackView
-        hStackView.translatesAutoresizingMaskIntoConstraints = false
-        hStackView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        hStackView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        hStackView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
     @objc
