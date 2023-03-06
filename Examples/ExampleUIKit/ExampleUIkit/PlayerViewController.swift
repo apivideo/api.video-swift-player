@@ -3,12 +3,6 @@ import AVKit
 import UIKit
 
 class PlayerViewController: UIViewController {
-    private var didFinish = false {
-        didSet {
-            self.replayVideo()
-        }
-    }
-
     let playerView: ApiVideoPlayerView = .init(
         frame: .zero,
         videoOptions: VideoOptions(videoId: "vi4LEPFaRT5h4MlXE3FYyih8", videoType: .vod)
