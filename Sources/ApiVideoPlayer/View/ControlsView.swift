@@ -257,9 +257,7 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 }
 
 extension ControlsView: PlayerDelegate {
-    func didPrepare() {
-        print("controlView didPrepare")
-    }
+    func didPrepare() {}
 
     func didReady() {
         if playerController.isVod {

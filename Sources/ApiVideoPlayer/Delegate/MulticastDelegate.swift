@@ -15,7 +15,11 @@ class MulticastDelegate<T> {
 
     func invoke(_ invocation: (T) -> Void) {
         for delegate in self.delegates.allObjects.reversed() {
-            invocation(delegate as! T)
+            if let delegate = delegate as? T {
+                invocation(delegate)
+            } else {
+                print("Error: delegate is not of type \(T.self)")
+            }
         }
     }
 }
