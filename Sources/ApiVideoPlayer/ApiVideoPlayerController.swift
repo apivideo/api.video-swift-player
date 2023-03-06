@@ -341,10 +341,9 @@ public class ApiVideoPlayerController: NSObject {
         get {
             if let playerItem = avPlayer.currentItem,
                let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
-               let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group),
-               let locale = selectedOption.locale
+               let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
             {
-                return SubtitleLanguage(language: locale.identifier, code: locale.languageCode)
+                return SubtitleLanguage(language: selectedOption.displayName, code: selectedOption.extendedLanguageTag)
             }
             return self.offSubtitleLanguage
         }
