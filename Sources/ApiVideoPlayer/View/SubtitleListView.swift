@@ -26,16 +26,16 @@ class SubtitleListView: UIView {
                 posY -= 25 * CGFloat(self.languages.count)
             }
             self.frame = CGRect(
-                    x: frame.origin.x,
-                    y: posY,
-                    width: frame.width,
-                    height: 45 * CGFloat(self.languages.count)
+                x: frame.origin.x,
+                y: posY,
+                width: frame.width,
+                height: 45 * CGFloat(self.languages.count)
             )
             tableview.frame = CGRect(
-                    x: 0,
-                    y: 0,
-                    width: frame.width,
-                    height: 45 * CGFloat(self.languages.count)
+                x: 0,
+                y: 0,
+                width: frame.width,
+                height: 45 * CGFloat(self.languages.count)
             )
         } else {
             self.frame = CGRect(x: frame.origin.x, y: frame.origin.y - 90, width: frame.width, height: frame.height)
@@ -57,6 +57,7 @@ class SubtitleListView: UIView {
 }
 
 // MARK: TableView
+
 extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         languages.count
@@ -64,8 +65,8 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell = tableView.dequeueReusableCell(
-                withIdentifier: cellReuseIdentifier,
-                for: indexPath
+            withIdentifier: cellReuseIdentifier,
+            for: indexPath
         )
 
         let rowLanguage = languages[indexPath.row]
@@ -78,7 +79,7 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
             cell.textLabel?.text = rowLanguage.language
         }
 
-        if rowLanguage == selectedLanguage {
+        if rowLanguage.code == selectedLanguage.code {
             cell.accessoryType = .checkmark
         }
 
@@ -96,7 +97,9 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
 
         // Uncheck previous selected language
         if let previousSelectedLanguageIndex = getRowForLanguage(selectedLanguage) {
-            if let previousCell = tableView.cellForRow(at: IndexPath(row: previousSelectedLanguageIndex, section: indexPath.section)) {
+            if let previousCell = tableView
+                .cellForRow(at: IndexPath(row: previousSelectedLanguageIndex, section: indexPath.section))
+            {
                 previousCell.accessoryType = .none
             }
         }
@@ -111,7 +114,7 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
         removeFromSuperview()
     }
 
-    private func getRowForLanguage(_ language: SubtitleLanguage) -> Int? {
+    private func getRowForLanguage(_: SubtitleLanguage) -> Int? {
         languages.firstIndex(of: selectedLanguage)
     }
 }
