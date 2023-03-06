@@ -354,7 +354,7 @@ extension ControlsView: SubtitleViewDelegate {
 }
 
 extension ControlsView: ScheduledTimerDelegate {
-    func didTimerFired() {
+    func didTimerFire() {
         hideControls()
     }
 }

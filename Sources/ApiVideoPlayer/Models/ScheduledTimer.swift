@@ -17,7 +17,7 @@ class ScheduledTimer {
         timer = Timer.scheduledTimer(
             timeInterval: timeInterval,
             target: self,
-            selector: #selector(didFired),
+            selector: #selector(didFire),
             userInfo: nil,
             repeats: false
         )
@@ -37,11 +37,11 @@ class ScheduledTimer {
     }
 
     @objc
-    private func didFired() {
-        delegate?.didTimerFired()
+    private func didFire() {
+        delegate?.didTimerFire()
     }
 }
 
 public protocol ScheduledTimerDelegate: AnyObject {
-    func didTimerFired()
+    func didTimerFire()
 }
