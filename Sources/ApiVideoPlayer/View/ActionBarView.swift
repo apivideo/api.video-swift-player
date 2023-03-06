@@ -23,6 +23,7 @@ class ActionBarView: UIView {
     private let bottomActionView: UIView = {
         let view = UIView()
         view.sizeToFit()
+        view.isHidden = true
         return view
     }()
 
@@ -179,16 +180,11 @@ extension ActionBarView: PlayerDelegate {
             print("Error: unexpected video type")
         }
 
-        // TODO: Show or hide subtitle button
+        // Show or hide subtitle button
         subtitleButton.isHidden = !playerController.hasSubtitles
-        if playerController.hasSubtitles {
-            subtitleButton.isHidden = false
-        }
-//        hide bottomActionView if there is no button
-        if liveButton.isHidden, subtitleButton.isHidden {
-            bottomActionView.isHidden = true
-        }
 
+        // Show or hide bottomActionView if there is no button inside
+        bottomActionView.isHidden = liveButton.isHidden && subtitleButton.isHidden
     }
 
     func didPause() {
