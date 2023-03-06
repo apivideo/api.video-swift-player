@@ -10,9 +10,19 @@ import UIKit
 class TimeSliderView: UIView {
     public weak var delegate: TimeSliderViewDelegate?
 
+    private let hStackView: UIStackView = {
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.distribution = .fill
+        hStack.alignment = .fill
+        hStack.spacing = 6
+        return hStack
+    }()
+
     /// The playback slider
     private let playbackSlider: UISlider = {
         let slider = UISlider()
+        slider.sizeToFit()
         return slider
     }()
 
@@ -21,6 +31,7 @@ class TimeSliderView: UIView {
         let label = UILabel()
         label.text = CMTime.zero.stringRepresentation
         label.tintColor = .white
+        label.sizeToFit()
         return label
     }()
 
@@ -29,17 +40,18 @@ class TimeSliderView: UIView {
         let label = UILabel()
         label.text = CMTime.zero.stringRepresentation
         label.tintColor = .white
+        label.sizeToFit()
         return label
     }()
 
-    public var duration: CMTime = CMTime.zero {
+    public var duration: CMTime = .zero {
         didSet {
             playbackSlider.maximumValue = Float(duration.seconds)
             updateTimeLabels()
         }
     }
 
-    public var currentTime: CMTime = CMTime.zero {
+    public var currentTime: CMTime = .zero {
         didSet {
             playbackSlider.value = Float(currentTime.seconds)
             updateTimeLabels()
@@ -57,14 +69,15 @@ class TimeSliderView: UIView {
     }
 
     private func addSubviews() {
-        addSubview(playbackSlider)
-        addSubview(elapsedTimeLabel)
-        addSubview(remainingTimeLabel)
+        addSubview(hStackView)
+        hStackView.addArrangedSubview(elapsedTimeLabel)
+        hStackView.addArrangedSubview(playbackSlider)
+        hStackView.addArrangedSubview(remainingTimeLabel)
 
         playbackSlider.addTarget(
-                self,
-                action: #selector(playbackSliderValueChanged),
-                for: .valueChanged
+            self,
+            action: #selector(playbackSliderValueChanged),
+            for: .valueChanged
         )
         playbackSlider.tintColor = UIColor.orange.withAlphaComponent(0.7)
         playbackSlider.thumbTintColor = UIColor.white
@@ -73,28 +86,11 @@ class TimeSliderView: UIView {
     }
 
     private func addConstraints() {
-        // Slider
-        playbackSlider.translatesAutoresizingMaskIntoConstraints = false
-        playbackSlider.centerYAnchor.constraint(equalTo: centerYAnchor)
-                .isActive = true
-        playbackSlider.leftAnchor.constraint(equalTo: elapsedTimeLabel.rightAnchor, constant: 10)
-                .isActive = true
-        playbackSlider.rightAnchor.constraint(equalTo: remainingTimeLabel.leftAnchor, constant: -10)
-                .isActive = true
-
-        // Elapsed time label
-        elapsedTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        elapsedTimeLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
-                .isActive = true
-        elapsedTimeLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 10)
-                .isActive = true
-
-        // Remaining time label
-        remainingTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        remainingTimeLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
-                .isActive = true
-        remainingTimeLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -10)
-                .isActive = true
+        // StackView
+        hStackView.translatesAutoresizingMaskIntoConstraints = false
+        hStackView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        hStackView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        hStackView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
     @objc

@@ -11,16 +11,49 @@ class ActionBarView: UIView {
 
     private var timeObserver: Any?
 
+    private var verticalStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = NSLayoutConstraint.Axis.vertical
+        stack.distribution = .fillEqually
+        stack.alignment = .fill
+        stack.spacing = 1
+        return stack
+    }()
+
+    private let bottomActionView: UIView = {
+        let view = UIView()
+        view.sizeToFit()
+        return view
+    }()
+
+    private let actionStackView: UIStackView = {
+        let hStack = UIStackView()
+        hStack.axis = .horizontal
+        hStack.distribution = .fillEqually
+        hStack.alignment = .center
+        return hStack
+    }()
+
+    let subtitleButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
+        btn.tintColor = .white
+        btn.isHidden = true
+        btn.sizeToFit()
+        return btn
+    }()
+
     private let liveButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.tintColor = .white
         btn.contentHorizontalAlignment = .fill
         btn.contentVerticalAlignment = .fill
-        btn.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5) // TODO: Do not use UIEdgeInsets
+//        btn.imageEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 10, right: 12) // TODO: Do not use UIEdgeInsets
         btn.setImage(
-                UIImage(named: "live-primary", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
+            UIImage(named: "live-primary", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+            for: .normal
         )
+        btn.isHidden = true
         return btn
     }()
 
@@ -30,6 +63,8 @@ class ActionBarView: UIView {
         self.playerController = playerController
 
         timeSliderView = TimeSliderView(frame: frame)
+
+        timeSliderView.sizeToFit()
 
         super.init(frame: frame)
 
@@ -52,28 +87,42 @@ class ActionBarView: UIView {
     }
 
     func addSubview() {
-        addSubview(timeSliderView)
-        addSubview(liveButton)
-        // addSubview() // TODO UiStackView
+        addSubview(verticalStackView)
+        verticalStackView.addArrangedSubview(timeSliderView)
+        verticalStackView.addArrangedSubview(bottomActionView)
 
-        bringSubviewToFront(timeSliderView)
+        bottomActionView.addSubview(actionStackView)
+        actionStackView.addArrangedSubview(subtitleButton)
+        bottomActionView.addSubview(liveButton)
+
         liveButton.addTarget(self, action: #selector(goToLive), for: .touchUpInside)
+        subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
 
         addConstraints()
     }
 
     func addConstraints() {
-        // TimeSliderView
-        timeSliderView.translatesAutoresizingMaskIntoConstraints = false
-        timeSliderView.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
-        timeSliderView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        timeSliderView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+
+        // StackView
+        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
+        verticalStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        verticalStackView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        verticalStackView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+
+        actionStackView.translatesAutoresizingMaskIntoConstraints = false
+        actionStackView.leftAnchor.constraint(equalTo: bottomActionView.leftAnchor).isActive = true
+        actionStackView.topAnchor.constraint(equalTo: bottomActionView.topAnchor).isActive = true
+        actionStackView.bottomAnchor.constraint(equalTo: bottomActionView.bottomAnchor).isActive = true
 
         // LiveButton
         liveButton.translatesAutoresizingMaskIntoConstraints = false
-        liveButton.topAnchor.constraint(equalTo: timeSliderView.bottomAnchor, constant: 10).isActive = true
-        liveButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
-        liveButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -5).isActive = true
+        liveButton.rightAnchor.constraint(equalTo: bottomActionView.rightAnchor).isActive = true
+        liveButton.centerYAnchor.constraint(equalTo: bottomActionView.centerYAnchor).isActive = true
+        liveButton.topAnchor.constraint(equalTo: bottomActionView.topAnchor).isActive = true
+        liveButton.bottomAnchor.constraint(equalTo: bottomActionView.bottomAnchor).isActive = true
+        liveButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+
     }
 
     private func updateLiveButtonColor() {
@@ -110,11 +159,15 @@ class ActionBarView: UIView {
             self.timeObserver = nil
         }
     }
+
+    @objc
+    private func toggleSubtitleView() {
+        delegate?.subtitleButtonTapped(subtitleButton: subtitleButton)
+    }
 }
 
 extension ActionBarView: PlayerDelegate {
-    func didPrepare() {
-    }
+    func didPrepare() {}
 
     func didReady() {
         timeSliderView.duration = playerController.duration
@@ -127,14 +180,15 @@ extension ActionBarView: PlayerDelegate {
         }
 
         // TODO: Show or hide subtitle button
-        /*
         subtitleButton.isHidden = !playerController.hasSubtitles
         if playerController.hasSubtitles {
-            timerLeadingConstraintWithoutSubtitleButton?.isActive = false
-            timerLeadingConstraintWithSubtitleButton?.isActive = true
             subtitleButton.isHidden = false
         }
-         */
+//        hide bottomActionView if there is no button
+        if liveButton.isHidden, subtitleButton.isHidden {
+            bottomActionView.isHidden = true
+        }
+
     }
 
     func didPause() {
@@ -148,22 +202,17 @@ extension ActionBarView: PlayerDelegate {
         })
     }
 
-    func didReplay() {
-    }
+    func didReplay() {}
 
-    func didMute() {
-    }
+    func didMute() {}
 
-    func didUnMute() {
-    }
+    func didUnMute() {}
 
-    func didLoop() {
-    }
+    func didLoop() {}
 
-    func didSetVolume(_ volume: Float) {
-    }
+    func didSetVolume(_: Float) {}
 
-    func didSeek(_ from: CMTime, _ to: CMTime) {
+    func didSeek(_: CMTime, _: CMTime) {
         timeSliderView.currentTime = playerController.currentTime
         updateLiveButtonColor()
     }
@@ -172,11 +221,9 @@ extension ActionBarView: PlayerDelegate {
         removeTimeObserver()
     }
 
-    func didError(_ error: Error) {
-    }
+    func didError(_: Error) {}
 
-    func didVideoSizeChanged(_ size: CGSize) {
-    }
+    func didVideoSizeChanged(_: CGSize) {}
 }
 
 extension ActionBarView: TimeSliderViewDelegate {
