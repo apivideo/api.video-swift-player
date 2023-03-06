@@ -305,15 +305,16 @@ extension ControlsView: ActionBarViewDelegate {
         {
             removeSubtitleView()
         } else {
-            subtitleView = SubtitleListView(
+            let notOptionalSubtitleView = SubtitleListView(
                 frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
                 languages: self.playerController.subtitles,
                 selectedLanguage: self.playerController.currentSubtitle
             )
-            subtitleView!.delegate = self
-            addSubview(subtitleView!)
+            notOptionalSubtitleView.delegate = self
+            addSubview(notOptionalSubtitleView)
+            bringSubviewToFront(notOptionalSubtitleView)
+            subtitleView = notOptionalSubtitleView
         }
-        self.bringSubviewToFront(subtitleView!)
         timer.activate()
     }
 

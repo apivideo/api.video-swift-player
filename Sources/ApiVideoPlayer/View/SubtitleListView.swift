@@ -7,7 +7,7 @@ class SubtitleListView: UIView {
     private var tableview = UITableView()
     private let cellReuseIdentifier = "CellWithTextField"
 
-    private var languages: [SubtitleLanguage] = []
+    private let languages: [SubtitleLanguage]
     private var selectedLanguage: SubtitleLanguage
 
     public weak var delegate: SubtitleViewDelegate?
@@ -79,7 +79,7 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
             cell.textLabel?.text = rowLanguage.language
         }
 
-        if rowLanguage.code == selectedLanguage.code {
+        if rowLanguage == selectedLanguage {
             cell.accessoryType = .checkmark
         }
 
@@ -91,31 +91,28 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
 
         let selectedRowLanguage = languages[indexPath.row]
 
-        if selectedRowLanguage == selectedLanguage {
-            return
-        }
+        if selectedRowLanguage != selectedLanguage {
+            // Uncheck previous selected language
+            if let previousSelectedLanguageIndex = getRowForLanguage(selectedLanguage) {
+                if let previousCell = tableView
+                    .cellForRow(at: IndexPath(row: previousSelectedLanguageIndex, section: indexPath.section))
+                {
+                    previousCell.accessoryType = .none
+                }
+            }
 
-        // Uncheck previous selected language
-        if let previousSelectedLanguageIndex = getRowForLanguage(selectedLanguage) {
-            if let previousCell = tableView
-                .cellForRow(at: IndexPath(row: previousSelectedLanguageIndex, section: indexPath.section))
-            {
-                previousCell.accessoryType = .none
+            selectedLanguage = selectedRowLanguage
+            // Check new selected language
+            if let cell = tableView.cellForRow(at: indexPath) {
+                cell.accessoryType = .checkmark
             }
         }
 
-        // Check new selected language
-        if let cell = tableView.cellForRow(at: indexPath) {
-            cell.accessoryType = .checkmark
-        }
-
         delegate?.languageSelected(language: selectedRowLanguage)
-
-        removeFromSuperview()
     }
 
-    private func getRowForLanguage(_: SubtitleLanguage) -> Int? {
-        languages.firstIndex(of: selectedLanguage)
+    private func getRowForLanguage(_ language: SubtitleLanguage) -> Int? {
+        languages.firstIndex(of: language)
     }
 }
 
