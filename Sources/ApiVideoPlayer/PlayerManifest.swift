@@ -14,5 +14,5 @@ public struct Video: Codable {
 }
 
 public struct TokenSession: Codable {
-    var session_token: String
+    var sessionToken: String
 }

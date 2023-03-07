@@ -52,10 +52,12 @@ class ApiVideoUrlFactory {
                 self.taskExecutor.execute(session: session, request: request) { data, error in
                     if let data = data {
                         do {
-                            let token: TokenSession? = try JSONDecoder().decode(TokenSession.self, from: data)
+                            let decoder = JSONDecoder()
+                            decoder.keyDecodingStrategy = .convertFromSnakeCase
+                            let token: TokenSession? = try decoder.decode(TokenSession.self, from: data)
                             if let token = token {
-                                self.xTokenSession = token.session_token
-                                completion("\(url)?avh=\(self.xTokenSession ?? token.session_token)")
+                                self.xTokenSession = token.sessionToken
+                                completion("\(url)?avh=\(self.xTokenSession ?? token.sessionToken)")
                             } else {
                                 self.delegate?
                                     .didError(
