@@ -20,42 +20,51 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     /// Assert that didError is not called if the JSON is valid
     func testWithValidPlayerManifestJson() throws {
         self.generateRessource(ressource: "responseSuccess")
+
         let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare()
+        _ = mockDelegate.expectationError() // We expect an error as it can't get the video
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi2H6m1D23s0lGQnYZJyIp7e"),
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
-        _ = mockDelegate.expectationPrepare()
-        _ = mockDelegate.expectationError(true)
+
         waitForExpectations(timeout: 15, handler: nil)
     }
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
     func testWithInvalidPlayerManifestJson() throws {
         self.generateRessource(ressource: "responseError")
+
         let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare(true)
+        _ = mockDelegate.expectationError()
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
-        _ = mockDelegate.expectationPrepare(true)
-        _ = mockDelegate.expectationError()
+
         waitForExpectations(timeout: 5, handler: nil)
     }
 
     /// Assert didError is called if the server returns an error
     func testWithServerError() throws {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
+
         let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare(true)
+        _ = mockDelegate.expectationError()
+
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(videoId: "vi18RL1kvZlDRdzk7Mas59HT"),
             delegates: [mockDelegate],
             taskExecutor: MockedTasksExecutor.self
         )
-        _ = mockDelegate.expectationPrepare(true)
-        _ = mockDelegate.expectationError()
+
         waitForExpectations(timeout: 10, handler: nil)
     }
 }

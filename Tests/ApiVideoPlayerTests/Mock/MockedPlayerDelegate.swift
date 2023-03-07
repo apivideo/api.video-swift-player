@@ -2,6 +2,7 @@ import ApiVideoPlayer
 import CoreMedia
 import Foundation
 import XCTest
+
 class MockedPlayerDelegate {
     private var completedExpectationPrepare: XCTestExpectation?
     private var completedExpectationReady: XCTestExpectation?
@@ -17,44 +18,50 @@ class MockedPlayerDelegate {
         self.testCase = testCase
     }
 
-    func expectationPrepare(_ isInverted: Bool = false) -> XCTestExpectation? {
-        self.completedExpectationPrepare = self.testCase.expectation(description: "Completed Prepare")
+    func expectationPrepare(_ isInverted: Bool = false) -> XCTestExpectation {
+        let completedExpectationPrepare = testCase.expectation(description: "Completed Prepare")
         if isInverted {
-            self.completedExpectationPrepare?.isInverted = true
+            completedExpectationPrepare.isInverted = true
         }
-        return self.completedExpectationPrepare
+        self.completedExpectationPrepare = completedExpectationPrepare
+        return completedExpectationPrepare
     }
 
-    func expectationReady(_ isInverted: Bool = false) -> XCTestExpectation? {
-        self.completedExpectationReady = self.testCase.expectation(description: "Completed Ready")
+    func expectationReady(_ isInverted: Bool = false) -> XCTestExpectation {
+        let completedExpectationReady = testCase.expectation(description: "Completed Ready")
         if isInverted {
-            self.completedExpectationReady?.isInverted = true
+            completedExpectationReady.isInverted = true
         }
-        return self.completedExpectationReady
+        self.completedExpectationReady = completedExpectationReady
+        return completedExpectationReady
     }
 
-    func expectationPlay() -> XCTestExpectation? {
-        self.completedExpectationPlay = self.testCase.expectation(description: "Completed Play")
-        return self.completedExpectationPlay
+    func expectationPlay() -> XCTestExpectation {
+        let completedExpectationPlay = testCase.expectation(description: "Completed Play")
+        self.completedExpectationPlay = completedExpectationPlay
+        return completedExpectationPlay
     }
 
-    func expectationPause() -> XCTestExpectation? {
-        self.completedExpectationPause = self.testCase.expectation(description: "Completed Pause")
-        return self.completedExpectationPause
+    func expectationPause() -> XCTestExpectation {
+        let completedExpectationPause = testCase.expectation(description: "Completed Pause")
+        self.completedExpectationPause = completedExpectationPause
+        return completedExpectationPause
     }
 
-    func expectationMultiplePause() -> XCTestExpectation? {
-        self.completedExpectationMultiplePause = self.testCase.expectation(description: "Completed Multiple Pause")
-        self.completedExpectationMultiplePause?.isInverted = true
-        return self.completedExpectationMultiplePause
+    func expectationMultiplePause() -> XCTestExpectation {
+        let completedExpectationMultiplePause = testCase.expectation(description: "Completed Multiple Pause")
+        completedExpectationMultiplePause.isInverted = true
+        self.completedExpectationMultiplePause = completedExpectationMultiplePause
+        return completedExpectationMultiplePause
     }
 
-    func expectationError(_ isInverted: Bool = false) -> XCTestExpectation? {
-        self.errorExpectation = self.testCase.expectation(description: "error is called")
+    func expectationError(_ isInverted: Bool = false) -> XCTestExpectation {
+        let errorExpectation = testCase.expectation(description: "error is called")
         if isInverted {
-            self.errorExpectation?.isInverted = true
+            errorExpectation.isInverted = true
         }
-        return self.errorExpectation
+        self.errorExpectation = errorExpectation
+        return errorExpectation
     }
 }
 
@@ -63,43 +70,32 @@ class MockedPlayerDelegate {
 extension MockedPlayerDelegate: PlayerDelegate {
     func didPrepare() {
         print("test didPrepare")
-        if self.completedExpectationPrepare != nil {
-            self.completedExpectationPrepare?.fulfill()
-        }
-        self.completedExpectationPrepare = nil
+        completedExpectationPrepare?.fulfill()
+        completedExpectationPrepare = nil
     }
 
     func didReady() {
         print("test didReady")
-        if self.completedExpectationReady != nil {
-            self.completedExpectationReady?.fulfill()
-        }
-        self.completedExpectationReady = nil
+        completedExpectationReady?.fulfill()
+        completedExpectationReady = nil
     }
 
     func didPause() {
         print("test didPause")
-        if !self.didPauseCalled {
-            self.didPauseCalled = true
-            if self.completedExpectationPause != nil {
-                self.completedExpectationPause?.fulfill()
-            }
-            self.completedExpectationPause = nil
-
+        if !didPauseCalled {
+            didPauseCalled = true
+            completedExpectationPause?.fulfill()
+            completedExpectationPause = nil
         } else {
-            if self.completedExpectationMultiplePause != nil {
-                self.completedExpectationMultiplePause?.fulfill()
-            }
-            self.completedExpectationMultiplePause = nil
+            completedExpectationMultiplePause?.fulfill()
+            completedExpectationMultiplePause = nil
         }
     }
 
     func didPlay() {
         print("test didPlay")
-        if self.completedExpectationPlay != nil {
-            self.completedExpectationPlay?.fulfill()
-        }
-        self.completedExpectationPlay = nil
+        completedExpectationPlay?.fulfill()
+        completedExpectationPlay = nil
     }
 
     func didReplay() {}
@@ -118,10 +114,8 @@ extension MockedPlayerDelegate: PlayerDelegate {
 
     func didError(_: Error) {
         print("test didError")
-        if self.errorExpectation != nil {
-            self.errorExpectation?.fulfill()
-        }
-        self.errorExpectation = nil
+        errorExpectation?.fulfill()
+        errorExpectation = nil
     }
 
     func didVideoSizeChanged(_: CGSize) {}
