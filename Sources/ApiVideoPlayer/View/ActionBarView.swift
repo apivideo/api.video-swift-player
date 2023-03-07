@@ -49,7 +49,6 @@ class ActionBarView: UIView {
         btn.tintColor = .white
         btn.contentHorizontalAlignment = .fill
         btn.contentVerticalAlignment = .fill
-//        btn.imageEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 10, right: 12) // TODO: Do not use UIEdgeInsets
         btn.setImage(
             UIImage(named: "live-primary", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
             for: .normal
@@ -120,10 +119,6 @@ class ActionBarView: UIView {
         liveButton.translatesAutoresizingMaskIntoConstraints = false
         liveButton.rightAnchor.constraint(equalTo: bottomActionView.rightAnchor).isActive = true
         liveButton.centerYAnchor.constraint(equalTo: bottomActionView.centerYAnchor).isActive = true
-        liveButton.topAnchor.constraint(equalTo: bottomActionView.topAnchor).isActive = true
-        liveButton.bottomAnchor.constraint(equalTo: bottomActionView.bottomAnchor).isActive = true
-        liveButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-
     }
 
     private func updateLiveButtonColor() {
