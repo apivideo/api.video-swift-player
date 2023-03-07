@@ -3,7 +3,7 @@ import AVFoundation
 import Foundation
 import UIKit
 
-class ControlsView: UIView, UIGestureRecognizerDelegate {
+class ControlsView: UIView {
     private let playerController: ApiVideoPlayerController
 
     private let actionBarView: ActionBarView
@@ -99,7 +99,6 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 
     private func addActions() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        tapGestureRecognizer.delegate = self
         tapView.addGestureRecognizer(tapGestureRecognizer)
         tapView.isUserInteractionEnabled = true
 
