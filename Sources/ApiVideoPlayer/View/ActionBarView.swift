@@ -171,14 +171,12 @@ extension ActionBarView: PlayerDelegate {
     func didPrepare() {}
 
     func didReady() {
+        // Reset time slider
         timeSliderView.duration = playerController.duration
-        if playerController.isVod {
-            liveButton.isHidden = true
-        } else if playerController.isLive {
-            liveButton.isHidden = false
-        } else {
-            print("Error: unexpected video type")
-        }
+        timeSliderView.currentTime = playerController.currentTime
+
+        // Show or hide live button
+        liveButton.isHidden = !playerController.isLive
 
         // Show or hide subtitle button
         subtitleButton.isHidden = !playerController.hasSubtitles
