@@ -182,7 +182,7 @@ extension ActionBarView: PlayerDelegate {
         subtitleButton.isHidden = !playerController.hasSubtitles
 
         // Show or hide bottomActionView if there is no button inside
-        bottomActionView.isHidden = liveButton.isHidden && subtitleButton.isHidden
+        bottomActionView.isHidden = liveButton.isHidden && !actionStackView.hasVisibleItems
     }
 
     func didPause() {
