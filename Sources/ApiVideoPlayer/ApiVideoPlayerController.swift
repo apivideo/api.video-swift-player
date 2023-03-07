@@ -483,7 +483,7 @@ public class ApiVideoPlayerController: NSObject {
 
 extension ApiVideoPlayerController: ApiVideoPlayerItemFactoryDelegate {
     func didError(_ error: Error) {
-        notifyError(error: error)
+        self.multicastDelegate.didError(error)
     }
 }
 
