@@ -242,7 +242,9 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
         backward15Button.isHidden = isHidden
         actionBarView.isHidden = isHidden
         fullScreenButton.isHidden = isHidden
-        removeSubtitleView()
+        if isHidden {
+            removeSubtitleView()
+        }
     }
 
     private func showControls() {
