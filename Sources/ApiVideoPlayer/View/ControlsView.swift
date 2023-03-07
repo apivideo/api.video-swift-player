@@ -318,8 +318,8 @@ extension ControlsView: ActionBarViewDelegate {
         } else {
             let notOptionalSubtitleView = SubtitleListView(
                 frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                languages: self.playerController.subtitles,
-                selectedLanguage: self.playerController.currentSubtitle
+                locales: playerController.subtitleLocales,
+                selectedLocale: playerController.currentSubtitleLocale
             )
             notOptionalSubtitleView.delegate = self
             addSubview(notOptionalSubtitleView)
@@ -347,8 +347,12 @@ extension ControlsView: ActionBarViewDelegate {
 }
 
 extension ControlsView: SubtitleViewDelegate {
-    func languageSelected(language: SubtitleLanguage) {
-        playerController.currentSubtitle = language
+    func languageSelected(locale: Locale?) {
+        if let locale = locale {
+            playerController.setCurrentSubtitleLocale(locale: locale)
+        } else {
+            playerController.hideSubtitle()
+        }
         removeSubtitleView()
     }
 }

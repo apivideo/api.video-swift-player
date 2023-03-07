@@ -147,16 +147,20 @@ public class ApiVideoPlayerView: UIView {
         self.playerController.hideSubtitle()
     }
 
-    /// Show the selected subtitles.
-    /// - Parameter language: use code language as String (example: "en" for english).
-    public var currentSubtitle: Locale {
-        get { Locale(identifier: self.playerController.currentSubtitle.language) }
-        set(newSubtitle) {
-            self.playerController.currentSubtitle = SubtitleLanguage(
-                language: newSubtitle.identifier,
-                code: newSubtitle.languageCode
-            )
-        }
+    /// Get the list of available subtitle locales.
+    public var subtitleLocales: [Locale] {
+        self.playerController.subtitleLocales
+    }
+
+    /// Get the selected subtitle locale.
+    /// - Returns: Locale of the selected subtitles.
+    public var currentSubtitleLocale: Locale? {
+        playerController.currentSubtitleLocale
+    }
+
+    /// Set the selected subtitle locale.
+    public func setCurrentSubtitleLocale(_ newLocale: Locale) {
+        playerController.setCurrentSubtitleLocale(locale: newLocale)
     }
 
     /// Go forward or backward in the video.

@@ -5,7 +5,6 @@ import Foundation
 
 public class ApiVideoPlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
-    private let offSubtitleLanguage = SubtitleLanguage(language: "Off", code: nil)
     private var analytics: PlayerAnalytics?
     private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
@@ -322,46 +321,50 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public var hasSubtitles: Bool {
-        self.subtitles.count > 1
+        !subtitleLocales.isEmpty
     }
 
-    public var subtitles: [SubtitleLanguage] {
-        var subtitles: [SubtitleLanguage] = [offSubtitleLanguage]
+    public var subtitleLocales: [Locale] {
+        var locales: [Locale] = []
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
         {
             for option in group.options where option.displayName != "CC" {
-                subtitles.append(SubtitleLanguage(language: option.displayName, code: option.extendedLanguageTag))
-            }
-        }
-        return subtitles
-    }
-
-    public var currentSubtitle: SubtitleLanguage {
-        get {
-            if let playerItem = avPlayer.currentItem,
-               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
-               let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
-            {
-                return SubtitleLanguage(language: selectedOption.displayName, code: selectedOption.extendedLanguageTag)
-            }
-            return self.offSubtitleLanguage
-        }
-        set(newSubtitle) {
-            if let playerItem = avPlayer.currentItem,
-               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
-            {
-                if let code = newSubtitle.code {
-                    let locale = Locale(identifier: code)
-                    let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
-                    if let option = options.first {
-                        guard let currentItem = self.avPlayer.currentItem else { return }
-                        currentItem.select(option, in: group)
-                    }
-                } else {
-                    self.hideSubtitle()
+                if let locale = option.locale {
+                    locales.append(locale)
                 }
             }
+        }
+        return locales
+    }
+
+    public var currentSubtitleLocale: Locale? {
+        if let playerItem = avPlayer.currentItem,
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
+           let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
+        {
+            return selectedOption.locale
+        }
+        return nil
+    }
+
+    public func setCurrentSubtitleLocale(locale: Locale) {
+        if let playerItem = avPlayer.currentItem,
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
+        {
+            let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
+            if let option = options.first {
+                playerItem.select(option, in: group)
+            }
+        }
+    }
+
+    public func hideSubtitle() {
+        guard let playerItem = avPlayer.currentItem else {
+            return
+        }
+        if let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
+            playerItem.select(nil, in: group)
         }
     }
 
@@ -369,16 +372,11 @@ public class ApiVideoPlayerController: NSObject {
     public func goToFullScreen(viewController: UIViewController) {
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
-        viewController.present(playerViewController, animated: true) { self.play() }
-    }
-    #endif
-
-    public func hideSubtitle() {
-        guard let currentItem = self.avPlayer.currentItem else { return }
-        if let group = currentItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            currentItem.select(nil, in: group)
+        viewController.present(playerViewController, animated: true) {
+            self.play()
         }
     }
+    #endif
 
     @objc
     func playerDidFinishPlaying() {
@@ -492,16 +490,26 @@ public class ApiVideoPlayerController: NSObject {
             self.doReadyToPlay()
         }
         if keyPath == "timeControlStatus" {
-            guard let change = change else { return }
-            guard let newValue = change[.newKey] as? Int else { return }
-            guard let oldValue = change[.oldKey] as? Int else { return }
+            guard let change = change else {
+                return
+            }
+            guard let newValue = change[.newKey] as? Int else {
+                return
+            }
+            guard let oldValue = change[.oldKey] as? Int else {
+                return
+            }
             if oldValue != newValue {
                 self.doTimeControlStatus()
             }
         }
         if keyPath == "currentItem.presentationSize" {
-            guard let change = change else { return }
-            guard let newSize = change[.newKey] as? CGSize else { return }
+            guard let change = change else {
+                return
+            }
+            guard let newSize = change[.newKey] as? CGSize else {
+                return
+            }
             self.multicastDelegate.didVideoSizeChanged(newSize)
         }
     }

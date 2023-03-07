@@ -12,9 +12,13 @@ class SubtitleListView: UIView {
 
     public weak var delegate: SubtitleViewDelegate?
 
-    public init(frame: CGRect, languages: [SubtitleLanguage], selectedLanguage: SubtitleLanguage) {
+    public init(frame: CGRect, locales: [Locale], selectedLocale: Locale?) {
+        var languages: [SubtitleLanguage] = [SubtitleLanguage.off]
+        locales.forEach { languages.append($0.toSubtitleLanguage()) }
         self.languages = languages
-        self.selectedLanguage = selectedLanguage
+
+        selectedLanguage = selectedLocale?.toSubtitleLanguage() ?? SubtitleLanguage.off
+
         super.init(frame: frame)
 
         layer.cornerRadius = 15
@@ -108,7 +112,7 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
             }
         }
 
-        delegate?.languageSelected(language: selectedRowLanguage)
+        delegate?.languageSelected(locale: selectedRowLanguage.toLocale())
     }
 
     private func getRowForLanguage(_ language: SubtitleLanguage) -> Int? {
@@ -117,6 +121,6 @@ extension SubtitleListView: UITableViewDataSource, UITableViewDelegate {
 }
 
 public protocol SubtitleViewDelegate: AnyObject {
-    func languageSelected(language: SubtitleLanguage)
+    func languageSelected(locale: Locale?)
 }
 #endif

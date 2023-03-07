@@ -260,7 +260,7 @@ class PlayerViewController: UIViewController {
 
     @objc
     func frSubtitleAction(sender _: UIButton!) {
-        self.playerView.currentSubtitle = Locale(identifier: "fr")
+        self.playerView.setCurrentSubtitleLocale(Locale(identifier: "fr"))
     }
 
     @objc
