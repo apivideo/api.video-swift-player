@@ -293,18 +293,18 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public var duration: CMTime {
-        guard let videoOptions = self.videoOptions else {
-            return CMTime(seconds: 0.0, preferredTimescale: 1_000)
-        }
         guard let currentItem = avPlayer.currentItem else {
             return CMTime(seconds: 0.0, preferredTimescale: 1_000)
-
         }
-        if videoOptions.videoType == .vod {
+
+        if isVod {
             return currentItem.asset.duration
-        } else {
+        } else if isLive {
             let seekableDuration = currentItem.seekableTimeRanges.last?.timeRangeValue.end.seconds ?? 0.0
             return CMTime(seconds: seekableDuration, preferredTimescale: 1_000)
+        } else {
+            print("duration is not available")
+            return CMTime(seconds: 0.0, preferredTimescale: 1_000)
         }
     }
 
