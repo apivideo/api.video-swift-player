@@ -238,10 +238,8 @@ class ControlsView: UIView, UIGestureRecognizerDelegate {
 
     private func showHideControls(_ isHidden: Bool) {
         playPauseButton.isHidden = isHidden
-        if playerController.videoOptions?.videoType == .vod {
-            forward15Button.isHidden = isHidden
-            backward15Button.isHidden = isHidden
-        }
+        forward15Button.isHidden = isHidden
+        backward15Button.isHidden = isHidden
         actionBarView.isHidden = isHidden
         fullScreenButton.isHidden = isHidden
         removeSubtitleView()
@@ -260,16 +258,6 @@ extension ControlsView: PlayerDelegate {
     func didPrepare() {}
 
     func didReady() {
-        if playerController.isVod {
-            forward15Button.isHidden = false
-            backward15Button.isHidden = false
-        } else if playerController.isLive {
-            forward15Button.isHidden = true
-            backward15Button.isHidden = true
-        } else {
-            print("Error: unexpected video type")
-        }
-
         // remove subtitle view if it is present when loading another video to force user to reload it
         removeSubtitleView()
     }
