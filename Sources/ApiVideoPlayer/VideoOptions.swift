@@ -5,49 +5,36 @@ public struct VideoOptions {
     public let videoType: VideoType
     public let token: String?
 
-    private var baseUrl = ""
-    private var vodUrl = ""
-    private var liveUrl = ""
+    public let hlsManifestUrl: String
+    public let sessionTokenUrl: String
+    public let mp4Url: String
+    public let thumbnailUrl: String
 
     public init(videoId: String, videoType: VideoType, token: String? = nil) {
         self.videoId = videoId
         self.videoType = videoType
         self.token = token
 
-        baseUrl = "\(videoType.rawValue)/\(videoId)"
-        vodUrl = baseUrl
-        liveUrl = "\(videoType.rawValue)"
+        let baseUrl = "\(videoType.rawValue)/\(videoId)"
+        var vodUrl = baseUrl
+        var liveUrl = "\(videoType.rawValue)"
         if let token = token {
             vodUrl.append("/token/\(token)")
             liveUrl.append("/private/\(token)")
         }
         liveUrl.append("/\(videoId)")
-    }
 
-    public var hlsManifestUrl: String {
         if videoType == .vod {
-            return "\(vodUrl)/hls/manifest.m3u8"
+            self.hlsManifestUrl = "\(vodUrl)/hls/manifest.m3u8"
+            self.sessionTokenUrl = "\(vodUrl)/session"
         } else {
-            return "\(liveUrl).m3u8"
+            self.hlsManifestUrl = "\(liveUrl).m3u8"
+            self.sessionTokenUrl = self.hlsManifestUrl
         }
-    }
 
-    public var sessionTokenUrl: String {
-        if videoType == .vod {
-            return "\(vodUrl)/session"
-        } else {
-            return hlsManifestUrl
-        }
+        self.mp4Url = "\(vodUrl)/mp4/source.mp4"
+        self.thumbnailUrl = "\(vodUrl)/thumbnail.jpg"
     }
-
-    public var mp4Url: String {
-        "\(vodUrl)/mp4/source.mp4"
-    }
-
-    public var thumbnailUrl: String {
-        "\(vodUrl)/thumbnail.jpg"
-    }
-
 }
 
 public enum VideoType: String {
