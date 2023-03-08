@@ -5,7 +5,7 @@ import UIKit
 class PlayerViewController: UIViewController {
     let playerView: ApiVideoPlayerView = .init(
         frame: .zero,
-        videoOptions: VideoOptions(videoId: "vi4LEPFaRT5h4MlXE3FYyih8", videoType: .vod)
+        videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)
     )
 
     let scrollView: UIScrollView = {
