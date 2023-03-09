@@ -12,7 +12,7 @@ public class ApiVideoPlayerController: NSObject {
     private var isSeeking = false
     private let taskExecutor: TasksExecutorProtocol.Type
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
-    private var playerItemFactory: ApiVideoPlayerItemFactory!
+    private var playerItemFactory: ApiVideoPlayerItemFactory?
 
     #if !os(macOS)
     public convenience init(
@@ -41,6 +41,9 @@ public class ApiVideoPlayerController: NSObject {
         super.init()
         defer {
             self.videoOptions = videoOptions
+        }
+        if videoOptions == nil {
+            playerItemFactory = nil
         }
 
         self.autoplay = autoplay
@@ -75,7 +78,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func retrySetUpPlayerUrlWithMp4() {
-        self.playerItemFactory.getMp4PlayerItem { currentItem in
+        self.playerItemFactory?.getMp4PlayerItem { currentItem in
             self.preparePlayer(playerItem: currentItem)
         }
     }
@@ -223,8 +226,8 @@ public class ApiVideoPlayerController: NSObject {
                 return
             }
             playerItemFactory = ApiVideoPlayerItemFactory(videoOptions: videoOptions, taskExecutor: taskExecutor)
-            playerItemFactory.delegate = self
-            playerItemFactory.getHlsPlayerItem { currentItem in
+            playerItemFactory?.delegate = self
+            playerItemFactory?.getHlsPlayerItem { currentItem in
                 self.preparePlayer(playerItem: currentItem)
             }
         }
