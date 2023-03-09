@@ -5,12 +5,6 @@ class ApiVideoUrlFactory {
     weak var delegate: ApiVideoUrlFactoryDelegate?
     private var xTokenSession: String?
 
-    private enum UrlType {
-        case hls
-        case mp4
-        case thumbnail
-    }
-
     init(videoOptions: VideoOptions, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
         self.videoOptions = videoOptions
         self.taskExecutor = taskExecutor
@@ -18,25 +12,25 @@ class ApiVideoUrlFactory {
 
     /// Get the URL to read from api.video HLS
     func getHlsUrl(completion: @escaping (String) -> Void) {
-        getTokenSession(url: videoOptions.hlsManifestUrl, urlType: .hls) { url in
+        getTokenSession(url: videoOptions.hlsManifestUrl) { url in
             completion(url)
         }
     }
 
     /// Get the URL to read fro; api.video MP4
     func getMp4Url(completion: @escaping (String) -> Void) {
-        getTokenSession(url: videoOptions.mp4Url, urlType: .mp4) { url in
+        getTokenSession(url: videoOptions.mp4Url) { url in
             completion(url)
         }
     }
 
     func getThumbnail(completion: @escaping (String) -> Void) {
-        getTokenSession(url: videoOptions.thumbnailUrl, urlType: .thumbnail) { url in
+        getTokenSession(url: videoOptions.thumbnailUrl) { url in
             completion(url)
         }
     }
 
-    private func getTokenSession(url: String, urlType _: UrlType, completion: @escaping (String) -> Void) {
+    private func getTokenSession(url: String, completion: @escaping (String) -> Void) {
         if videoOptions.token != nil {
             // check if xTokenSession already exists
             if let xTokenSession = xTokenSession {
