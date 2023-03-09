@@ -1,18 +1,18 @@
 import Foundation
 
 public class RequestsBuilder {
-    private func setContentType(request: inout URLRequest) {
+    private static func setContentType(request: inout URLRequest) {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     }
 
-    public func getSessionToken(path: URL) -> URLRequest {
+    public static func buildSessionToken(path: URL) -> URLRequest {
         var request = URLRequest(url: path)
         self.setContentType(request: &request)
         request.httpMethod = "GET"
         return request
     }
 
-    public func buildUrlSession() -> URLSession {
+    public static func buildUrlSession() -> URLSession {
         return URLSession(configuration: URLSessionConfiguration.default)
     }
 }
