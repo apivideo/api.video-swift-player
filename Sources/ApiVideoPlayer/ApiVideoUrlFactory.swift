@@ -48,18 +48,9 @@ class ApiVideoUrlFactory {
                         do {
                             let decoder = JSONDecoder()
                             decoder.keyDecodingStrategy = .convertFromSnakeCase
-                            let token: TokenSession? = try decoder.decode(TokenSession.self, from: data)
-                            if let token = token {
-                                self.xTokenSession = token.sessionToken
-                                completion("\(url)?avh=\(self.xTokenSession ?? token.sessionToken)")
-                            } else {
-                                self.delegate?
-                                    .didError(
-                                        PlayerError
-                                            .urlError("An error occured while decode json, session_token is nil")
-                                    )
-                            }
-
+                            let token: TokenSession = try decoder.decode(TokenSession.self, from: data)
+                            self.xTokenSession = token.sessionToken
+                            completion("\(url)?avh=\(self.xTokenSession ?? token.sessionToken)")
                         } catch {
                             self.delegate?.didError(PlayerError.urlError(error.localizedDescription))
                             return
