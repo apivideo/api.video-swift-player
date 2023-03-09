@@ -1,12 +1,10 @@
 import AVFoundation
 import Foundation
 class ApiVideoPlayerItemFactory {
-    private let videoOptions: VideoOptions
     weak var delegate: ApiVideoPlayerItemFactoryDelegate?
-    private var urlFactory: ApiVideoUrlFactory!
+    private let urlFactory: ApiVideoUrlFactory!
 
     init(videoOptions: VideoOptions, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
-        self.videoOptions = videoOptions
         self.urlFactory = ApiVideoUrlFactory(videoOptions: videoOptions, taskExecutor: taskExecutor)
         self.urlFactory.delegate = self
     }
@@ -40,11 +38,10 @@ class ApiVideoPlayerItemFactory {
 
     private func createPlayerItem(url: String) -> AVPlayerItem? {
         guard let path = URL(string: url) else {
-            delegate?.didError(PlayerError.urlError("Couldn't set up AVPlayerItem with invalid url"))
+            delegate?.didError(PlayerError.urlError("Invalid URL"))
             return nil
         }
-        let item = AVPlayerItem(url: path)
-        return item
+        return AVPlayerItem(url: path)
     }
 
 }
