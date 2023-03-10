@@ -1,6 +1,6 @@
 import Foundation
 
-public class RequestsBuilder {
+public enum RequestsBuilder {
     private static func setContentType(request: inout URLRequest) {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     }
