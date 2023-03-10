@@ -33,9 +33,11 @@ class ApiVideoUrlFactory {
     private func getTokenSession(url: String, completion: @escaping (String) -> Void) {
         if videoOptions.token != nil {
             // check if xTokenSession already exists
+            var tempUrl = url
             if let xTokenSession = xTokenSession {
                 // do success with uri and xTokenSession
-                completion("\(url)?avh=\(xTokenSession)")
+                tempUrl.appendTokenSession(token: xTokenSession)
+                completion(tempUrl)
             } else {
                 guard let path = URL(string: videoOptions.sessionTokenUrl) else {
                     delegate?.didError(PlayerError.urlError("Couldn't set up url from this videoId"))
@@ -50,7 +52,8 @@ class ApiVideoUrlFactory {
                             decoder.keyDecodingStrategy = .convertFromSnakeCase
                             let token: TokenSession = try decoder.decode(TokenSession.self, from: data)
                             self.xTokenSession = token.sessionToken
-                            completion("\(url)?avh=\(self.xTokenSession ?? token.sessionToken)")
+                            tempUrl.appendTokenSession(token: self.xTokenSession ?? token.sessionToken)
+                            completion(tempUrl)
                         } catch {
                             self.delegate?.didError(PlayerError.urlError(error.localizedDescription))
                             return
@@ -74,4 +77,10 @@ class ApiVideoUrlFactory {
 
 protocol ApiVideoUrlFactoryDelegate: AnyObject {
     func didError(_ error: Error)
+}
+
+extension String {
+    mutating func appendTokenSession(token: String) {
+        self.append("?avh=\(token)")
+    }
 }
