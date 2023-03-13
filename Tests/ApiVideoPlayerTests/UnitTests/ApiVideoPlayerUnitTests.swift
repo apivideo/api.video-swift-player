@@ -78,7 +78,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithServerError() throws {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        _ = mockDelegate.expectationPrepare()
+        _ = mockDelegate.expectationError()
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
