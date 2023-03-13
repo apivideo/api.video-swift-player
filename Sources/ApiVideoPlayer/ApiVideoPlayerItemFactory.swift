@@ -55,6 +55,6 @@ extension ApiVideoPlayerItemFactory: ApiVideoUrlFactoryDelegate {
 
 }
 
-protocol ApiVideoPlayerItemFactoryDelegate: AnyObject {
+public protocol ApiVideoPlayerItemFactoryDelegate: AnyObject {
     func didError(_ error: Error)
 }
