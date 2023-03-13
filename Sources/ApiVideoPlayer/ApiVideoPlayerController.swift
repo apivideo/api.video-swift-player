@@ -491,7 +491,7 @@ public class ApiVideoPlayerController: NSObject {
 // MARK: ApiVideoPlayerItemFactoryDelegate
 
 extension ApiVideoPlayerController: ApiVideoPlayerItemFactoryDelegate {
-    func didError(_ error: Error) {
+    public func didError(_ error: Error) {
         self.multicastDelegate.didError(error)
     }
 }

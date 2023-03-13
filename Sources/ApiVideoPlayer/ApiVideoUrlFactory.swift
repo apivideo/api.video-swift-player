@@ -75,7 +75,7 @@ class ApiVideoUrlFactory {
     }
 }
 
-protocol ApiVideoUrlFactoryDelegate: AnyObject {
+public protocol ApiVideoUrlFactoryDelegate: AnyObject {
     func didError(_ error: Error)
 }
 
