@@ -22,7 +22,6 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         generateResource(resource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         _ = mockDelegate.expectationPrepare()
-        _ = mockDelegate.expectationError(true) // We expect an error as it can't get the video
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
@@ -42,7 +41,6 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         generateResource(resource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         _ = mockDelegate.expectationPrepare()
-        _ = mockDelegate.expectationError(true) // We expect an error as it can't get the video
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
@@ -62,7 +60,6 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         generateResource(resource: "responseError")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         _ = mockDelegate.expectationPrepare(true)
-        _ = mockDelegate.expectationError()
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
@@ -82,8 +79,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         MockedTasksExecutor.error = MockServerError.serverError("error 500")
 
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        _ = mockDelegate.expectationPrepare(true)
-        _ = mockDelegate.expectationError()
+        _ = mockDelegate.expectationPrepare()
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
