@@ -22,7 +22,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         generateResource(resource: "responseSuccess")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
         _ = mockDelegate.expectationPrepare()
-        _ = mockDelegate.expectationError() // We expect an error as it can't get the video
+        _ = mockDelegate.expectationError(true) // We expect an error as it can't get the video
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
@@ -35,6 +35,26 @@ class ApiVideoPlayerUnitTests: XCTestCase {
         )
 
         waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    /// Assert that didError is not called if the JSON is valid
+    func testWithNilToken() throws {
+        generateResource(resource: "responseSuccess")
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationPrepare()
+        _ = mockDelegate.expectationError(true) // We expect an error as it can't get the video
+
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(
+                videoId: "vi2H6m1D23s0lGQnYZJyIp7e",
+                videoType: .vod,
+                token: nil
+            ),
+            delegates: [mockDelegate],
+            taskExecutor: MockedTasksExecutor.self
+        )
+
+        waitForExpectations(timeout: 15, handler: nil)
     }
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
