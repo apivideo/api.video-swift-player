@@ -107,8 +107,8 @@ class ActionBarView: UIView {
         verticalStackView.translatesAutoresizingMaskIntoConstraints = false
         verticalStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        verticalStackView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        verticalStackView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        verticalStackView.leftAnchor.constraint(equalTo: leftAnchor, constant: 6).isActive = true
+        verticalStackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -6).isActive = true
 
         actionStackView.translatesAutoresizingMaskIntoConstraints = false
         actionStackView.leftAnchor.constraint(equalTo: bottomActionView.leftAnchor).isActive = true
