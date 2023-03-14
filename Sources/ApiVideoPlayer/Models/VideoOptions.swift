@@ -1,5 +1,6 @@
 import Foundation
 
+/// Description of the video to play.
 public struct VideoOptions {
     public let videoId: String
     public let videoType: VideoType
@@ -10,6 +11,11 @@ public struct VideoOptions {
     public let mp4Url: String
     public let thumbnailUrl: String
 
+    /// Init method for VideoOptions.
+    /// - Parameters:
+    ///   - videoId: the video Id of the video to play.
+    ///   - videoType: the video type of the video to play.
+    ///   - token: the private token the video to play.
     public init(videoId: String, videoType: VideoType, token: String? = nil) {
         self.videoId = videoId
         self.videoType = videoType
