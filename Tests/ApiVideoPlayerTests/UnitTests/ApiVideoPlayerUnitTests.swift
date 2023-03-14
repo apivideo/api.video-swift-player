@@ -47,7 +47,7 @@ class ApiVideoPlayerUnitTests: XCTestCase {
     func testWithInvalidSessionRequestResponse() throws {
         Utils.generateResource(resource: "responseError")
         let mockDelegate = MockedPlayerDelegate(testCase: self)
-        _ = mockDelegate.expectationPrepare(true)
+        _ = mockDelegate.expectationError()
 
         let controller = ApiVideoPlayerController(
             videoOptions: VideoOptions(
