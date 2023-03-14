@@ -1,26 +1,29 @@
 @testable import ApiVideoPlayer
 import CoreMedia
 import XCTest
+
 /// Unit tests on PlayerController without connection to api.video
 /// The connection is mocked with MockedTasksExecutor
 class ApiVideoUrlFactoryUnitTests: XCTestCase {
     private var errorExpectation: XCTestExpectation?
     private var successExpectation: XCTestExpectation?
 
-    func expectationError(_ isInverted: Bool = false) -> XCTestExpectation? {
-        self.errorExpectation = self.expectation(description: "error is called")
+    func expectationError(_ isInverted: Bool = false) -> XCTestExpectation {
+        let errorExpectation = self.expectation(description: "error is called")
         if isInverted {
-            self.errorExpectation?.isInverted = true
+            errorExpectation.isInverted = true
         }
-        return self.errorExpectation
+        self.errorExpectation = errorExpectation
+        return errorExpectation
     }
 
-    func expectationSuccess(_ isInverted: Bool = false) -> XCTestExpectation? {
-        self.successExpectation = self.expectation(description: "success is called")
+    func expectationSuccess(_ isInverted: Bool = false) -> XCTestExpectation {
+        let successExpectation = self.expectation(description: "success is called")
         if isInverted {
-            self.successExpectation?.isInverted = true
+            successExpectation.isInverted = true
         }
-        return self.successExpectation
+        self.successExpectation = successExpectation
+        return successExpectation
     }
 
     /// Assert that didError is not called if the JSON is valid
@@ -102,9 +105,7 @@ class ApiVideoUrlFactoryUnitTests: XCTestCase {
 
 extension ApiVideoUrlFactoryUnitTests: ApiVideoUrlFactoryDelegate {
     func didError(_: Error) {
-        if self.errorExpectation != nil {
-            self.errorExpectation?.fulfill()
-        }
+        self.errorExpectation?.fulfill()
         self.errorExpectation = nil
     }
 }
