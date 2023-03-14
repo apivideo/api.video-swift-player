@@ -16,10 +16,12 @@ public enum RequestsBuilder {
         URLSession(configuration: URLSessionConfiguration.default)
     }
 
-    public static func getSessionToken(taskExecutor: TasksExecutorProtocol.Type,
-                                       url: URL,
-                                       completion: @escaping (TokenSession) -> Void,
-                                       didError: @escaping (Error) -> Void) {
+    public static func getSessionToken(
+        taskExecutor: TasksExecutorProtocol.Type,
+        url: URL,
+        completion: @escaping (TokenSession) -> Void,
+        didError: @escaping (Error) -> Void
+    ) {
         let request = buildUrlRequest(url: url)
         let session = buildUrlSession()
         taskExecutor.execute(session: session, request: request) { data, error in
