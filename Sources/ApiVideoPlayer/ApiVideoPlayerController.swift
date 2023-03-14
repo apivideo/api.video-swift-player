@@ -43,9 +43,6 @@ public class ApiVideoPlayerController: NSObject {
         defer {
             self.videoOptions = videoOptions
         }
-        if videoOptions == nil {
-            playerItemFactory = nil
-        }
 
         self.autoplay = autoplay
         self.avPlayer.addObserver(
