@@ -9,15 +9,6 @@ import UIKit
 class TimeSliderView: UIStackView {
     public weak var delegate: TimeSliderViewDelegate?
 
-    private let hStackView: UIStackView = {
-        let hStack = UIStackView()
-        hStack.axis = .horizontal
-        hStack.distribution = .fill
-        hStack.alignment = .fill
-        hStack.spacing = 6
-        return hStack
-    }()
-
     /// The playback slider
     private let playbackSlider: UISlider = {
         let slider = UISlider()
