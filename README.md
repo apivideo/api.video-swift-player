@@ -144,7 +144,7 @@ extension YourViewController: PlayerDelegate {
 }
 ```
 
-4. Implement playerView and delegate in your view controller
+4. Add the player view in your view controller and register your player delegates of your view controller
 
 ```swift
     override func viewDidLoad() {
