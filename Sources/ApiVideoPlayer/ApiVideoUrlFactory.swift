@@ -39,34 +39,17 @@ class ApiVideoUrlFactory {
                 tempUrl.appendTokenSession(token: xTokenSession)
                 completion(tempUrl)
             } else {
-                guard let path = URL(string: videoOptions.sessionTokenUrl) else {
+                guard let url = URL(string: videoOptions.sessionTokenUrl) else {
                     delegate?.didError(PlayerError.urlError("Couldn't set up url from this videoId"))
                     return
                 }
-                let request = RequestsBuilder.buildSessionToken(path: path)
-                let session = RequestsBuilder.buildUrlSession()
-                self.taskExecutor.execute(session: session, request: request) { data, error in
-                    if let data = data {
-                        do {
-                            let decoder = JSONDecoder()
-                            decoder.keyDecodingStrategy = .convertFromSnakeCase
-                            let token: TokenSession = try decoder.decode(TokenSession.self, from: data)
-                            self.xTokenSession = token.sessionToken
-                            tempUrl.appendTokenSession(token: self.xTokenSession ?? token.sessionToken)
-                            completion(tempUrl)
-                        } catch {
-                            self.delegate?.didError(PlayerError.urlError(error.localizedDescription))
-                            return
-                        }
-                    } else {
-                        if let error = error {
-                            self.delegate?.didError(PlayerError.urlError(error.localizedDescription))
-                        } else {
-                            self.delegate?
-                                .didError(PlayerError.sessionTokenError("Request error, no valid session token"))
-                        }
-                    }
-                }
+                RequestsBuilder.getSessionToken(taskExecutor: taskExecutor, url: url, completion: { sessionToken in
+                    self.xTokenSession = sessionToken.sessionToken
+                    tempUrl.appendTokenSession(token: sessionToken.sessionToken)
+                    completion(tempUrl)
+                }, didError: { error in
+                    self.delegate?.didError(PlayerError.sessionTokenError(error.localizedDescription))
+                })
             }
         } else {
             // do success with no token session, the video should be public
