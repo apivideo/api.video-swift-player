@@ -6,7 +6,6 @@ import Foundation
 public class ApiVideoPlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
-    private var playerManifest: PlayerManifest!
     private var timeObserver: Any?
     private var isFirstPlay = true
     private var isSeeking = false
