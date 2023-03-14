@@ -3,10 +3,14 @@ import AVKit
 import UIKit
 
 @available(tvOS 10.0, *)
+/// The api.video player view based on AVPlayer
 public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let controlsView: ControlsView?
     private let playerController: ApiVideoPlayerController!
+
+    /// The controller that manage the main view (which include the player view).
+    /// Set it to be able to use fullscreen and subtitles.
     public var viewController: UIViewController? {
         didSet {
             self.controlsView?.viewController = self.viewController
