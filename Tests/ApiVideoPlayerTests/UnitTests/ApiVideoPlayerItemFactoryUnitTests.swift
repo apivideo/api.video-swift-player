@@ -23,22 +23,9 @@ class ApiVideoPlayerItemFactoryUnitTests: XCTestCase {
         return self.successExpectation
     }
 
-    func generateResource(resource: String) {
-        guard let resourceUrl = Bundle.module.url(forResource: resource, withExtension: "json") else {
-            XCTFail("Error can't find the json file")
-            return
-        }
-        do {
-            let data = try Data(contentsOf: resourceUrl, options: .mappedIfSafe)
-            MockedTasksExecutor.data = data
-        } catch {
-            XCTFail("Error can't get data from json")
-        }
-    }
-
     /// Assert that didError is not called if the JSON is valid
     func testWithValidSessionRequest() throws {
-        generateResource(resource: "responseSuccess")
+        Utils.generateResource(resource: "responseSuccess")
         _ = expectationError(true)
         _ = expectationSuccess()
 
@@ -59,7 +46,7 @@ class ApiVideoPlayerItemFactoryUnitTests: XCTestCase {
 
     /// Assert that didError is not called if the JSON is valid
     func testWithNilToken() throws {
-        generateResource(resource: "responseSuccess")
+        Utils.generateResource(resource: "responseSuccess")
         _ = expectationError(true)
         _ = expectationSuccess()
 
@@ -79,7 +66,7 @@ class ApiVideoPlayerItemFactoryUnitTests: XCTestCase {
 
     /// Assert didError is called if the JSON is invalid (syntax error or missing values)
     func testWithInvalidSessionRequestResponse() throws {
-        generateResource(resource: "responseError")
+        Utils.generateResource(resource: "responseError")
         _ = expectationError()
         let playerItemFactory = ApiVideoPlayerItemFactory(videoOptions: VideoOptions(
             videoId: "vi2H6m1D23s0lGQnYZJyIp7e",
