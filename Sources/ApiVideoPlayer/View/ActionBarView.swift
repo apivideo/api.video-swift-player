@@ -187,6 +187,9 @@ extension ActionBarView: PlayerDelegate {
     func didPlay() {
         timeObserver = playerController.addTimerObserver(callback: { () in
             self.updateLiveButtonColor()
+            if self.playerController.isLive {
+                self.timeSliderView.duration = self.playerController.duration
+            }
             self.timeSliderView.currentTime = self.playerController.currentTime
         })
     }

@@ -101,7 +101,7 @@ class TimeSliderView: UIStackView {
     }
 
     private func updateTimeLabels() {
-        elapsedTimeLabel.text = clampedStringRepresentation(currentTime)
+        elapsedTimeLabel.text = currentTime.stringRepresentation
         remainingTimeLabel.text = clampedStringRepresentation(duration - currentTime)
     }
 
