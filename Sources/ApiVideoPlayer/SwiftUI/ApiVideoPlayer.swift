@@ -8,8 +8,8 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
     /// Create a new player view
     /// - Parameters:
-    ///   - videoOptions: Description of the video to play
-    ///   - events: List of player events
+    ///   - videoOptions: Description of the video to play.
+    ///   - events: List of player events.
     public init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
         self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions, events: events)
     }
@@ -20,12 +20,12 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
     public func updateUIViewController(_: SwiftUIPlayerViewController, context _: Context) {}
 
-    /// Play the video
+    /// Play the video.
     public func play() {
         self.playerViewController.play()
     }
 
-    /// Pause the video
+    /// Pause the video.
     public func pause() {
         self.playerViewController.pause()
     }
@@ -35,7 +35,7 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
         self.playerViewController.isPlaying
     }
 
-    /// Replay the video
+    /// Replay the video.
     public func replay() {
         self.playerViewController.replay()
     }
@@ -102,7 +102,7 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
         self.playerViewController.goToFullScreen()
     }
 
-    /// Getter and Setter to loop the video
+    /// Getter and Setter to loop the video.
     public var isLooping: Bool {
         get {
             self.playerViewController.isLooping

@@ -20,9 +20,9 @@ public class ApiVideoPlayerView: UIView {
     /// Init method for PlayerView.
     /// - Parameters:
     ///   - frame: frame of the player view.
-    ///   - videoOptions: The video option containing the videoId and the videoType
-    ///   - hideControls: true to hide video controls, false to show them
-    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play
+    ///   - videoOptions: The video option containing the videoId and the videoType.
+    ///   - hideControls: true to hide video controls, false to show them.
+    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play.
     public init(
         frame: CGRect,
         videoOptions: VideoOptions,
@@ -82,31 +82,31 @@ public class ApiVideoPlayerView: UIView {
         self.playerLayer.frame = bounds
     }
 
-    /// Add a delegate to multicast delegate to receive player events
-    /// - Parameter delegate: The object that acts as the delegate of the PlayerDelegate
+    /// Add a delegate to multicast delegate to receive player events.
+    /// - Parameter delegate: The object that acts as the delegate of the PlayerDelegate.
     public func addDelegate(_ delegate: PlayerDelegate) {
         playerController.addDelegate(delegate: delegate)
     }
 
-    /// Add multiple delegates to multicast delegate to receive player events
+    /// Add multiple delegates to multicast delegate to receive player events.
     /// - Parameter delegates: List of objects that acts as the delegates of the PlayerDelegate.
     public func addDelegates(_ delegates: [PlayerDelegate]) {
         playerController.addDelegates(delegates: delegates)
     }
 
-    /// Remove a selected delegate
+    /// Remove a selected delegate.
     /// - Parameter delegate: The object that acts as the delegate which as to be removed.
     public func removeDelegate(_ delegate: PlayerDelegate) {
         playerController.removeDelegate(delegate: delegate)
     }
 
-    /// Remove a list of delegates
-    /// - Parameter delegates: List of objects that acts as the delegate which as to be removed
+    /// Remove a list of delegates.
+    /// - Parameter delegates: List of objects that acts as the delegate which as to be removed.
     public func removeDelegates(_ delegates: [PlayerDelegate]) {
         playerController.removeDelegates(delegates: delegates)
     }
 
-    /// Description of the video to play
+    /// Description of the video to play.
     public var videoOptions: VideoOptions? {
         get {
             self.playerController.videoOptions
@@ -218,7 +218,7 @@ public class ApiVideoPlayerView: UIView {
         self.playerController.goToFullScreen(viewController: vc)
     }
 
-    /// Getter and Setter to loop the video
+    /// Getter and Setter to loop the video.
     public var isLooping: Bool {
         get {
             self.playerController.isLooping

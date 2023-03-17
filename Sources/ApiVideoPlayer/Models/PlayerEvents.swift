@@ -1,32 +1,32 @@
 import AVFoundation
 import Foundation
-/// Callbacks to get all player events
+/// Callbacks to get all player events.
 public class PlayerEvents {
-    /// Events called when the player is preparing for a video
+    /// Events called when the player is preparing for a video.
     public var didPrepare: (() -> Void)?
-    /// Events called when the player is ready to play video
+    /// Events called when the player is ready to play video.
     public var didReady: (() -> Void)?
-    /// Events called when the video is paused
+    /// Events called when the video is paused.
     public var didPause: (() -> Void)?
-    /// Events called when the video is playing
+    /// Events called when the video is playing.
     public var didPlay: (() -> Void)?
-    /// Events called when the video is replayed
+    /// Events called when the video is replayed.
     public var didReplay: (() -> Void)?
-    /// Events called when the player is muted
+    /// Events called when the player is muted.
     public var didMute: (() -> Void)?
-    /// Events called when the player is unmuted
+    /// Events called when the player is unmuted.
     public var didUnMute: (() -> Void)?
-    /// Events called when the video is replayed in a loop
+    /// Events called when the video is replayed in a loop.
     public var didLoop: (() -> Void)?
-    /// Events called when the player volume is changed
+    /// Events called when the player volume is changed.
     public var didSetVolume: ((_ volume: Float) -> Void)?
-    /// Events called when the player is seeking in the video
+    /// Events called when the player is seeking in the video.
     public var didSeek: ((_ from: CMTime, _ to: CMTime) -> Void)?
-    /// Events called when the video ended
+    /// Events called when the video ended.
     public var didEnd: (() -> Void)?
-    /// Events called when there is an error with the player or video
+    /// Events called when there is an error with the player or video.
     public var didError: ((_ error: Error) -> Void)?
-    /// Events called when the size of the video changed
+    /// Events called when the size of the video changed.
     public var didVideoSizeChanged: ((_ size: CGSize) -> Void)?
 
     public init(
