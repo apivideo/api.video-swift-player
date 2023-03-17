@@ -1,4 +1,4 @@
-# GettingStarted
+# Getting Started
 
 Easily integrate a video player for videos from api.video in your iOS
 application.
@@ -14,6 +14,9 @@ application.
 
 ## Installation
 
+### Get the latest verison
+- You can find it [here](https://github.com/apivideo/api.video-swift-player/releases)
+
 ### Swift Package Manager
 In the Project Navigator select your own project. Then select the project in the Project section and click on the Package Dependencies tab. Click on the "+" button at the bottom. Paste the below url on the search bar on the top right. Finaly click on "Add package" button.
 
@@ -23,14 +26,20 @@ In the Project Navigator select your own project. Then select the project in the
 Or add this in your Package.swift
 ```
   dependencies: [
-        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.0.2"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "USE_THE_LASTEST_RELEASE"),
     ],
 ```
 
 ### Cocoapods
-Add `pod 'ApiVideoPlayer', '1.0.2'` in your `Podfile`
+Add the following in your `Podfile` :
+```
+pod 'ApiVideoPlayer', 'USE_THE_LATEST_RELEASE'
+```
 
-Run `pod install`
+Then run 
+```
+pod install
+```
 
 ## Retrieve your video Id
 
@@ -55,51 +64,91 @@ your [dashboard](https://dashboard.api.video).
 
 ## Code sample
 
-1. Import the library 
+#### 1. Import the library 
 
 ```
 import ApiVideoPlayer
 ```
-2. Instantiate the Player view with the player events:
+
+#### 2. Instantiate the [player view](``ApiVideoPlayerView``):
 
 ```swift
     let playerView: ApiVideoPlayerView = {
-        let events = PlayerEvents(
-            didPause: {() in
-                print("paused")
-            },
-            didPlay: {() in
-                print("play")
-            },
-            didReplay: {() in
-                print("video replayed")
-            },
-            didLoop: {() in
-                print("video replayed from loop")
-            },
-            didSetVolume: {(volume) in
-                print("volume set to : \(volume)")
-            },
-            didSeek: {(from, to)in
-                print("seek from : \(from), to: \(to)")
-            }
-            
-        )
-        
-        return ApiVideoPlayerView(frame: .zero, videoId: "YOUR_VIDEO_ID", videoType: VideoType.vod /* only .vod is supported */, events: events)
+        return ApiVideoPlayerView(frame: .zero, videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)) // for private video VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod, token: "YOUR_PRIVATE_VIDEO_TOKEN")
     }()
 ```
 
-3. Implement it in your view controller
+#### 3. Add heritance to PlayerDelegate
+you must implement all the methods to avoid error
+
+```swift
+extension YourViewController: PlayerDelegate {
+    public func didPrepare() {
+        // Do what you want when didPrepare is called
+    }
+
+    public func didReady() {
+        // Do what you want when didReady is called
+    }
+
+    public func didPause() {
+        // Do what you want when didPause is called
+    }
+
+    public func didPlay() {
+        // Do what you want when didPlay is called
+    }
+
+    public func didReplay() {
+        // Do what you want when didReplay is called
+    }
+
+    public func didMute() {
+        // Do what you want when didMute is called
+    }
+
+    public func didUnMute() {
+        // Do what you want when didUnMute is called
+    }
+
+    public func didLoop() {
+        // Do what you want when didLoop is called
+    }
+
+    public func didSetVolume(_: Float) {
+        // Do what you want when didSetVolume is called
+    }
+
+    public func didSeek(_: CMTime, _: CMTime) {
+        // Do what you want when didSeek is called
+    }
+
+    public func didEnd() {
+        // Do what you want when didEnd is called
+    }
+
+    public func didError(_: Error) {
+        // Do what you want when didError is called
+    }
+
+    public func didVideoSizeChanged(_: CGSize) {
+        // Do what you want when didVideoSizeChanged is called
+    }
+}
+```
+
+#### 4. Add the player view in your view controller and register your player delegates of your view controller
 
 ```swift
     override func viewDidLoad() {
         ...
         self.addSubview(playerView)
+        self.playerView.addDelegate(self)
         ...
     }
 ```
-4. To use full screen and subtitle
+
+#### 5. To use full screen and subtitle
 ```swift
     override func viewDidAppear(_ animated: Bool) {
         ...

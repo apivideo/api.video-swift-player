@@ -1,5 +1,6 @@
 import AVFoundation
 import Foundation
+/// Callbacks to get all player events
 public class PlayerEvents {
     /// Events called when the player is preparing for a video
     public var didPrepare: (() -> Void)?

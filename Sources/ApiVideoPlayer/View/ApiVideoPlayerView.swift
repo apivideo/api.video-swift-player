@@ -2,8 +2,8 @@
 import AVKit
 import UIKit
 
-@available(tvOS 10.0, *)
 /// The api.video player view based on AVPlayer
+@available(tvOS 10.0, *)
 public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let controlsView: ControlsView?
@@ -82,22 +82,31 @@ public class ApiVideoPlayerView: UIView {
         self.playerLayer.frame = bounds
     }
 
+    /// Add a delegate to multicast delegate to receive player events
+    /// - Parameter delegate: The object that acts as the delegate of the PlayerDelegate
     public func addDelegate(_ delegate: PlayerDelegate) {
         playerController.addDelegate(delegate: delegate)
     }
 
+    /// Add multiple delegates to multicast delegate to receive player events
+    /// - Parameter delegates: List of objects that acts as the delegates of the PlayerDelegate.
     public func addDelegates(_ delegates: [PlayerDelegate]) {
         playerController.addDelegates(delegates: delegates)
     }
 
+    /// Remove a selected delegate
+    /// - Parameter delegate: The object that acts as the delegate which as to be removed.
     public func removeDelegate(_ delegate: PlayerDelegate) {
         playerController.removeDelegate(delegate: delegate)
     }
 
+    /// Remove a list of delegates
+    /// - Parameter delegates: List of objects that acts as the delegate which as to be removed
     public func removeDelegates(_ delegates: [PlayerDelegate]) {
         playerController.removeDelegates(delegates: delegates)
     }
 
+    /// Description of the video to play
     public var videoOptions: VideoOptions? {
         get {
             self.playerController.videoOptions
