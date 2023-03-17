@@ -1,6 +1,33 @@
 {
   "pins" : [
     {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire",
+      "state" : {
+        "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
+        "version" : "5.6.4"
+      }
+    },
+    {
+      "identity" : "anycodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Flight-School/AnyCodable",
+      "state" : {
+        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
+        "version" : "0.6.7"
+      }
+    },
+    {
+      "identity" : "api.video-ios-client",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apivideo/api.video-ios-client",
+      "state" : {
+        "revision" : "0f98e2d65c628e6ece85e14879462cf4d76f9647",
+        "version" : "1.1.1"
+      }
+    },
+    {
       "identity" : "api.video-ios-player-analytics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apivideo/api.video-ios-player-analytics.git",
