@@ -40,12 +40,12 @@ In the Project Navigator select your own project. Then select the project in the
 Or add this in your Package.swift
 ```
   dependencies: [
-        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.0.5"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.1.0"),
     ],
 ```
 
 ### Cocoapods
-Add `pod 'ApiVideoPlayer', '1.0.5'` in your `Podfile`
+Add `pod 'ApiVideoPlayer', '1.1.0'` in your `Podfile`
 
 Run `pod install`
 
@@ -82,8 +82,7 @@ import ApiVideoPlayer
 
 ```swift
     let playerView: ApiVideoPlayerView = {
-        let videoOptions = VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)
-        return ApiVideoPlayerView(frame: .zero, videoOptions: videoOptions)
+        return ApiVideoPlayerView(frame: .zero, videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)) // for private video VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod, token: "YOUR_PRIVATE_VIDEO_TOKEN")
     }()
 ```
 3. Add heritance to PlayerDelegate
