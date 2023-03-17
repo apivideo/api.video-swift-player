@@ -1,5 +1,10 @@
 # Changelog
 All changes to this project will be documented in this file.
+## [1.1.0] - 2023-03-15
+- Add private vod videos
+- Add live feature
+- Change callback to delegate for UIKit 
+
 ## [1.0.5] - 2022-11-23
 - Add didReady event
 - Use completionhandler in seek method to get the result of the seek, before doing any other action.
