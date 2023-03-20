@@ -18,7 +18,7 @@ class MulticastDelegate<T> {
             if let delegate = delegate as? T {
                 invocation(delegate)
             } else {
-                print("Error: delegate is not of type \(T.self)")
+                fatalError("Error: delegate is not of type \(T.self)")
             }
         }
     }
