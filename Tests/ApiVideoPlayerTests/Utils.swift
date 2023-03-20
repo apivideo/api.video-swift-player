@@ -1,5 +1,7 @@
 import Foundation
 import XCTest
+import ApiVideoClient
+import ApiVideoPlayer
 
 public enum Utils {
     public static func generateResource(resource: String) {
@@ -14,4 +16,33 @@ public enum Utils {
             XCTFail("Error can't get data from json")
         }
     }
+
+    static func getPrivateToken(videoId: String) async throws -> String {
+        // Init ApiVideoClient
+        try XCTSkipIf(Parameters.apiKey == "INTEGRATION_TESTS_API_KEY", "Can't get API key")
+        ApiVideoClient.apiKey = Parameters.apiKey
+        try? ApiVideoClient.setApplicationName(name: "player-integration-tests", version: "0")
+
+        // Get token
+        return try await withCheckedThrowingContinuation { continuation in
+            VideosAPI.get(videoId: VideoId.privateVideoId) { video, error in
+                if let error = error {
+                    print("Can't get video: \(error)")
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let player = video?.assets?.player else {
+                    print("Can't get assets")
+                    continuation.resume(throwing: PlayerTestError.invalidAssets("Can't get assets"))
+                    return
+                }
+
+                continuation.resume(returning: player.components(separatedBy: "=")[1])
+            }
+        }
+    }
+}
+
+enum PlayerTestError: Error {
+    case invalidAssets(String)
 }
