@@ -333,8 +333,8 @@ extension PlayerViewController: PlayerDelegate {
         print("app didEnd")
     }
 
-    public func didError(_: Error) {
-        print("app didError")
+    public func didError(_ error: Error) {
+        print("app didError: \(error)")
     }
 
     public func didVideoSizeChanged(_: CGSize) {}
