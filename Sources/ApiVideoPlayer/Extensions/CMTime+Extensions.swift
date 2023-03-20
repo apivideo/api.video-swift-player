@@ -11,17 +11,23 @@ extension CMTime {
     var second: Int { Int(self.roundedSeconds.truncatingRemainder(dividingBy: 60)) }
 
     var stringRepresentation: String {
-        self.hours > 0 ?
-            String(
-                format: "%d:%02d:%02d",
-                self.hours,
-                self.minute,
-                self.second
-            ) :
-            String(
-                format: "%02d:%02d",
-                self.minute,
-                self.second
-            )
+        if !isValid {
+            return CMTime.invalidStringRepresentation
+        } else {
+            return self.hours > 0 ?
+                String(
+                    format: "%d:%02d:%02d",
+                    self.hours,
+                    self.minute,
+                    self.second
+                ) :
+                String(
+                    format: "%02d:%02d",
+                    self.minute,
+                    self.second
+                )
+        }
     }
+
+    static let invalidStringRepresentation = "--:--"
 }

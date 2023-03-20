@@ -36,14 +36,26 @@ class TimeSliderView: UIStackView {
 
     public var duration: CMTime = .zero {
         didSet {
-            playbackSlider.maximumValue = Float(duration.seconds)
+            let nextDuration: CMTime
+            if duration.isValid {
+                nextDuration = duration
+            } else {
+                nextDuration = .zero
+            }
+            playbackSlider.maximumValue = Float(nextDuration.seconds)
             updateTimeLabels()
         }
     }
 
     public var currentTime: CMTime = .zero {
         didSet {
-            playbackSlider.value = Float(currentTime.seconds)
+            let nextCurrentTime: CMTime
+            if currentTime.isValid {
+                nextCurrentTime = currentTime
+            } else {
+                nextCurrentTime = .zero
+            }
+            playbackSlider.value = Float(nextCurrentTime.seconds)
             updateTimeLabels()
         }
     }
@@ -101,8 +113,15 @@ class TimeSliderView: UIStackView {
     }
 
     private func updateTimeLabels() {
+        let remainingTimeLabelText: String
+
+        if duration.isValid && currentTime.isValid {
+            remainingTimeLabelText = clampedStringRepresentation(duration - currentTime)
+        } else {
+            remainingTimeLabelText = CMTime.invalidStringRepresentation
+        }
         elapsedTimeLabel.text = currentTime.stringRepresentation
-        remainingTimeLabel.text = clampedStringRepresentation(duration - currentTime)
+        remainingTimeLabel.text = remainingTimeLabelText
     }
 
     private func clampedStringRepresentation(_ time: CMTime) -> String {

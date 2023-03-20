@@ -200,11 +200,13 @@ public class ApiVideoPlayerView: UIView {
     }
 
     /// Get the duration of the video.
+    /// The duration is invalid if the video is not ready or not set.
     public var duration: CMTime {
         self.playerController.duration
     }
 
     /// Get the current time of the video playing.
+    /// The position is invalid if the video is not ready or not set.
     public var currentTime: CMTime {
         self.playerController.currentTime
     }

@@ -95,10 +95,18 @@ public class ApiVideoPlayerController: NSObject {
         multicastDelegate.removeDelegates(delegates)
     }
 
+    private func resetPlayer(with playerItem: AVPlayerItem? = nil) {
+        if let currentItem = avPlayer.currentItem {
+            currentItem.removeObserver(self, forKeyPath: "status", context: nil)
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: currentItem)
+        }
+
+        avPlayer.replaceCurrentItem(with: playerItem)
+    }
+
     private func preparePlayer(playerItem: AVPlayerItem) {
         self.multicastDelegate.didPrepare()
-        self.avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
-        self.avPlayer.replaceCurrentItem(with: playerItem)
+        resetPlayer(with: playerItem)
         playerItem.addObserver(self, forKeyPath: "status", options: .new, context: nil)
         NotificationCenter.default.addObserver(
             self,
@@ -219,6 +227,7 @@ public class ApiVideoPlayerController: NSObject {
     public var videoOptions: VideoOptions? {
         didSet {
             guard let videoOptions = videoOptions else {
+                resetPlayer(with: nil)
                 return
             }
             playerItemFactory = ApiVideoPlayerItemFactory(videoOptions: videoOptions, taskExecutor: taskExecutor)
@@ -254,22 +263,29 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    /// Get the current video duration.
+    /// If the video is live, the duration is the seekable duration.
+    /// The duration is invalid if the video is not ready or not set.
     public var duration: CMTime {
         guard let currentItem = avPlayer.currentItem else {
-            return CMTime(seconds: 0.0, preferredTimescale: 1_000)
+            return CMTime.invalid
         }
 
         if isVod {
             return currentItem.asset.duration
         } else if isLive {
-            let seekableDuration = currentItem.seekableTimeRanges.last?.timeRangeValue.end.seconds ?? 0.0
+            guard let seekableDuration = currentItem.seekableTimeRanges.last?.timeRangeValue.end.seconds else {
+                return CMTime.invalid
+            }
             return CMTime(seconds: seekableDuration, preferredTimescale: 1_000)
         } else {
             print("duration is not available")
-            return CMTime(seconds: 0.0, preferredTimescale: 1_000)
+            return CMTime.invalid
         }
     }
 
+    /// Get the current video position.
+    /// The position is invalid if the video is not ready or not set.
     public var currentTime: CMTime {
         self.avPlayer.currentTime()
     }
