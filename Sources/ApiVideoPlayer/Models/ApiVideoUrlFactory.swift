@@ -1,30 +1,41 @@
 import Foundation
+
+/// Factory to create the URL to read api.video items from ``VideoOptions``.
 class ApiVideoUrlFactory {
     private let videoOptions: VideoOptions
     private let taskExecutor: TasksExecutorProtocol.Type
     weak var delegate: ApiVideoUrlFactoryDelegate?
     private var xTokenSession: String?
 
+    /// Initializes the URL factory.
+    ///
+    /// - Parameters:
+    ///   - videoOptions: The video options
+    ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default is ``TasksExecutor``.
     init(videoOptions: VideoOptions, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
         self.videoOptions = videoOptions
         self.taskExecutor = taskExecutor
     }
 
-    /// Get the URL to read from api.video HLS
+    /// Gets the URL of the api.video HLS
+    /// - Parameter completion: The completion handler
     func getHlsUrl(completion: @escaping (String) -> Void) {
         getTokenSession(url: videoOptions.hlsManifestUrl) { url in
             completion(url)
         }
     }
 
-    /// Get the URL to read fro; api.video MP4
+    /// Gets the URL of the api.video MP4
+    /// - Parameter completion: The completion handler
     func getMp4Url(completion: @escaping (String) -> Void) {
         getTokenSession(url: videoOptions.mp4Url) { url in
             completion(url)
         }
     }
 
-    func getThumbnail(completion: @escaping (String) -> Void) {
+    /// Gets the URL of the api.video thumbnail
+    /// - Parameter completion: The completion handler
+    func getThumbnailUrl(completion: @escaping (String) -> Void) {
         getTokenSession(url: videoOptions.thumbnailUrl) { url in
             completion(url)
         }
@@ -58,6 +69,7 @@ class ApiVideoUrlFactory {
     }
 }
 
+/// Delegate to handle errors from the ``ApiVideoUrlFactory``.
 public protocol ApiVideoUrlFactoryDelegate: AnyObject {
     func didError(_ error: Error)
 }

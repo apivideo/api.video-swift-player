@@ -1,21 +1,24 @@
 import Foundation
 
-/// Description of the video to play.
+/// Description of a video.
 public struct VideoOptions {
+    /// The video Id (from api.video) of the video.
     public let videoId: String
+    /// The video type of the video(ie VOD or Live).
     public let videoType: VideoType
+    /// The private token of the video. If video is public, this parameter is nil.
     public let token: String?
 
-    public let hlsManifestUrl: String
-    public let sessionTokenUrl: String
-    public let mp4Url: String
-    public let thumbnailUrl: String
+    let hlsManifestUrl: String
+    let sessionTokenUrl: String
+    let mp4Url: String
+    let thumbnailUrl: String
 
-    /// Init method for VideoOptions.
+    /// Initializes a video options from the video Id and the video type.
     /// - Parameters:
-    ///   - videoId: the video Id of the video to play.
-    ///   - videoType: the video type of the video to play.
-    ///   - token: the private token the video to play.
+    ///   - videoId: The video Id (from api.video) of the video.
+    ///   - videoType: The video type of the video (ie VOD or Live).
+    ///   - token: The private token the video. If the video is public, this parameter can be omitted.
     public init(videoId: String, videoType: VideoType, token: String? = nil) {
         self.videoId = videoId
         self.videoType = videoType
@@ -43,7 +46,10 @@ public struct VideoOptions {
     }
 }
 
+/// The video type of the video to play (ie VOD or Live).
 public enum VideoType: String {
+    /// Video type to play a video on demand.
     case vod = "https://vod.api.video/vod"
+    /// Video type to play a live stream.
     case live = "https://live.api.video"
 }

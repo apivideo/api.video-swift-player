@@ -1,26 +1,26 @@
 import AVFoundation
 import Foundation
-/// Methods to get all the player events.
+/// An interface that delegates of an instance to handle the player events.
 public protocol PlayerDelegate: AnyObject {
-    /// Events called when the player is preparing for a video.
+    /// Event called before the video URL will passed to the player.
     func didPrepare()
-    /// Events called when the player is ready to play video.
+    /// Event called when the player is ready to play video.
     func didReady()
-    /// Events called when the video is paused.
+    /// Event called when the video has been paused.
     func didPause()
-    /// Events called when the video is playing.
+    /// Event called when the video has been played.
     func didPlay()
-    /// Events called when the video is replayed.
+    /// Event called when the video has been replayed.
     func didReplay()
-    /// Events called when the player is muted.
+    /// Event called when the player has been muted.
     func didMute()
-    /// Events called when the player is unmuted.
+    /// Event called when the player has been unmuted.
     func didUnMute()
-    /// Events called when the video is replayed in a loop.
+    /// Event called when the video has been replayed in a loop.
     func didLoop()
-    /// Events called when the player volume is changed.
+    /// Event called when the player volume has been changed.
     func didSetVolume(_ volume: Float)
-    /// Events called when the player is seeking in the video.
+    /// Event called when the playback position has changed.
     func didSeek(_ from: CMTime, _ to: CMTime)
     /// Events called when the video ended.
     func didEnd()

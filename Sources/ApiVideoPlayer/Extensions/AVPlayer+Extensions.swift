@@ -13,7 +13,7 @@ extension AVPlayer {
         return size
     }
 
-    /// Replaces the player's current item with the specified HLS video options.
+    /// Replaces the player's current item with the HLS of the provided video options.
     /// For private videos, this method will fetch a token session before playing the video and is therefore
     /// asynchronous.
     ///
@@ -34,7 +34,7 @@ extension AVPlayer {
         }
     }
 
-    /// Replaces the player's current item with the specified MP4 video options.
+    /// Replaces the player's current item with the MP4 of the provided video options.
     /// For private videos, this method will fetch a token session before playing the video and is therefore
     /// asynchronous.
     ///

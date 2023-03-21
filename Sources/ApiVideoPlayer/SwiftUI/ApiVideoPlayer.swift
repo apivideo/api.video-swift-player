@@ -2,14 +2,14 @@
 import AVKit
 import SwiftUI
 
-/// The api.video player view based on AVPlayer
+/// The api.video player view for SwiftUI.
 public struct ApiVideoPlayer: UIViewControllerRepresentable {
     private let playerViewController: SwiftUIPlayerViewController
 
-    /// Create a new player view
+    /// Initializes a player view for SwiftUI.
     /// - Parameters:
-    ///   - videoOptions: Description of the video to play.
-    ///   - events: List of player events.
+    ///   - videoOptions: The video to play.
+    ///   - events: The player events.
     public init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
         self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions, events: events)
     }
@@ -20,63 +20,62 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 
     public func updateUIViewController(_: SwiftUIPlayerViewController, context _: Context) {}
 
-    /// Play the video.
+    /// Plays the video.
     public func play() {
         self.playerViewController.play()
     }
 
-    /// Pause the video.
+    /// Pauses the video.
     public func pause() {
         self.playerViewController.pause()
     }
 
-    /// Get information if the video is playing.
+    /// Gets if the video is playing.
     public var isPlaying: Bool {
         self.playerViewController.isPlaying
     }
 
-    /// Replay the video.
+    /// Replays the video.
     public func replay() {
         self.playerViewController.replay()
     }
 
-    /// Getter and Setter to mute or unmute video player.
+    /// Gets and sets the playback muted state.
     public var isMuted: Bool {
         get { self.playerViewController.isMuted }
         set(newValue) { self.playerViewController.isMuted = newValue }
     }
 
-    /// Hide all the controls of the player.
-    /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
+    /// Hides all the controls of the player.
     public func hideControls() {
         self.playerViewController.hideControls()
     }
 
-    /// Show all the controls of the player.
-    /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
+    /// Shows all the controls of the player.
+    /// The controls will be hidden in case of inactivity, and display again on user interaction.
     public func showControls() {
         self.playerViewController.showControls()
     }
 
-    /// Hide the selected subtitle.
+    /// Hides the current subtitle.
     public func hideSubtitle() {
         self.playerViewController.hideSubtitle()
     }
 
-    /// Go forward or backward in the video to a specific time.
-    /// - Parameter offset: offset in seconds, (use minus to go backward).
+    /// Moves the playback cursor to the ``currentTime`` + offset.
+    /// - Parameter offset: The offset in seconds from the current time (prefix with minus to go backward).
     public func seek(offset: CMTime) {
         self.playerViewController.seek(offset: offset)
     }
 
-    /// Go forward or backward in the video to a specific time.
-    /// - Parameter to: go to a specific time (in second).
+    /// Moves the playback cursor to the provided time.
+    /// - Parameter to: The new playback position.
     public func seek(to: CMTime) {
         self.playerViewController.seek(to: to)
     }
 
-    /// The video player volume is connected to the device audio volume.
-    /// - Parameter volume: Float between 0 to 1.
+    /// Gets and sets the video playback volume.
+    /// - Parameter volume: The new volume between 0 to 1.
     public var volume: Float {
         get {
             self.playerViewController.volume
@@ -86,23 +85,25 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
         }
     }
 
-    /// Get the duration of the video.
+    /// Gets the duration of the current video.
+    /// The duration is invalid if the video is not ready or not set.
     public var duration: CMTime {
         self.playerViewController.duration
     }
 
-    /// Get the current time of the video playing.
+    /// Gets the playback position of the current video.
+    /// The position is invalid if the video is not ready or not set.
     public var currentTime: CMTime {
         self.playerViewController.currentTime
     }
 
-    /// Put the video in full screen.
-    /// To be able tu use full screen viewController must be set before.
+    /// Sends the player in fullscreen.
     public func goToFullScreen() {
         self.playerViewController.goToFullScreen()
     }
 
-    /// Getter and Setter to loop the video.
+    /// Gets and sets the video loop.
+    /// If set to true, the video will loop at the end.
     public var isLooping: Bool {
         get {
             self.playerViewController.isLooping

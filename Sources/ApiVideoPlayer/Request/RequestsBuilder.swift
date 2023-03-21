@@ -1,6 +1,7 @@
 import Foundation
 
-public enum RequestsBuilder {
+/// Static methods to build the network requests.
+enum RequestsBuilder {
     private static func setContentType(request: inout URLRequest) {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     }
@@ -16,7 +17,7 @@ public enum RequestsBuilder {
         URLSession(configuration: URLSessionConfiguration.default)
     }
 
-    public static func getSessionToken(
+    static func getSessionToken(
         taskExecutor: TasksExecutorProtocol.Type,
         url: URL,
         completion: @escaping (TokenSession) -> Void,

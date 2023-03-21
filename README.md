@@ -32,12 +32,16 @@ application.
 
 ### Swift Package Manager
 
-In the Project Navigator select your own project. Then select the project in the Project section and click on the Package Dependencies tab. Click on the "+" button at the bottom. Paste the below url on the search bar on the top right. Finaly click on "Add package" button.
+In the Project Navigator select your own project. Then select the project in the Project section and click on the
+Package Dependencies tab. Click on the "+" button at the bottom. Paste the below url on the search bar on the top right.
+Finaly click on "Add package" button.
 
 ```
  https://github.com/apivideo/api.video-swift-player
 ```
+
 Or add this in your Package.swift
+
 ```
   dependencies: [
         .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.1.0"),
@@ -45,10 +49,10 @@ Or add this in your Package.swift
 ```
 
 ### Cocoapods
+
 Add `pod 'ApiVideoPlayer', '1.1.0'` in your `Podfile`
 
 Run `pod install`
-
 
 ## Retrieve your video Id
 
@@ -73,20 +77,33 @@ your [dashboard](https://dashboard.api.video).
 
 ## Code sample
 
-1. Import the library 
+## Code sample
+
+1. Imports the library
 
 ```
 import ApiVideoPlayer
 ```
-2. Instantiate the Player view:
+
+2. Instantiates the player view
 
 ```swift
-    let playerView: ApiVideoPlayerView = {
-        return ApiVideoPlayerView(frame: .zero, videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)) // for private video VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod, token: "YOUR_PRIVATE_VIDEO_TOKEN")
-    }()
+let playerView: ApiVideoPlayerView = ApiVideoPlayerView(frame: .zero, videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)) // for private video VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod, token: "YOUR_PRIVATE_VIDEO_TOKEN")
 ```
-3. Add heritance to PlayerDelegate
-you must implement all the methods to avoid error
+
+3. Adds the player view as a subview of your view controller
+
+```swift
+override func viewDidLoad() {
+    ...
+    self.addSubview(playerView)
+}
+```
+
+4. Delegates the player events
+
+To be able to use the player delegate, you must implement the PlayerDelegate protocol.
+
 ```swift
 extension YourViewController: PlayerDelegate {
     public func didPrepare() {
@@ -143,23 +160,22 @@ extension YourViewController: PlayerDelegate {
 }
 ```
 
-4. Add the player view in your view controller and register your player delegates of your view controller
+5. Registers the delegate
 
 ```swift
-    override func viewDidLoad() {
-        ...
-        self.addSubview(playerView)
-        self.playerView.addDelegate(self)
-        ...
-    }
+override func viewDidLoad() {
+    ...
+    self.playerView.addDelegate(self)
+}
 ```
-5. To use full screen and subtitle
+
+6. To use fullscreen, you must pass the view controller to the player view
+
 ```swift
-    override func viewDidAppear(_ animated: Bool) {
-        ...
-        playerView.viewController = self
-        ...
-    }
+override func viewDidAppear(_ animated: Bool) {
+    ...
+    playerView.viewController = self
+}
 ```
 
 # Sample application
@@ -169,6 +185,7 @@ See [`/example`](https://github.com/apivideo/api.video-swift-player/tree/main/Ex
 folder.
 
 On the first run, you will have to set your video Id:
+
 1. Replace "YOUR_VIDEO_ID" by your video Id
 
 # Documentation
@@ -180,11 +197,11 @@ On the first run, you will have to set your video Id:
 
 We are using external library
 
-| Plugin | README |
-| ------ | ------ |
+| Plugin                                                                                | README                                                                         |
+|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-ios-player-analytics) | [README.md](https://github.com/apivideo/api.video-ios-player-analytics#readme) |
 
 # FAQ
 
-If you have any questions, ask us here: [https://community.api.video](https://community.api.video).
-Or use [Issues](https://github.com/apivideo/api.video-ios-player-analytics/issues).
+If you have any questions, ask us here: [https://community.api.video](https://community.api.video) or
+use [Issues](https://github.com/apivideo/api.video-ios-player-analytics/issues).

@@ -146,7 +146,7 @@ extension SwiftUIPlayerViewController: PlayerDelegate {
     }
 
     public func didUnMute() {
-        events?.didUnMute?()
+        events?.didUnmute?()
     }
 
     public func didLoop() {

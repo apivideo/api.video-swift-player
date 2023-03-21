@@ -2,27 +2,19 @@
 import AVKit
 import UIKit
 
-/// The api.video player view based on AVPlayer
+/// The api.video player view for UIKit.
 @available(tvOS 10.0, *)
 public class ApiVideoPlayerView: UIView {
     private let playerLayer = AVPlayerLayer()
     private let controlsView: ControlsView?
     private let playerController: ApiVideoPlayerController!
 
-    /// The controller that manage the main view (which include the player view).
-    /// Set it to be able to use fullscreen and subtitles.
-    public var viewController: UIViewController? {
-        didSet {
-            self.controlsView?.viewController = self.viewController
-        }
-    }
-
-    /// Init method for PlayerView.
+    /// Initializes a player view for UIKit.
     /// - Parameters:
-    ///   - frame: frame of the player view.
-    ///   - videoOptions: The video option containing the videoId and the videoType.
-    ///   - hideControls: true to hide video controls, false to show them.
-    ///   - autoplay: true to play the video when it has been loaded, false to wait for an explicit play.
+    ///   - frame: The frame of the player view.
+    ///   - videoOptions: The video to play.
+    ///   - hideControls: True to hide video controls, false to show them.
+    ///   - autoplay: True to play the video when it has been loaded, false to wait for an explicit play.
     public init(
         frame: CGRect,
         videoOptions: VideoOptions,
@@ -61,7 +53,9 @@ public class ApiVideoPlayerView: UIView {
     }
 
     private func setupSubviews() {
-        guard let controlsView = controlsView else { return }
+        guard let controlsView = controlsView else {
+            return
+        }
 
         // Controls View
         addSubview(controlsView)
@@ -82,31 +76,42 @@ public class ApiVideoPlayerView: UIView {
         self.playerLayer.frame = bounds
     }
 
-    /// Add a delegate to multicast delegate to receive player events.
-    /// - Parameter delegate: The object that acts as the delegate of the PlayerDelegate.
+    /// Adds the provided player delegate.
+    /// When the delegate is not used anymore, it should be removed with ``removeDelegate(_:)``.
+    /// - Parameter delegate: The player delegate to be added.
     public func addDelegate(_ delegate: PlayerDelegate) {
         playerController.addDelegate(delegate: delegate)
     }
 
-    /// Add multiple delegates to multicast delegate to receive player events.
-    /// - Parameter delegates: List of objects that acts as the delegates of the PlayerDelegate.
+    /// Adds the provided player delegates.
+    /// When the delegates are not used anymore, it should be removed with ``removeDelegate(_:)``.
+    /// - Parameter delegates: The array of player delegate to be added.
     public func addDelegates(_ delegates: [PlayerDelegate]) {
         playerController.addDelegates(delegates: delegates)
     }
 
-    /// Remove a selected delegate.
-    /// - Parameter delegate: The object that acts as the delegate which as to be removed.
+    /// Removes the provided delegate.
+    /// - Parameter delegate: The player delegate to be removed.
     public func removeDelegate(_ delegate: PlayerDelegate) {
         playerController.removeDelegate(delegate: delegate)
     }
 
-    /// Remove a list of delegates.
-    /// - Parameter delegates: List of objects that acts as the delegate which as to be removed.
+    /// Removes the provided delegates.
+    /// - Parameter delegates: The array of player delegate to be removed.
     public func removeDelegates(_ delegates: [PlayerDelegate]) {
         playerController.removeDelegates(delegates: delegates)
     }
 
-    /// Description of the video to play.
+    /// The view controller that manages this view.
+    /// Set it to be able to use fullscreen.
+    /// If set to nil, fullscreen button is hidden.
+    public var viewController: UIViewController? {
+        didSet {
+            self.controlsView?.viewController = self.viewController
+        }
+    }
+
+    /// Gets and sets the video options.
     public var videoOptions: VideoOptions? {
         get {
             self.playerController.videoOptions
@@ -116,80 +121,83 @@ public class ApiVideoPlayerView: UIView {
         }
     }
 
-    /// Get information if the video is playing.
+    /// Gets information if the video is playing.
     /// - Returns: Boolean.
     public var isPlaying: Bool {
         self.playerController.isPlaying
     }
 
-    /// Play the video.
+    /// Plays the video.
     public func play() {
         self.playerController.play()
     }
 
-    /// Replay the video.
+    /// Replays the video.
     public func replay() {
         self.playerController.replay()
     }
 
-    /// Pause the video.
+    /// Pauses the video.
     public func pause() {
         self.playerController.pause()
     }
 
-    /// Getter and Setter to mute or unmute video player.
+    /// Gets and sets the playback muted state.
     public var isMuted: Bool {
-        get { self.playerController.isMuted }
-        set(newValue) { self.playerController.isMuted = newValue }
+        get {
+            self.playerController.isMuted
+        }
+        set(newValue) {
+            self.playerController.isMuted = newValue
+        }
     }
 
-    /// Hide all the controls of the player.
-    /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
+    /// Hides all the controls of the player.
     public func hideControls() {
         self.controlsView?.isHidden = true
     }
 
-    /// Show all the controls of the player.
-    /// By default the controls are on. They will be hide in case of inactivity, and display again on user interaction.
+    /// Shows all the controls of the player.
+    /// The controls will be hidden in case of inactivity, and display again on user interaction.
     public func showControls() {
         self.controlsView?.isHidden = false
     }
 
-    /// Hide the selected subtitle.
+    /// Hides the current subtitle.
     public func hideSubtitle() {
         self.playerController.hideSubtitle()
     }
 
-    /// Get the list of available subtitle locales.
+    /// Gets the list of available subtitle locales.
     public var subtitleLocales: [Locale] {
         self.playerController.subtitleLocales
     }
 
-    /// Get the selected subtitle locale.
+    /// Gets the selected subtitle locale.
     /// - Returns: Locale of the selected subtitles.
     public var currentSubtitleLocale: Locale? {
         playerController.currentSubtitleLocale
     }
 
-    /// Set the selected subtitle locale.
+    /// Sets the selected subtitle locale.
     public func setCurrentSubtitleLocale(_ newLocale: Locale) {
         playerController.setCurrentSubtitleLocale(locale: newLocale)
     }
 
-    /// Go forward or backward in the video.
-    /// - Parameter offset: offset in seconds, (use minus to go backward).
+    /// Moves the playback cursor to the ``currentTime`` + offset.
+    /// - Parameter offset: The offset in seconds from the current time (prefix with minus to go backward).
     public func seek(offset: CMTime) {
         self.playerController.seek(offset: offset)
     }
 
-    /// Go forward or backward in the video to a specific time.
-    /// - Parameter to: go to a specific time (in second).
+    /// Moves the playback cursor to the provided time.
+    /// - Parameter to: The new playback position.
     public func seek(to: CMTime) {
         self.playerController.seek(to: to)
     }
 
-    /// The video player volume is connected to the device audio volume.
-    /// - Parameter volume: Float between 0 to 1.
+    /// Gets and sets the video playback volume.
+    /// - Parameter volume: The new volume between 0 to 1.
     public var volume: Float {
         get {
             self.playerController.volume
@@ -199,20 +207,20 @@ public class ApiVideoPlayerView: UIView {
         }
     }
 
-    /// Get the duration of the video.
+    /// Gets the duration of the current video.
     /// The duration is invalid if the video is not ready or not set.
     public var duration: CMTime {
         self.playerController.duration
     }
 
-    /// Get the current time of the video playing.
+    /// Gets the playback position of the current video.
     /// The position is invalid if the video is not ready or not set.
     public var currentTime: CMTime {
         self.playerController.currentTime
     }
 
-    /// Put the video in full screen.
-    /// To be able tu use full screen viewController must be set before.
+    /// Sends the player in fullscreen.
+    /// To be able tu use fullscreen, ``viewController`` must not be nil.
     public func goToFullScreen() {
         guard let vc = viewController else {
             return
@@ -220,7 +228,8 @@ public class ApiVideoPlayerView: UIView {
         self.playerController.goToFullScreen(viewController: vc)
     }
 
-    /// Getter and Setter to loop the video.
+    /// Gets and sets the video loop.
+    /// If set to true, the video will loop at the end.
     public var isLooping: Bool {
         get {
             self.playerController.isLooping
@@ -233,6 +242,9 @@ public class ApiVideoPlayerView: UIView {
 
 #else
 import Cocoa
+
+/// The api.video player view for AppKit.
+/// This view is not implemented yet.
 public class ApiVideoPlayerView: NSView {
     override public init(frame: NSRect) {
         super.init(frame: frame)

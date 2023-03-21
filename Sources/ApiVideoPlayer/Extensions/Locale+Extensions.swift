@@ -1,6 +1,6 @@
 import Foundation
 
-public extension Locale {
+extension Locale {
     /// Returns the language code of the locale.
     func toSubtitleLanguage() -> SubtitleLanguage {
         SubtitleLanguage(

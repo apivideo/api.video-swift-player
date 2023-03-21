@@ -3,6 +3,7 @@ import AVFoundation
 import AVKit
 import Foundation
 
+/// The ApiVideoPlayerController class is a wrapper around ``AVPlayer``.
 public class ApiVideoPlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
@@ -69,7 +70,9 @@ public class ApiVideoPlayerController: NSObject {
 
         if let privateToken = privateToken {
             url = baseUrl + "\(videoOptions.videoId)/token/\(privateToken)/player.json"
-        } else { url = baseUrl + "\(videoOptions.videoId)/player.json" }
+        } else {
+            url = baseUrl + "\(videoOptions.videoId)/player.json"
+        }
         return url
     }
 
@@ -153,7 +156,9 @@ public class ApiVideoPlayerController: NSObject {
         do {
             let option = try Options(mediaUrl: url, metadata: [])
             self.analytics = PlayerAnalytics(options: option)
-        } catch { print("error with the url") }
+        } catch {
+            print("error with the url")
+        }
     }
 
     public var isLive: Bool {
@@ -212,11 +217,13 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.pause()
     }
 
-    public func seek(offset: CMTime, completion: @escaping (Bool) -> Void = { _ in }) {
+    public func seek(offset: CMTime, completion: @escaping (Bool) -> Void = { _ in
+    }) {
         self.seek(to: self.currentTime + offset, completion: completion)
     }
 
-    public func seek(to: CMTime, completion: @escaping (Bool) -> Void = { _ in }) {
+    public func seek(to: CMTime, completion: @escaping (Bool) -> Void = { _ in
+    }) {
         let from = self.currentTime
         self.seekImpl(to: to, completion: { completed in
             completion(completed)
@@ -256,7 +263,9 @@ public class ApiVideoPlayerController: NSObject {
     public var autoplay = false
 
     public var volume: Float {
-        get { self.avPlayer.volume }
+        get {
+            self.avPlayer.volume
+        }
         set(newVolume) {
             self.avPlayer.volume = newVolume
             self.multicastDelegate.didSetVolume(volume)
@@ -305,8 +314,7 @@ public class ApiVideoPlayerController: NSObject {
     public var subtitleLocales: [Locale] {
         var locales: [Locale] = []
         if let playerItem = avPlayer.currentItem,
-           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
-        {
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
             for option in group.options where option.displayName != "CC" {
                 if let locale = option.locale {
                     locales.append(locale)
@@ -319,8 +327,7 @@ public class ApiVideoPlayerController: NSObject {
     public var currentSubtitleLocale: Locale? {
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
-           let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
-        {
+           let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group) {
             return selectedOption.locale
         }
         return nil
@@ -328,8 +335,7 @@ public class ApiVideoPlayerController: NSObject {
 
     public func setCurrentSubtitleLocale(locale: Locale) {
         if let playerItem = avPlayer.currentItem,
-           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
-        {
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
             let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
             if let option = options.first {
                 playerItem.select(option, in: group)
