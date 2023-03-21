@@ -1,29 +1,36 @@
 import ApiVideoPlayer
+import CoreMedia
 import SwiftUI
 struct ContentView: View {
     private var player: ApiVideoPlayer
     init() {
         let events = PlayerEvents(
+            didPrepare: { () in
+                print("swiftui app did prepare")
+            },
             didPause: { () in
-                print("paused")
+                print("swiftui app paused")
             },
             didPlay: { () in
-                print("play")
+                print("swiftui app play")
             },
             didReplay: { () in
-                print("video replayed")
+                print("swiftui app video replayed")
             },
             didLoop: { () in
-                print("video replayed from loop")
+                print("swiftui app video replayed from loop")
             },
             didSeek: { from, to in
-                print("seek from : \(from), to: \(to)")
+                print("swiftui app seek from : \(from), to: \(to)")
             },
             didError: { error in
-                print("error \(error)")
+                print("swiftui app error \(error)")
             }
         )
-        self.player = ApiVideoPlayer(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod, events: events)
+        self.player = ApiVideoPlayer(
+            videoOptions: VideoOptions(videoId: "YOUR-VIDEO-ID", videoType: .vod),
+            events: events
+        )
     }
 
     var body: some View {
@@ -32,21 +39,16 @@ struct ContentView: View {
                 .frame(height: 250)
                 .padding(.bottom)
             HStack {
-                Button(action: {
-                    player.play()
-                }) {
+                Button(action: { player.play() }, label: {
                     Text("Play")
-                }
-                Button(action: {
-                    player.pause()
-                }) {
+                })
+                Button(action: { player.pause() }, label: {
                     Text("Pause")
-                }
+                })
             }
             Spacer()
         }
     }
-
 }
 
 struct ContentView_Previews: PreviewProvider {

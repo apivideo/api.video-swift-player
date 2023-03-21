@@ -110,7 +110,7 @@ function_parameter_count:
 
 type_body_length:
   warning: 350
-  error: 450
+  error: 550
 
 file_length:
   warning: 1000

@@ -3,8 +3,8 @@ import AVKit
 import UIKit
 
 public class SwiftUIPlayerViewController: UIViewController {
-
     let playerView: ApiVideoPlayerView
+    private var events: PlayerEvents?
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -14,15 +14,19 @@ public class SwiftUIPlayerViewController: UIViewController {
     init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
         self.playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoOptions: videoOptions,
-            events: events
+            videoOptions: videoOptions
         )
+        self.events = events
         super.init(nibName: nil, bundle: nil)
+        playerView.addDelegate(self)
+    }
+
+    deinit {
+        playerView.removeDelegate(self)
     }
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
         view.addSubview(self.playerView)
         self.playerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -33,12 +37,14 @@ public class SwiftUIPlayerViewController: UIViewController {
         ])
     }
 
-    override public func viewDidAppear(_: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         self.playerView.viewController = self
+        super.viewDidAppear(animated)
     }
 
-    override public func viewDidDisappear(_: Bool) {
+    override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
+        super.viewDidDisappear(animated)
     }
 
     public func play() {
@@ -50,7 +56,7 @@ public class SwiftUIPlayerViewController: UIViewController {
     }
 
     public var isPlaying: Bool {
-        return self.playerView.isPlaying
+        self.playerView.isPlaying
     }
 
     public func replay() {
@@ -112,5 +118,59 @@ public class SwiftUIPlayerViewController: UIViewController {
         }
     }
 
+}
+
+extension SwiftUIPlayerViewController: PlayerDelegate {
+    public func didPrepare() {
+        events?.didPrepare?()
+    }
+
+    public func didReady() {
+        events?.didReady?()
+    }
+
+    public func didPause() {
+        events?.didPause?()
+    }
+
+    public func didPlay() {
+        events?.didPlay?()
+    }
+
+    public func didReplay() {
+        events?.didReplay?()
+    }
+
+    public func didMute() {
+        events?.didMute?()
+    }
+
+    public func didUnMute() {
+        events?.didUnmute?()
+    }
+
+    public func didLoop() {
+        events?.didLoop?()
+    }
+
+    public func didSetVolume(_ volume: Float) {
+        events?.didSetVolume?(volume)
+    }
+
+    public func didSeek(_ from: CMTime, _ to: CMTime) {
+        events?.didSeek?(from, to)
+    }
+
+    public func didEnd() {
+        events?.didEnd?()
+    }
+
+    public func didError(_ error: Error) {
+        events?.didError?(error)
+    }
+
+    public func didVideoSizeChanged(_ size: CGSize) {
+        events?.didVideoSizeChanged?(size)
+    }
 }
 #endif

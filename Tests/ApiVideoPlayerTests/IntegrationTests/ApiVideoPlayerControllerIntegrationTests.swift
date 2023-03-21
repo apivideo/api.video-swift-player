@@ -1,204 +1,144 @@
+import ApiVideoClient
 @testable import ApiVideoPlayer
 import CoreMedia
 import XCTest
 
 final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
-
     func testValidVideoIdPlay() throws {
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let completedExpectationPlay = expectation(description: "Completed Play")
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        let ready = mockDelegate.expectationReady()
+        let play = mockDelegate.expectationPlay()
+        let error = mockDelegate.expectationError(true)
+
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
+            delegates: [mockDelegate]
         )
-        wait(for: [completedExpectationPrepare], timeout: 10)
+
+        wait(for: [ready], timeout: 10)
         controller.play()
-        wait(for: [completedExpectationPlay], timeout: 2)
-        wait(for: [errorExpectation], timeout: 5)
+        wait(for: [play], timeout: 2)
+        wait(for: [error], timeout: 5)
     }
 
     func testValidVideoIdWithSetterPlay() throws {
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let completedExpectationPlay = expectation(description: "Completed Play")
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        let ready = mockDelegate.expectationReady()
+        let play = mockDelegate.expectationPlay()
+        let error = mockDelegate.expectationError(true)
+
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            events: events
+            delegates: [mockDelegate]
         )
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-        wait(for: [completedExpectationPrepare], timeout: 10)
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
+
+        wait(for: [ready], timeout: 10)
         controller.play()
-        wait(for: [completedExpectationPlay], timeout: 2)
-        wait(for: [errorExpectation], timeout: 5)
+        wait(for: [play], timeout: 2)
+        wait(for: [error], timeout: 5)
     }
 
     func testValidVideoIdPause() throws {
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let completedExpectationPlay = expectation(description: "Completed Play")
-        let completedExpectationPause = expectation(description: "Completed Pause")
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPause: { () in
-                print("paused")
-                completedExpectationPause.fulfill()
-            },
-            didPlay: { () in
-                print("play")
-                completedExpectationPlay.fulfill()
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        let ready = mockDelegate.expectationReady()
+        let play = mockDelegate.expectationPlay()
+        let pause = mockDelegate.expectationPause()
+        let error = mockDelegate.expectationError(true)
+
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
+            delegates: [mockDelegate]
         )
-        wait(for: [completedExpectationPrepare], timeout: 10)
+
+        wait(for: [ready], timeout: 10)
         controller.play()
-        wait(for: [completedExpectationPlay], timeout: 2)
+        wait(for: [play], timeout: 2)
         controller.pause()
-        wait(for: [completedExpectationPause], timeout: 2)
-        wait(for: [errorExpectation], timeout: 5)
+        wait(for: [pause], timeout: 2)
+        wait(for: [error], timeout: 5)
     }
 
     func testReturnOneEventOnMultiplePause() throws {
-        var didCalled = false
-        let completedExpectationPrepare = expectation(description: "Completed Prepare")
-        let expectationPause = self.expectation(description: "pause is called")
-        let secondExpectationPause = self.expectation(description: "2nd pause is called")
-        secondExpectationPause.isInverted = true
-        let errorExpectation = expectation(description: "error is called")
-        errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                completedExpectationPrepare.fulfill()
-            },
-            didPause: { () in
-                print("paused")
-                if !didCalled {
-                    didCalled = true
-                    expectationPause.fulfill()
-                } else {
-                    secondExpectationPause.fulfill()
-                }
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        let ready = mockDelegate.expectationReady()
+        let play = mockDelegate.expectationPlay()
+        _ = mockDelegate.expectationPause()
+        _ = mockDelegate.expectationMultiplePause()
+        _ = mockDelegate.expectationError(true)
 
-            },
-            didError: { error in
-                print("error\(error)")
-                errorExpectation.fulfill()
-            }
-        )
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
+            delegates: [mockDelegate]
         )
-        wait(for: [completedExpectationPrepare], timeout: 10)
+
+        wait(for: [ready], timeout: 5)
         controller.play()
+        wait(for: [play], timeout: 2)
         controller.pause()
         controller.pause()
+
         waitForExpectations(timeout: 15, handler: nil)
     }
 
     func testDuration() throws {
-        let prepareExpectation = self.expectation(description: "prepare is called")
-        let errorExpectation = self.expectation(description: "error is called")
-        errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
-        )
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationReady()
+        _ = mockDelegate.expectationError(true)
+
         let controller = ApiVideoPlayerController(
-            videoOptions: VideoOptions(videoId: VideoId.validVideoId),
-            events: events
+            videoOptions: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod),
+            delegates: [mockDelegate]
         )
+
         waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
 
     func testWithVideoOptionsWithSetterDuration() throws {
-        let prepareExpectation = self.expectation(description: "prepare is called")
-        let errorExpectation = self.expectation(description: "error is called")
-        errorExpectation.isInverted = true
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
-        )
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationReady()
+        _ = mockDelegate.expectationError(true)
+
         let controller = ApiVideoPlayerController(
             videoOptions: nil,
-            events: events
+            delegates: [mockDelegate]
         )
+        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId, videoType: .vod)
 
-        controller.videoOptions = VideoOptions(videoId: VideoId.validVideoId)
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
         XCTAssertEqual(controller.duration.seconds, 60.2)
     }
 
     func testInvalidVideoId() throws {
-        let prepareExpectation = expectation(description: "prepare is called")
-        prepareExpectation.isInverted = true
-        let errorExpectation = expectation(description: "error is called")
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("ready")
-                prepareExpectation.fulfill()
-            },
-            didError: { error in
-                print("error : \(error)")
-                errorExpectation.fulfill()
-            }
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        _ = mockDelegate.expectationReady(true)
+        _ = mockDelegate.expectationError()
+
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.invalidVideoId, videoType: .vod),
+            delegates: [mockDelegate]
         )
-        _ = ApiVideoPlayerController(videoOptions: VideoOptions(videoId: VideoId.invalidVideoId), events: events)
-        waitForExpectations(timeout: 10, handler: nil)
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testValidPrivateVideoIdPlay() async throws {
+        let privateToken = try await Utils.getPrivateToken(videoId: VideoId.privateVideoId)
+
+        let mockDelegate = MockedPlayerDelegate(testCase: self)
+        let ready = mockDelegate.expectationReady()
+        let play = mockDelegate.expectationPlay()
+        let expectationError = mockDelegate.expectationError(true)
+
+        let controller = ApiVideoPlayerController(
+            videoOptions: VideoOptions(videoId: VideoId.privateVideoId, videoType: .vod, token: privateToken),
+            delegates: [mockDelegate]
+        )
+
+        self.wait(for: [ready], timeout: 10)
+        controller.play()
+        self.wait(for: [play], timeout: 2)
+        self.wait(for: [expectationError], timeout: 15)
     }
 }

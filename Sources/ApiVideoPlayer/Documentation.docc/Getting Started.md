@@ -1,34 +1,23 @@
-[![badge](https://img.shields.io/twitter/follow/api_video?style=social)](https://twitter.com/intent/follow?screen_name=api_video)
-&nbsp; [![badge](https://img.shields.io/github/stars/apivideo/api.video-swift-player?style=social)](https://github.com/apivideo/api.video-swift-player)
-&nbsp; [![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
-![](https://github.com/apivideo/.github/blob/main/assets/apivideo_banner.png)
-<h1 align="center">api.video Swift player</h1>
+# Getting Started
 
-[api.video](https://api.video) is the video infrastructure for product builders. Lightning fast
-video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in
-your app.
+Easily integrate a video player for videos from api.video in your iOS
+application.
 
-# Table of contents
+## Table of contents
 
-- [Table of contents](#table-of-contents)
-- [Project description](#project-description)
-- [Getting started](#getting-started)
-    - [Installation](#installation)
-        - [Swift Package Manager](#swift-package-manager)
-        - [Cocoapods](#cocoapods)
-    - [Retrieve your video Id](#retrieve-your-video-id)
+- [Installation](#installation)
+    - [Swift Package Manager](#swift-package-manager)
+    - [Cocoapods](#cocoapods)
+- [Retrieve your video Id](#retrieve-your-video-id)
 - [Sample application](#sample-application)
 - [Documentation](#documentation)
 - [Dependencies](#dependencies)
 
-# Project description
-
-Easily integrate a video player for videos from [api.video](https://api.video) in your iOS
-application.
-
-# Getting started
-
 ## Installation
+
+### Get the latest verison
+
+- You can find it [here](https://github.com/apivideo/api.video-swift-player/releases)
 
 ### Swift Package Manager
 
@@ -44,15 +33,23 @@ Or add this in your Package.swift
 
 ```
   dependencies: [
-        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.1.0"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "USE_THE_LASTEST_RELEASE"),
     ],
 ```
 
 ### Cocoapods
 
-Add `pod 'ApiVideoPlayer', '1.1.0'` in your `Podfile`
+Add the following in your `Podfile` :
 
-Run `pod install`
+```
+pod 'ApiVideoPlayer', 'USE_THE_LATEST_RELEASE'
+```
+
+Then run
+
+```
+pod install
+```
 
 ## Retrieve your video Id
 
@@ -77,21 +74,19 @@ your [dashboard](https://dashboard.api.video).
 
 ## Code sample
 
-## Code sample
-
-1. Imports the library
+### 1. Imports the library
 
 ```
 import ApiVideoPlayer
 ```
 
-2. Instantiates the player view
+### 2. Instantiates the player view
 
 ```swift
 let playerView: ApiVideoPlayerView = ApiVideoPlayerView(frame: .zero, videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)) // for private video VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod, token: "YOUR_PRIVATE_VIDEO_TOKEN")
 ```
 
-3. Adds the player view as a subview of your view controller
+### 3. Adds the player view as a subview of your view controller
 
 ```swift
 override func viewDidLoad() {
@@ -100,7 +95,7 @@ override func viewDidLoad() {
 }
 ```
 
-4. Delegates the player events
+### 4. Delegates the player events
 
 To be able to use the player delegate, you must implement the PlayerDelegate protocol.
 
@@ -160,7 +155,7 @@ extension YourViewController: PlayerDelegate {
 }
 ```
 
-5. Registers the delegate
+### 5. Registers the delegate
 
 ```swift
 override func viewDidLoad() {
@@ -169,7 +164,7 @@ override func viewDidLoad() {
 }
 ```
 
-6. To use fullscreen, you must pass the view controller to the player view
+### 6. To use fullscreen, you must pass the view controller to the player view
 
 ```swift
 override func viewDidAppear(_ animated: Bool) {
@@ -178,7 +173,7 @@ override func viewDidAppear(_ animated: Bool) {
 }
 ```
 
-# Sample application
+## Sample application
 
 A demo application demonstrates how to use player.
 See [`/example`](https://github.com/apivideo/api.video-swift-player/tree/main/Examples)
@@ -186,14 +181,14 @@ folder.
 
 On the first run, you will have to set your video Id:
 
-1. Replace "YOUR_VIDEO_ID" by your video Id
+1. Replace "YOUR_VIDEO_ID" of the `PlayerViewController` by your video Id
 
-# Documentation
+## Documentation
 
 * [API documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
 * [api.video documentation](https://docs.api.video)
 
-# Dependencies
+## Dependencies
 
 We are using external library
 
@@ -201,7 +196,9 @@ We are using external library
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-ios-player-analytics) | [README.md](https://github.com/apivideo/api.video-ios-player-analytics#readme) |
 
-# FAQ
+## FAQ
 
 If you have any questions, ask us here: [https://community.api.video](https://community.api.video) or
 use [Issues](https://github.com/apivideo/api.video-ios-player-analytics/issues).
+
+

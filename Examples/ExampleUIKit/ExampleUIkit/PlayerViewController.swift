@@ -3,50 +3,10 @@ import AVKit
 import UIKit
 
 class PlayerViewController: UIViewController {
-    private var didFinish = false {
-        didSet {
-            self.replayVideo()
-        }
-    }
-
-    let playerView: ApiVideoPlayerView = {
-        let events = PlayerEvents(
-            didPrepare: { () in
-                print("didPrepare")
-            },
-            didReady: { () in
-                print("didReady")
-            },
-            didPause: { () in
-                print("paused")
-            },
-            didPlay: { () in
-                print("play")
-            },
-            didReplay: { () in
-                print("video replayed")
-            },
-            didLoop: { () in
-                print("video replayed from loop")
-            },
-            didSetVolume: { volume in
-                print("volume set to : \(volume)")
-            },
-            didSeek: { from, to in
-                print("seek from : \(from), to: \(to)")
-            },
-            didError: { error in
-                print("error \(error)")
-            }
-        )
-
-        return ApiVideoPlayerView(
-            frame: .zero,
-            videoId: "YOUR_VIDEO_ID",
-            videoType: VideoType.vod /* only .vod is supported */,
-            events: events
-        )
-    }()
+    let playerView: ApiVideoPlayerView = .init(
+        frame: .zero,
+        videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)
+    )
 
     let scrollView: UIScrollView = {
         let scrlview = UIScrollView()
@@ -166,11 +126,10 @@ class PlayerViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(self.scrollView)
         self.scrollView.addSubview(self.playerView)
-
+        self.playerView.addDelegate(self)
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         self.playerView.addGestureRecognizer(doubleTap)
-
         let swipeGestureRecognizerRight = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipe(_:)))
         swipeGestureRecognizerRight.direction = .right
         self.playerView.addGestureRecognizer(swipeGestureRecognizerRight)
@@ -301,7 +260,7 @@ class PlayerViewController: UIViewController {
 
     @objc
     func frSubtitleAction(sender _: UIButton!) {
-        self.playerView.currentSubtitle = Locale(identifier: "fr")
+        self.playerView.setCurrentSubtitleLocale(Locale(identifier: "fr"))
     }
 
     @objc
@@ -325,4 +284,58 @@ class PlayerViewController: UIViewController {
     private func didSwipe(_: UISwipeGestureRecognizer) {
         self.playerView.goToFullScreen()
     }
+}
+
+// MARK: PlayerDelegate
+
+extension PlayerViewController: PlayerDelegate {
+    public func didPrepare() {
+        print("app didPrepare")
+    }
+
+    public func didReady() {
+        print("app didReady")
+    }
+
+    public func didPause() {
+        print("app didPause")
+    }
+
+    public func didPlay() {
+        print("app didPlay")
+    }
+
+    public func didReplay() {
+        print("app didReplay")
+    }
+
+    public func didMute() {
+        print("app didMute")
+    }
+
+    public func didUnMute() {
+        print("app didUnMute")
+    }
+
+    public func didLoop() {
+        print("app didLoop")
+    }
+
+    public func didSetVolume(_: Float) {
+        print("app didSetVolume")
+    }
+
+    public func didSeek(_: CMTime, _: CMTime) {
+        print("app didSeek")
+    }
+
+    public func didEnd() {
+        print("app didEnd")
+    }
+
+    public func didError(_ error: Error) {
+        print("app didError: \(error)")
+    }
+
+    public func didVideoSizeChanged(_: CGSize) {}
 }

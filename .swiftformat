@@ -36,7 +36,7 @@
  --enable redundantparens
  --enable redundantpattern
  --enable redundantrawvalues
- --enable redundantself
+ --disable redundantself
  --enable redundanttype
  --enable redundantvoidreturntype
  --enable semicolons
@@ -80,7 +80,6 @@
  ### Attributes
  --funcattributes prev-line
  --typeattributes prev-line
- --varattributes same-line
 
  ### Else
  --elseposition same-line

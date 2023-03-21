@@ -2,12 +2,13 @@ name: Run unit tests
 on: [push]
 jobs:
   test:
-    runs-on: macos-12
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: xcode version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '13.4.1'
+      - name: Set API key
+        run: |
+          sed -i -e "s/INTEGRATION_TESTS_API_KEY/${INTEGRATION_TESTS_API_KEY}/" ./Tests/ApiVideoPlayerTests/Parameters.swift
+        env:
+          INTEGRATION_TESTS_API_KEY: ${{ secrets.INTEGRATION_TESTS_API_TOKEN }}
       - name: Running tests
-        run: xcodebuild -scheme ApiVideoPlayer  -destination 'platform=iOS Simulator,name=iPhone 13' test
+        run: swift test

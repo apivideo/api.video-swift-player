@@ -1,33 +1,36 @@
 import AVFoundation
 import Foundation
+
+/// Callbacks to be notified of the player events.
 public class PlayerEvents {
-    /// Events called when the player is preparing for a video
+    /// Event called before the video URL will passed to the player.
     public var didPrepare: (() -> Void)?
-    /// Events called when the player is ready to play video
+    /// Event called when the player is ready to play video.
     public var didReady: (() -> Void)?
-    /// Events called when the video is paused
+    /// Event called when the video has been paused.
     public var didPause: (() -> Void)?
-    /// Events called when the video is playing
+    /// Event called when the video has been played.
     public var didPlay: (() -> Void)?
-    /// Events called when the video is replayed
+    /// Event called when the video has been replayed.
     public var didReplay: (() -> Void)?
-    /// Events called when the player is muted
+    /// Event called when the player has been muted.
     public var didMute: (() -> Void)?
-    /// Events called when the player is unmuted
-    public var didUnMute: (() -> Void)?
-    /// Events called when the video is replayed in a loop
+    /// Event called when the player has been unmuted.
+    public var didUnmute: (() -> Void)?
+    /// Event called when the video has been replayed in a loop.
     public var didLoop: (() -> Void)?
-    /// Events called when the player volume is changed
+    /// Event called when the player volume has been changed.
     public var didSetVolume: ((_ volume: Float) -> Void)?
-    /// Events called when the player is seeking in the video
+    /// Event called when the playback position has changed.
     public var didSeek: ((_ from: CMTime, _ to: CMTime) -> Void)?
-    /// Events called when the video ended
+    /// Events called when the video ended.
     public var didEnd: (() -> Void)?
-    /// Events called when there is an error with the player or video
+    /// Events called when there is an error with the player or video.
     public var didError: ((_ error: Error) -> Void)?
-    /// Events called when the size of the video changed
+    /// Events called when the size of the video changed.
     public var didVideoSizeChanged: ((_ size: CGSize) -> Void)?
 
+    /// Initializes a new instance of `PlayerEvents`.
     public init(
         didPrepare: (() -> Void)? = nil,
         didReady: (() -> Void)? = nil,
@@ -49,7 +52,7 @@ public class PlayerEvents {
         self.didPlay = didPlay
         self.didReplay = didReplay
         self.didMute = didMute
-        self.didUnMute = didUnMute
+        self.didUnmute = didUnMute
         self.didLoop = didLoop
         self.didSetVolume = didSetVolume
         self.didSeek = didSeek
