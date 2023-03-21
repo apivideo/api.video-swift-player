@@ -121,8 +121,8 @@ public class ApiVideoPlayerView: UIView {
         }
     }
 
-    /// Gets information if the video is playing.
-    /// - Returns: Boolean.
+    /// Gets if the video is playing.
+    /// - Returns: True if the player is playing a video
     public var isPlaying: Bool {
         self.playerController.isPlaying
     }
@@ -132,7 +132,7 @@ public class ApiVideoPlayerView: UIView {
         self.playerController.play()
     }
 
-    /// Replays the video.
+    /// Seeks to the beginning of the video and plays it.
     public func replay() {
         self.playerController.replay()
     }

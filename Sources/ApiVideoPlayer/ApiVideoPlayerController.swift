@@ -4,6 +4,8 @@ import AVKit
 import Foundation
 
 /// The ApiVideoPlayerController class is a wrapper around ``AVPlayer``.
+/// It is used internally of the ``ApiVideoPlayerView``.
+/// It could be used directly if you want to use the player with a fully custom UI.
 public class ApiVideoPlayerController: NSObject {
     private let avPlayer = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
@@ -15,6 +17,12 @@ public class ApiVideoPlayerController: NSObject {
     private var playerItemFactory: ApiVideoPlayerItemFactory?
 
     #if !os(macOS)
+    /// Initializes a player controller.
+    /// - Parameters:
+    ///   - videoOptions: The video to play.
+    ///   - playerLayer: The player layer where to display the video.
+    ///   - delegates: The delegates of the player events.
+    ///   - autoplay: True to play the video when it has been loaded, false to wait for an explicit play.
     public convenience init(
         videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
@@ -30,6 +38,12 @@ public class ApiVideoPlayerController: NSObject {
     }
     #endif
 
+    /// Initializes a player controller.
+    /// - Parameters:
+    ///   - videoOptions: The video to play.
+    ///   - delegates: The delegates of the player events.
+    ///   - autoplay: True to play the video when it has been loaded, false to wait for an explicit play.
+    ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default is``TasksExecutor``.
     public init(
         videoOptions: VideoOptions?,
         delegates: [PlayerDelegate] = [],
@@ -82,18 +96,28 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
-    func addDelegates(delegates: [PlayerDelegate]) {
-        multicastDelegate.addDelegates(delegates)
-    }
-
+    /// Adds the provided player delegate.
+    /// When the delegate is not used anymore, it should be removed with ``removeDelegate(_:)``.
+    /// - Parameter delegate: The player delegate to be added.
     func addDelegate(delegate: PlayerDelegate) {
         multicastDelegate.addDelegate(delegate)
     }
 
+    /// Adds the provided player delegates.
+    /// When the delegates are not used anymore, it should be removed with ``removeDelegate(_:)``.
+    /// - Parameter delegates: The array of player delegate to be added.
+    func addDelegates(delegates: [PlayerDelegate]) {
+        multicastDelegate.addDelegates(delegates)
+    }
+
+    /// Removes the provided delegate.
+    /// - Parameter delegate: The player delegate to be removed.
     func removeDelegate(delegate: PlayerDelegate) {
         multicastDelegate.removeDelegate(delegate)
     }
 
+    /// Removes the provided delegates.
+    /// - Parameter delegates: The array of player delegate to be removed.
     func removeDelegates(delegates: [PlayerDelegate]) {
         multicastDelegate.removeDelegates(delegates)
     }
@@ -137,6 +161,10 @@ public class ApiVideoPlayerController: NSObject {
         item.remove(output)
     }
 
+    /// Requests invocation of a block during playback to report changing time.
+    ///
+    /// - Parameter callback: The block to be invoked periodically during playback.
+    /// - Returns: You must retain this returned value as long as you want the time observer to be invoked by the player.
     public func addTimerObserver(callback: @escaping () -> Void) -> Any {
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         return avPlayer.addPeriodicTimeObserver(
@@ -148,6 +176,9 @@ public class ApiVideoPlayerController: NSObject {
         )
     }
 
+    /// Removes the provided time observer.
+    ///
+    /// - Parameter observer: The time observer to be removed.
     public func removeTimeObserver(_ observer: Any) {
         avPlayer.removeTimeObserver(observer)
     }
@@ -161,6 +192,8 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    /// Get if the player is playing a live stream.
+    /// - Returns: True if the player is playing a live stream
     public var isLive: Bool {
         guard let currentItem = avPlayer.currentItem else {
             return false
@@ -168,6 +201,8 @@ public class ApiVideoPlayerController: NSObject {
         return currentItem.duration.isIndefinite
     }
 
+    /// Gets if the player is playing a VOD.
+    /// - Returns: True if the player is playing a VOD
     public var isVod: Bool {
         guard let currentItem = avPlayer.currentItem else {
             return false
@@ -175,10 +210,13 @@ public class ApiVideoPlayerController: NSObject {
         return !currentItem.duration.isIndefinite
     }
 
+    /// Gets if the video is playing.
+    /// - Returns: True if the player is playing a video
     public var isPlaying: Bool {
         self.avPlayer.isPlaying
     }
 
+    /// Plays the video.
     public func play() {
         self.avPlayer.play()
     }
@@ -200,6 +238,7 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    /// Seeks to the beginning of the video and plays it.
     public func replay() {
         self.seekImpl(to: CMTime.zero, completion: { _ in
             self.play()
@@ -208,20 +247,31 @@ public class ApiVideoPlayerController: NSObject {
 
     }
 
+    /// Pauses the video.
     public func pause() {
         self.avPlayer.pause()
     }
 
+    /// Pauses the video before seeking.
+    /// This is useful to avoid spam of delegate calls.
     public func pauseBeforeSeek() {
         self.isSeeking = true
         self.avPlayer.pause()
     }
 
+    /// Moves the playback cursor to the ``currentTime`` + offset.
+    /// - Parameters:
+    ///           - offset: The offset in seconds from the current time (prefix with minus to go backward).
+    ///           - completion: The completion block to be called when the seek is completed.
     public func seek(offset: CMTime, completion: @escaping (Bool) -> Void = { _ in
     }) {
         self.seek(to: self.currentTime + offset, completion: completion)
     }
 
+    /// Moves the playback cursor to the provided time.
+    /// - Parameters:
+    ///           - to: The new playback position.
+    ///           - completion: The completion block to be called when the seek is completed.
     public func seek(to: CMTime, completion: @escaping (Bool) -> Void = { _ in
     }) {
         let from = self.currentTime
@@ -231,6 +281,7 @@ public class ApiVideoPlayerController: NSObject {
         })
     }
 
+    /// Gets and sets the video options.
     public var videoOptions: VideoOptions? {
         didSet {
             guard let videoOptions = videoOptions else {
@@ -245,6 +296,7 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    /// Gets and sets the playback muted state.
     public var isMuted: Bool {
         get {
             self.avPlayer.isMuted
@@ -259,9 +311,14 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    /// If set to true, the video will loop at the end.
     public var isLooping = false
+
+    /// If set to true, the video will autoplay when ready.
     public var autoplay = false
 
+    /// Gets and sets the video playback volume.
+    /// - Parameter volume: The new volume between 0 to 1.
     public var volume: Float {
         get {
             self.avPlayer.volume
@@ -303,14 +360,20 @@ public class ApiVideoPlayerController: NSObject {
         self.duration.roundedSeconds == self.currentTime.roundedSeconds
     }
 
+    /// Gets the current video size.
+    /// - Returns: The video size
     public var videoSize: CGSize {
         self.avPlayer.videoSize
     }
 
+    /// Gets if the current video has subtitles.
+    /// - Returns: True if the video has subtitles
     public var hasSubtitles: Bool {
         !subtitleLocales.isEmpty
     }
 
+    /// Gets the available subtitles locales.
+    /// - Returns: The available subtitles locales
     public var subtitleLocales: [Locale] {
         var locales: [Locale] = []
         if let playerItem = avPlayer.currentItem,
@@ -325,6 +388,8 @@ public class ApiVideoPlayerController: NSObject {
         return locales
     }
 
+    /// Gets the current subtitle locale.
+    /// - Returns: The current subtitle locale
     public var currentSubtitleLocale: Locale? {
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
@@ -335,6 +400,8 @@ public class ApiVideoPlayerController: NSObject {
         return nil
     }
 
+    /// Sets the current subtitle locale.
+    /// - Parameter locale: The new subtitle locale
     public func setCurrentSubtitleLocale(locale: Locale) {
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
@@ -346,6 +413,7 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
+    /// Hides the current subtitle.
     public func hideSubtitle() {
         guard let playerItem = avPlayer.currentItem else {
             return
@@ -356,6 +424,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     #if !os(macOS)
+    /// Sends the player in fullscreen.
     public func goToFullScreen(viewController: UIViewController) {
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
