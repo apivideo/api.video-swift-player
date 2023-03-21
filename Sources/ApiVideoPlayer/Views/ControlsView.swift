@@ -165,7 +165,7 @@ class ControlsView: UIView {
         backward15Button.widthAnchor.constraint(equalToConstant: 70).isActive = true
         backward15Button.heightAnchor.constraint(equalToConstant: 40).isActive = true
 
-        // Slider View
+        // Slider Views
         actionBarView.translatesAutoresizingMaskIntoConstraints = false
         actionBarView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         actionBarView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true

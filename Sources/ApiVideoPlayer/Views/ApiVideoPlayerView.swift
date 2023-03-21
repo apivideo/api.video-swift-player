@@ -57,7 +57,7 @@ public class ApiVideoPlayerView: UIView {
             return
         }
 
-        // Controls View
+        // Controls Views
         addSubview(controlsView)
         controlsView.translatesAutoresizingMaskIntoConstraints = false
         controlsView.topAnchor.constraint(equalTo: topAnchor).isActive = true
