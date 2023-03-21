@@ -12,12 +12,12 @@ public class ApiVideoPlayerView: UIView {
     /// Initializes a player view for UIKit.
     /// - Parameters:
     ///   - frame: The frame of the player view.
-    ///   - videoOptions: The video to play.
+    ///   - videoOptions: The video to play. Could be nil if you don't know the video when instantiating the view.
     ///   - hideControls: True to hide video controls, false to show them.
     ///   - autoplay: True to play the video when it has been loaded, false to wait for an explicit play.
     public init(
         frame: CGRect,
-        videoOptions: VideoOptions,
+        videoOptions: VideoOptions?,
         hideControls: Bool = false,
         autoplay: Bool = false
     ) {
