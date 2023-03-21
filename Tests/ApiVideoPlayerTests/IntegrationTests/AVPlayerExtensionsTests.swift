@@ -1,6 +1,6 @@
 @testable import ApiVideoPlayer
-import Foundation
 import AVFoundation
+import Foundation
 import XCTest
 
 /// Integration tests for AVPlayer extension

@@ -10,7 +10,8 @@ class ApiVideoPlayerItemFactory {
     ///
     /// - Parameters:
     ///   - videoOptions: The video options
-    ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default is ``TasksExecutor``.
+    ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default is
+    /// ``TasksExecutor``.
     init(videoOptions: VideoOptions, taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self) {
         self.urlFactory = ApiVideoUrlFactory(videoOptions: videoOptions, taskExecutor: taskExecutor)
         self.urlFactory.delegate = self

@@ -26,7 +26,7 @@ extension URLSession {
                 return
             }
             let status = response.statusCode
-            guard (200...299).contains(status) else {
+            guard (200 ... 299).contains(status) else {
                 completionHandler(Result.failure(HTTPError.serverSideError(status)))
                 return
             }

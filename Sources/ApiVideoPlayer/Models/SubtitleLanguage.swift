@@ -15,7 +15,7 @@ struct SubtitleLanguage: Equatable {
         self.code = code
     }
 
-    static func ==(lhs: SubtitleLanguage, rhs: SubtitleLanguage) -> Bool {
+    static func == (lhs: SubtitleLanguage, rhs: SubtitleLanguage) -> Bool {
         (lhs.language == rhs.language) && (lhs.code == rhs.code)
     }
 

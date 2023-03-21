@@ -314,7 +314,8 @@ public class ApiVideoPlayerController: NSObject {
     public var subtitleLocales: [Locale] {
         var locales: [Locale] = []
         if let playerItem = avPlayer.currentItem,
-           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
+        {
             for option in group.options where option.displayName != "CC" {
                 if let locale = option.locale {
                     locales.append(locale)
@@ -327,7 +328,8 @@ public class ApiVideoPlayerController: NSObject {
     public var currentSubtitleLocale: Locale? {
         if let playerItem = avPlayer.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
-           let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group) {
+           let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
+        {
             return selectedOption.locale
         }
         return nil
@@ -335,7 +337,8 @@ public class ApiVideoPlayerController: NSObject {
 
     public func setCurrentSubtitleLocale(locale: Locale) {
         if let playerItem = avPlayer.currentItem,
-           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
+           let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
+        {
             let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
             if let option = options.first {
                 playerItem.select(option, in: group)

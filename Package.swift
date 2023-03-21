@@ -31,8 +31,9 @@ let package = Package(
         ),
         .testTarget(
             name: "ApiVideoPlayerTests",
-            dependencies: ["ApiVideoPlayer",
-                           .product(name: "ApiVideoClient", package: "api.video-ios-client")
+            dependencies: [
+                "ApiVideoPlayer",
+                .product(name: "ApiVideoClient", package: "api.video-ios-client")
             ],
             path: "Tests/ApiVideoPlayerTests",
             resources: [

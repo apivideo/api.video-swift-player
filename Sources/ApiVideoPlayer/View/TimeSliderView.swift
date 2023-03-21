@@ -115,7 +115,7 @@ class TimeSliderView: UIStackView {
     private func updateTimeLabels() {
         let remainingTimeLabelText: String
 
-        if duration.isValid && currentTime.isValid {
+        if duration.isValid, currentTime.isValid {
             remainingTimeLabelText = clampedStringRepresentation(duration - currentTime)
         } else {
             remainingTimeLabelText = CMTime.invalidStringRepresentation

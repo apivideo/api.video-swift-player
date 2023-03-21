@@ -1,7 +1,7 @@
-import Foundation
-import XCTest
 import ApiVideoClient
 import ApiVideoPlayer
+import Foundation
+import XCTest
 
 public enum Utils {
     public static func generateResource(resource: String) {
@@ -17,7 +17,7 @@ public enum Utils {
         }
     }
 
-    static func getPrivateToken(videoId: String) async throws -> String {
+    static func getPrivateToken(videoId _: String) async throws -> String {
         // Init ApiVideoClient
         try XCTSkipIf(Parameters.apiKey == "INTEGRATION_TESTS_API_KEY", "Can't get API key")
         ApiVideoClient.apiKey = Parameters.apiKey

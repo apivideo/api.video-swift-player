@@ -1,7 +1,7 @@
+import ApiVideoClient
 @testable import ApiVideoPlayer
 import CoreMedia
 import XCTest
-import ApiVideoClient
 
 final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
     func testValidVideoIdPlay() throws {
