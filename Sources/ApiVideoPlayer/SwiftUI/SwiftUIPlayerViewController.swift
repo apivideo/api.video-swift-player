@@ -4,25 +4,25 @@ import UIKit
 
 public class SwiftUIPlayerViewController: UIViewController {
     let playerView: ApiVideoPlayerView
-    private var events: PlayerEvents?
+
+    var onPlay: (() -> Void)?
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 
-    init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
-        self.playerView = ApiVideoPlayerView(
+    init(autoplay: Bool = false) {
+        playerView = ApiVideoPlayerView(
             frame: .zero,
-            videoOptions: videoOptions
+            videoOptions: nil,
+            hideControls: false,
+            autoplay: autoplay
         )
-        self.events = events
         super.init(nibName: nil, bundle: nil)
         playerView.addDelegate(self)
-    }
+        playerView.viewController = self
 
-    deinit {
-        playerView.removeDelegate(self)
     }
 
     override public func viewDidLoad() {
@@ -36,141 +36,57 @@ public class SwiftUIPlayerViewController: UIViewController {
             self.playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-
-    override public func viewDidAppear(_ animated: Bool) {
-        self.playerView.viewController = self
-        super.viewDidAppear(animated)
-    }
-
-    override public func viewDidDisappear(_ animated: Bool) {
-        self.playerView.viewController = nil
-        super.viewDidDisappear(animated)
-    }
-
-    public func play() {
-        self.playerView.play()
-    }
-
-    public func pause() {
-        self.playerView.pause()
-    }
-
-    public var isPlaying: Bool {
-        self.playerView.isPlaying
-    }
-
-    public func replay() {
-        self.playerView.replay()
-    }
-
-    public var isMuted: Bool {
-        get { self.playerView.isMuted }
-        set(newValue) { self.playerView.isMuted = newValue }
-    }
-
-    public func hideControls() {
-        self.playerView.hideControls()
-    }
-
-    public func showControls() {
-        self.playerView.showControls()
-    }
-
-    public func hideSubtitle() {
-        self.playerView.hideSubtitle()
-    }
-
-    public func seek(offset: CMTime) {
-        self.playerView.seek(offset: offset)
-    }
-
-    public func seek(to: CMTime) {
-        self.playerView.seek(to: to)
-    }
-
-    public var volume: Float {
-        get {
-            self.playerView.volume
-        }
-        set(newValue) {
-            self.playerView.volume = newValue
-        }
-    }
-
-    public var duration: CMTime {
-        self.playerView.duration
-    }
-
-    public var currentTime: CMTime {
-        self.playerView.currentTime
-    }
-
-    public func goToFullScreen() {
-        self.playerView.goToFullScreen()
-    }
-
-    public var isLooping: Bool {
-        get {
-            self.playerView.isLooping
-        }
-        set(newValue) {
-            self.playerView.isLooping = newValue
-        }
-    }
-
 }
 
 extension SwiftUIPlayerViewController: PlayerDelegate {
     public func didPrepare() {
-        events?.didPrepare?()
+        print("app didPrepare")
     }
 
     public func didReady() {
-        events?.didReady?()
+        print("app didReady")
     }
 
     public func didPause() {
-        events?.didPause?()
+        print("app didPause")
     }
 
     public func didPlay() {
-        events?.didPlay?()
+        onPlay?()
     }
 
     public func didReplay() {
-        events?.didReplay?()
+        print("app didReplay")
     }
 
     public func didMute() {
-        events?.didMute?()
+        print("app didMute")
     }
 
     public func didUnMute() {
-        events?.didUnmute?()
+        print("app didUnMute")
     }
 
     public func didLoop() {
-        events?.didLoop?()
+        print("app didLoop")
     }
 
-    public func didSetVolume(_ volume: Float) {
-        events?.didSetVolume?(volume)
+    public func didSetVolume(_: Float) {
+        print("app didSetVolume")
     }
 
-    public func didSeek(_ from: CMTime, _ to: CMTime) {
-        events?.didSeek?(from, to)
+    public func didSeek(_: CMTime, _: CMTime) {
+        print("app didSeek")
     }
 
     public func didEnd() {
-        events?.didEnd?()
+        print("app didEnd")
     }
 
     public func didError(_ error: Error) {
-        events?.didError?(error)
+        print("app didError: \(error)")
     }
 
-    public func didVideoSizeChanged(_ size: CGSize) {
-        events?.didVideoSizeChanged?(size)
-    }
+    public func didVideoSizeChanged(_: CGSize) {}
 }
 #endif

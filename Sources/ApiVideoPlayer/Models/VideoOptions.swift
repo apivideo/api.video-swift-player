@@ -1,7 +1,7 @@
 import Foundation
 
 /// Description of a video.
-public struct VideoOptions {
+public struct VideoOptions: Equatable {
     /// The video Id (from api.video) of the video.
     public let videoId: String
     /// The video type of the video(ie VOD or Live).
@@ -43,6 +43,10 @@ public struct VideoOptions {
 
         self.mp4Url = "\(vodUrl)/mp4/source.mp4"
         self.thumbnailUrl = "\(vodUrl)/thumbnail.jpg"
+    }
+
+    public static func == (lhs: VideoOptions, rhs: VideoOptions) -> Bool {
+        (lhs.videoId == rhs.videoId) && (lhs.videoType == rhs.videoType) && (lhs.token == rhs.token)
     }
 }
 
