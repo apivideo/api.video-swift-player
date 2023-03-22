@@ -255,7 +255,7 @@ class ControlsView: UIView {
     }
 }
 
-extension ControlsView: PlayerDelegate {
+extension ControlsView: ApiVideoPlayerControllerPlayerDelegate {
     func didPrepare() {}
 
     func didReady() {

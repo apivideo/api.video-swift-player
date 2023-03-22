@@ -2,27 +2,27 @@ import CoreMedia
 import Foundation
 
 public class ApiVideoPlayerControllerMulticastDelegate {
-    private let multicast = MulticastDelegate<PlayerDelegate>()
+    private let multicast = MulticastDelegate<ApiVideoPlayerControllerPlayerDelegate>()
 
-    init(_ delegates: [PlayerDelegate] = []) {
+    init(_ delegates: [ApiVideoPlayerControllerPlayerDelegate] = []) {
         addDelegates(delegates)
     }
 
-    func addDelegate(_ delegate: PlayerDelegate) {
+    func addDelegate(_ delegate: ApiVideoPlayerControllerPlayerDelegate) {
         multicast.add(delegate)
     }
 
-    func addDelegates(_ delegates: [PlayerDelegate]) {
+    func addDelegates(_ delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         delegates.forEach {
             addDelegate($0)
         }
     }
 
-    func removeDelegate(_ delegate: PlayerDelegate) {
+    func removeDelegate(_ delegate: ApiVideoPlayerControllerPlayerDelegate) {
         multicast.remove(delegate)
     }
 
-    func removeDelegates(_ delegates: [PlayerDelegate]) {
+    func removeDelegates(_ delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         delegates.forEach {
             removeDelegate($0)
         }
@@ -31,7 +31,7 @@ public class ApiVideoPlayerControllerMulticastDelegate {
 
 // MARK: PlayerDelegate
 
-extension ApiVideoPlayerControllerMulticastDelegate: PlayerDelegate {
+extension ApiVideoPlayerControllerMulticastDelegate: ApiVideoPlayerControllerPlayerDelegate {
 
     public func didPrepare() {
         multicast.invoke {

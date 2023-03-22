@@ -79,26 +79,26 @@ public class ApiVideoPlayerView: UIView {
     /// Adds the provided player delegate.
     /// When the delegate is not used anymore, it should be removed with ``removeDelegate(_:)``.
     /// - Parameter delegate: The player delegate to be added.
-    public func addDelegate(_ delegate: PlayerDelegate) {
+    public func addDelegate(_ delegate: ApiVideoPlayerControllerPlayerDelegate) {
         playerController.addDelegate(delegate: delegate)
     }
 
     /// Adds the provided player delegates.
     /// When the delegates are not used anymore, it should be removed with ``removeDelegate(_:)``.
     /// - Parameter delegates: The array of player delegate to be added.
-    public func addDelegates(_ delegates: [PlayerDelegate]) {
+    public func addDelegates(_ delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         playerController.addDelegates(delegates: delegates)
     }
 
     /// Removes the provided delegate.
     /// - Parameter delegate: The player delegate to be removed.
-    public func removeDelegate(_ delegate: PlayerDelegate) {
+    public func removeDelegate(_ delegate: ApiVideoPlayerControllerPlayerDelegate) {
         playerController.removeDelegate(delegate: delegate)
     }
 
     /// Removes the provided delegates.
     /// - Parameter delegates: The array of player delegate to be removed.
-    public func removeDelegates(_ delegates: [PlayerDelegate]) {
+    public func removeDelegates(_ delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         playerController.removeDelegates(delegates: delegates)
     }
 

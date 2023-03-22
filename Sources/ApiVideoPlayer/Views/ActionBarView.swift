@@ -162,7 +162,7 @@ class ActionBarView: UIView {
     }
 }
 
-extension ActionBarView: PlayerDelegate {
+extension ActionBarView: ApiVideoPlayerControllerPlayerDelegate {
     func didPrepare() {}
 
     func didReady() {

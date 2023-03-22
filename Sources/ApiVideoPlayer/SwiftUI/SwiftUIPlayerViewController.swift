@@ -120,7 +120,7 @@ public class SwiftUIPlayerViewController: UIViewController {
 
 }
 
-extension SwiftUIPlayerViewController: PlayerDelegate {
+extension SwiftUIPlayerViewController: ApiVideoPlayerControllerPlayerDelegate {
     public func didPrepare() {
         events?.didPrepare?()
     }

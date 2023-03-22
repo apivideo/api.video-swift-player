@@ -67,7 +67,7 @@ class MockedPlayerDelegate {
 
 // MARK: PlayerDelegate
 
-extension MockedPlayerDelegate: PlayerDelegate {
+extension MockedPlayerDelegate: ApiVideoPlayerControllerPlayerDelegate {
     func didPrepare() {
         print("test didPrepare")
         completedExpectationPrepare?.fulfill()

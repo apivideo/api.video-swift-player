@@ -288,7 +288,7 @@ class PlayerViewController: UIViewController {
 
 // MARK: PlayerDelegate
 
-extension PlayerViewController: PlayerDelegate {
+extension PlayerViewController: ApiVideoPlayerControllerPlayerDelegate {
     public func didPrepare() {
         print("app didPrepare")
     }

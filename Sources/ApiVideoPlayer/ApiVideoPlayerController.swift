@@ -26,7 +26,7 @@ public class ApiVideoPlayerController: NSObject {
     public convenience init(
         videoOptions: VideoOptions?,
         playerLayer: AVPlayerLayer,
-        delegates: [PlayerDelegate] = [],
+        delegates: [ApiVideoPlayerControllerPlayerDelegate] = [],
         autoplay: Bool = false
     ) {
         self.init(
@@ -46,7 +46,7 @@ public class ApiVideoPlayerController: NSObject {
     ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default is``TasksExecutor``.
     public init(
         videoOptions: VideoOptions?,
-        delegates: [PlayerDelegate] = [],
+        delegates: [ApiVideoPlayerControllerPlayerDelegate] = [],
         autoplay: Bool = false,
         taskExecutor: TasksExecutorProtocol.Type = TasksExecutor.self
     ) {
@@ -99,26 +99,26 @@ public class ApiVideoPlayerController: NSObject {
     /// Adds the provided player delegate.
     /// When the delegate is not used anymore, it should be removed with ``removeDelegate(_:)``.
     /// - Parameter delegate: The player delegate to be added.
-    func addDelegate(delegate: PlayerDelegate) {
+    func addDelegate(delegate: ApiVideoPlayerControllerPlayerDelegate) {
         multicastDelegate.addDelegate(delegate)
     }
 
     /// Adds the provided player delegates.
     /// When the delegates are not used anymore, it should be removed with ``removeDelegate(_:)``.
     /// - Parameter delegates: The array of player delegate to be added.
-    func addDelegates(delegates: [PlayerDelegate]) {
+    func addDelegates(delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         multicastDelegate.addDelegates(delegates)
     }
 
     /// Removes the provided delegate.
     /// - Parameter delegate: The player delegate to be removed.
-    func removeDelegate(delegate: PlayerDelegate) {
+    func removeDelegate(delegate: ApiVideoPlayerControllerPlayerDelegate) {
         multicastDelegate.removeDelegate(delegate)
     }
 
     /// Removes the provided delegates.
     /// - Parameter delegates: The array of player delegate to be removed.
-    func removeDelegates(delegates: [PlayerDelegate]) {
+    func removeDelegates(delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         multicastDelegate.removeDelegates(delegates)
     }
 

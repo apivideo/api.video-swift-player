@@ -1,7 +1,7 @@
 import AVFoundation
 import Foundation
 /// An interface that delegates of an instance to handle the player events.
-public protocol PlayerDelegate: AnyObject {
+public protocol ApiVideoPlayerControllerPlayerDelegate: AnyObject {
     /// Event called before the video URL will passed to the player.
     func didPrepare()
     /// Event called when the player is ready to play video.
