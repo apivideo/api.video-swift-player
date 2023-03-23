@@ -76,9 +76,6 @@ public class ApiVideoPlayerController: NSObject {
     private func retrySetUpPlayerUrlWithMp4() {
         self.playerItemFactory?.getMp4PlayerItem { currentItem in
             self.preparePlayer(playerItem: currentItem)
-            if let urlAsset = currentItem.asset as? AVURLAsset {
-                self.setUpAnalytics(url: urlAsset.url.absoluteString)
-            }
         }
     }
 
@@ -127,6 +124,9 @@ public class ApiVideoPlayerController: NSObject {
             name: .AVPlayerItemDidPlayToEndTime,
             object: playerItem
         )
+        if let urlAsset = playerItem.asset as? AVURLAsset {
+            self.setUpAnalytics(url: urlAsset.url.absoluteString)
+        }
     }
 
     private func notifyError(error: Error) {
@@ -279,9 +279,6 @@ public class ApiVideoPlayerController: NSObject {
             playerItemFactory?.delegate = self
             playerItemFactory?.getHlsPlayerItem { currentItem in
                 self.preparePlayer(playerItem: currentItem)
-                if let urlAsset = currentItem.asset as? AVURLAsset {
-                    self.setUpAnalytics(url: urlAsset.url.absoluteString)
-                }
             }
         }
     }
