@@ -72,24 +72,6 @@ public class ApiVideoPlayerController: NSObject {
         )
     }
 
-    private func getVideoUrl(videoOptions: VideoOptions) -> String {
-        let privateToken: String? = nil
-        var baseUrl = ""
-        if videoOptions.videoType == .vod {
-            baseUrl = "https://cdn.api.video/vod/"
-        } else {
-            baseUrl = "https://live.api.video/"
-        }
-        var url: String!
-
-        if let privateToken = privateToken {
-            url = baseUrl + "\(videoOptions.videoId)/token/\(privateToken)/player.json"
-        } else {
-            url = baseUrl + "\(videoOptions.videoId)/player.json"
-        }
-        return url
-    }
-
     private func retrySetUpPlayerUrlWithMp4() {
         self.playerItemFactory?.getMp4PlayerItem { currentItem in
             self.preparePlayer(playerItem: currentItem)
