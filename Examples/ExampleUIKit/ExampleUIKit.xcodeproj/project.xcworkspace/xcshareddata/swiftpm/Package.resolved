@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apivideo/api.video-ios-player-analytics",
       "state" : {
-        "revision" : "c34d58405161c8055ee14b33af7a06ff4e55d00a",
-        "version" : "1.0.4"
+        "revision" : "1d479316c75de5045dc12e471351e70a55f32270",
+        "version" : "1.0.5"
       }
     }
   ],
