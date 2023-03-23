@@ -43,7 +43,8 @@ public class ApiVideoPlayerController: NSObject {
     ///   - videoOptions: The video to play.
     ///   - delegates: The delegates of the player events.
     ///   - autoplay: True to play the video when it has been loaded, false to wait for an explicit play.
-    ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default is``TasksExecutor``.
+    ///   - taskExecutor: The executor for the calls to the private session endpoint. Only for test purpose. Default
+    /// is``TasksExecutor``.
     public init(
         videoOptions: VideoOptions?,
         delegates: [PlayerDelegate] = [],
@@ -75,6 +76,9 @@ public class ApiVideoPlayerController: NSObject {
     private func retrySetUpPlayerUrlWithMp4() {
         self.playerItemFactory?.getMp4PlayerItem { currentItem in
             self.preparePlayer(playerItem: currentItem)
+            if let urlAsset = currentItem.asset as? AVURLAsset {
+                self.setUpAnalytics(url: urlAsset.url.absoluteString)
+            }
         }
     }
 
@@ -146,7 +150,8 @@ public class ApiVideoPlayerController: NSObject {
     /// Requests invocation of a block during playback to report changing time.
     ///
     /// - Parameter callback: The block to be invoked periodically during playback.
-    /// - Returns: You must retain this returned value as long as you want the time observer to be invoked by the player.
+    /// - Returns: You must retain this returned value as long as you want the time observer to be invoked by the
+    /// player.
     public func addTimerObserver(callback: @escaping () -> Void) -> Any {
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         return avPlayer.addPeriodicTimeObserver(
@@ -274,6 +279,9 @@ public class ApiVideoPlayerController: NSObject {
             playerItemFactory?.delegate = self
             playerItemFactory?.getHlsPlayerItem { currentItem in
                 self.preparePlayer(playerItem: currentItem)
+                if let urlAsset = currentItem.asset as? AVURLAsset {
+                    self.setUpAnalytics(url: urlAsset.url.absoluteString)
+                }
             }
         }
     }
@@ -453,6 +461,12 @@ public class ApiVideoPlayerController: NSObject {
             if self.autoplay {
                 self.play()
             }
+            self.analytics?.ready { result in
+                switch result {
+                case .success: break
+                case let .failure(error): print("analytics error ready event: \(error)")
+                }
+            }
         }
     }
 
@@ -483,14 +497,14 @@ public class ApiVideoPlayerController: NSObject {
             self.isFirstPlay = false
             self.analytics?.play { result in
                 switch result {
-                case .success: return
+                case .success: break
                 case let .failure(error): print("analytics error on play event: \(error)")
                 }
             }
         } else {
             self.analytics?.resume { result in
                 switch result {
-                case .success: return
+                case .success: break
                 case let .failure(error): print("analytics error on resume event: \(error)")
                 }
             }
