@@ -12,13 +12,11 @@
 		C75C78F727E1E1FA001CA24D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F527E1E1FA001CA24D /* Main.storyboard */; };
 		C75C78F927E1E1FD001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F827E1E1FD001CA24D /* Assets.xcassets */; };
 		C75C78FC27E1E1FD001CA24D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */; };
-		C772528A29D427DA0027B874 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C772528929D427DA0027B874 /* ApiVideoPlayer */; };
+		C7773B6429D44901007897D8 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7773B6329D44901007897D8 /* ApiVideoPlayer */; };
 		C7922D942811685C00957116 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7922D932811685B00957116 /* PlayerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
-		C733377C29D4258100A6116C /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sources; path = ../../Sources; sourceTree = "<group>"; };
 		C75C78EC27E1E1FA001CA24D /* PlayerUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlayerUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -26,10 +24,8 @@
 		C75C78F827E1E1FD001CA24D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C75C78FB27E1E1FD001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C75C78FD27E1E1FD001CA24D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C7773B6229D448B0007897D8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
 		C7922D932811685B00957116 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
-		C7D8D6BF29D426DB00A0D0A8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
-		C7D8D6C029D426F100A0D0A8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
-		C7D8D6C129D4273500A0D0A8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C772528A29D427DA0027B874 /* ApiVideoPlayer in Frameworks */,
+				C7773B6429D44901007897D8 /* ApiVideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,10 +43,9 @@
 		C75C78E327E1E1FA001CA24D = {
 			isa = PBXGroup;
 			children = (
-				C7D8D6BE29D426DB00A0D0A8 /* Packages */,
 				C75C78EE27E1E1FA001CA24D /* PlayerUIkit */,
 				C75C78ED27E1E1FA001CA24D /* Products */,
-				C75C795227E1E6AB001CA24D /* Frameworks */,
+				C7773B6129D448B0007897D8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -76,23 +71,12 @@
 			path = PlayerUIkit;
 			sourceTree = "<group>";
 		};
-		C75C795227E1E6AB001CA24D /* Frameworks */ = {
+		C7773B6129D448B0007897D8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C733377C29D4258100A6116C /* Sources */,
-				C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */,
+				C7773B6229D448B0007897D8 /* api.video-swift-player */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		C7D8D6BE29D426DB00A0D0A8 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				C7D8D6BF29D426DB00A0D0A8 /* api.video-swift-player */,
-				C7D8D6C029D426F100A0D0A8 /* api.video-swift-player */,
-				C7D8D6C129D4273500A0D0A8 /* api.video-swift-player */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,7 +96,7 @@
 			);
 			name = PlayerUIKit;
 			packageProductDependencies = (
-				C772528929D427DA0027B874 /* ApiVideoPlayer */,
+				C7773B6329D44901007897D8 /* ApiVideoPlayer */,
 			);
 			productName = ExampleiOS;
 			productReference = C75C78EC27E1E1FA001CA24D /* PlayerUIKit.app */;
@@ -399,7 +383,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C772528929D427DA0027B874 /* ApiVideoPlayer */ = {
+		C7773B6329D44901007897D8 /* ApiVideoPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ApiVideoPlayer;
 		};
