@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C75C78EB27E1E1FA001CA24D"
-               BuildableName = "ExampleUIKit.app"
-               BlueprintName = "ExampleUIKit"
-               ReferencedContainer = "container:ExampleUIKit.xcodeproj">
+               BuildableName = "PlayerUIKit.app"
+               BlueprintName = "PlayerUIKit"
+               ReferencedContainer = "container:PlayerUIKit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C75C78EB27E1E1FA001CA24D"
-            BuildableName = "ExampleUIKit.app"
-            BlueprintName = "ExampleUIKit"
-            ReferencedContainer = "container:ExampleUIKit.xcodeproj">
+            BuildableName = "PlayerUIKit.app"
+            BlueprintName = "PlayerUIKit"
+            ReferencedContainer = "container:PlayerUIKit.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -63,9 +63,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C75C78EB27E1E1FA001CA24D"
-            BuildableName = "ExampleUIKit.app"
-            BlueprintName = "ExampleUIKit"
-            ReferencedContainer = "container:ExampleUIKit.xcodeproj">
+            BuildableName = "PlayerUIKit.app"
+            BlueprintName = "PlayerUIKit"
+            ReferencedContainer = "container:PlayerUIKit.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

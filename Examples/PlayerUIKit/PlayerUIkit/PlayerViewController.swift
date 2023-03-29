@@ -5,7 +5,7 @@ import UIKit
 class PlayerViewController: UIViewController {
     let playerView: ApiVideoPlayerView = .init(
         frame: .zero,
-        videoOptions: VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod)
+        videoOptions: VideoOptions(videoId: "vi6vt0hYM4eh7pbCazkDLbPl", videoType: .vod)
     )
 
     let scrollView: UIScrollView = {
@@ -286,7 +286,7 @@ class PlayerViewController: UIViewController {
     }
 }
 
-// MARK: PlayerDelegate
+// MARK: ApiVideoPlayerControllerPlayerDelegate
 
 extension PlayerViewController: ApiVideoPlayerControllerPlayerDelegate {
     public func didPrepare() {

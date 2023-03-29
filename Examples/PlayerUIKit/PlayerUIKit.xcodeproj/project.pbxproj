@@ -12,13 +12,14 @@
 		C75C78F727E1E1FA001CA24D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F527E1E1FA001CA24D /* Main.storyboard */; };
 		C75C78F927E1E1FD001CA24D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75C78F827E1E1FD001CA24D /* Assets.xcassets */; };
 		C75C78FC27E1E1FD001CA24D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75C78FA27E1E1FD001CA24D /* LaunchScreen.storyboard */; };
+		C772528A29D427DA0027B874 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C772528929D427DA0027B874 /* ApiVideoPlayer */; };
 		C7922D942811685C00957116 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7922D932811685B00957116 /* PlayerViewController.swift */; };
-		C7BDF0DA28F22B1B00CBDC45 /* ApiVideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = C7BDF0D928F22B1B00CBDC45 /* ApiVideoPlayer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ApiVideoPlayer; path = ../..; sourceTree = "<group>"; };
-		C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C733377C29D4258100A6116C /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sources; path = ../../Sources; sourceTree = "<group>"; };
+		C75C78EC27E1E1FA001CA24D /* PlayerUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlayerUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C75C78F127E1E1FA001CA24D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C75C78F627E1E1FA001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -26,6 +27,9 @@
 		C75C78FB27E1E1FD001CA24D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C75C78FD27E1E1FD001CA24D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C7922D932811685B00957116 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		C7D8D6BF29D426DB00A0D0A8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
+		C7D8D6C029D426F100A0D0A8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
+		C7D8D6C129D4273500A0D0A8 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7BDF0DA28F22B1B00CBDC45 /* ApiVideoPlayer in Frameworks */,
+				C772528A29D427DA0027B874 /* ApiVideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,7 +47,8 @@
 		C75C78E327E1E1FA001CA24D = {
 			isa = PBXGroup;
 			children = (
-				C75C78EE27E1E1FA001CA24D /* ExampleUIkit */,
+				C7D8D6BE29D426DB00A0D0A8 /* Packages */,
+				C75C78EE27E1E1FA001CA24D /* PlayerUIkit */,
 				C75C78ED27E1E1FA001CA24D /* Products */,
 				C75C795227E1E6AB001CA24D /* Frameworks */,
 			);
@@ -52,12 +57,12 @@
 		C75C78ED27E1E1FA001CA24D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */,
+				C75C78EC27E1E1FA001CA24D /* PlayerUIKit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C75C78EE27E1E1FA001CA24D /* ExampleUIkit */ = {
+		C75C78EE27E1E1FA001CA24D /* PlayerUIkit */ = {
 			isa = PBXGroup;
 			children = (
 				C75C78EF27E1E1FA001CA24D /* AppDelegate.swift */,
@@ -68,23 +73,34 @@
 				C75C78FD27E1E1FD001CA24D /* Info.plist */,
 				C7922D932811685B00957116 /* PlayerViewController.swift */,
 			);
-			path = ExampleUIkit;
+			path = PlayerUIkit;
 			sourceTree = "<group>";
 		};
 		C75C795227E1E6AB001CA24D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C733377C29D4258100A6116C /* Sources */,
 				C72B1B5D2875CDE500A6EAEF /* ApiVideoPlayer */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C7D8D6BE29D426DB00A0D0A8 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				C7D8D6BF29D426DB00A0D0A8 /* api.video-swift-player */,
+				C7D8D6C029D426F100A0D0A8 /* api.video-swift-player */,
+				C7D8D6C129D4273500A0D0A8 /* api.video-swift-player */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C75C78EB27E1E1FA001CA24D /* ExampleUIKit */ = {
+		C75C78EB27E1E1FA001CA24D /* PlayerUIKit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "ExampleUIKit" */;
+			buildConfigurationList = C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "PlayerUIKit" */;
 			buildPhases = (
 				C75C78E827E1E1FA001CA24D /* Sources */,
 				C75C78E927E1E1FA001CA24D /* Frameworks */,
@@ -94,12 +110,12 @@
 			);
 			dependencies = (
 			);
-			name = ExampleUIKit;
+			name = PlayerUIKit;
 			packageProductDependencies = (
-				C7BDF0D928F22B1B00CBDC45 /* ApiVideoPlayer */,
+				C772528929D427DA0027B874 /* ApiVideoPlayer */,
 			);
 			productName = ExampleiOS;
-			productReference = C75C78EC27E1E1FA001CA24D /* ExampleUIKit.app */;
+			productReference = C75C78EC27E1E1FA001CA24D /* PlayerUIKit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -117,7 +133,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "ExampleUIKit" */;
+			buildConfigurationList = C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "PlayerUIKit" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -132,7 +148,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C75C78EB27E1E1FA001CA24D /* ExampleUIKit */,
+				C75C78EB27E1E1FA001CA24D /* PlayerUIKit */,
 			);
 		};
 /* End PBXProject section */
@@ -308,7 +324,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ExampleUIKit/Info.plist;
+				INFOPLIST_FILE = PlayerUIKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -321,7 +337,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = video.api.player.ExampleUIKit;
+				PRODUCT_BUNDLE_IDENTIFIER = video.api.player.PlayerUIKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -338,7 +354,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ExampleUIKit/Info.plist;
+				INFOPLIST_FILE = PlayerUIKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -351,7 +367,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = video.api.player.ExampleUIKit;
+				PRODUCT_BUNDLE_IDENTIFIER = video.api.player.PlayerUIKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -362,7 +378,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "ExampleUIKit" */ = {
+		C75C78E727E1E1FA001CA24D /* Build configuration list for PBXProject "PlayerUIKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75C78FE27E1E1FD001CA24D /* Debug */,
@@ -371,7 +387,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "ExampleUIKit" */ = {
+		C75C790027E1E1FD001CA24D /* Build configuration list for PBXNativeTarget "PlayerUIKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C75C790127E1E1FD001CA24D /* Debug */,
@@ -383,7 +399,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C7BDF0D928F22B1B00CBDC45 /* ApiVideoPlayer */ = {
+		C772528929D427DA0027B874 /* ApiVideoPlayer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ApiVideoPlayer;
 		};
