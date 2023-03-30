@@ -26,6 +26,8 @@ your app.
 Easily integrate a video player for videos from [api.video](https://api.video) in your iOS
 application.
 
+![](https://github.com/apivideo/api.video-swift-player/blob/chore/preview/Assets/player-preview.png)
+
 # Getting started
 
 ## Installation
