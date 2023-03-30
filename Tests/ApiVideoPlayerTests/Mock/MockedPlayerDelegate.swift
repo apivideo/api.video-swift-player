@@ -65,7 +65,7 @@ class MockedPlayerDelegate {
     }
 }
 
-// MARK: PlayerDelegate
+// MARK: ApiVideoPlayerControllerPlayerDelegate
 
 extension MockedPlayerDelegate: ApiVideoPlayerControllerPlayerDelegate {
     func didPrepare() {

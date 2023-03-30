@@ -29,7 +29,7 @@ public class ApiVideoPlayerControllerMulticastDelegate {
     }
 }
 
-// MARK: PlayerDelegate
+// MARK: ApiVideoPlayerControllerPlayerDelegate
 
 extension ApiVideoPlayerControllerMulticastDelegate: ApiVideoPlayerControllerPlayerDelegate {
 

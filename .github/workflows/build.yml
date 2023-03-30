@@ -37,10 +37,10 @@ jobs:
           scheme: ${{ 'default' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild clean build -project Examples/ExampleUIKit/ExampleUIKit.xcodeproj -scheme $scheme -sdk iphoneos
+          xcodebuild clean build -project Examples/PlayerUIKit/PlayerUIKit.xcodeproj -scheme $scheme -sdk iphoneos
       - name: Build Example SwiftUI
         env:
           scheme: ${{ 'default' }}
         run: |
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          xcodebuild clean build -project Examples/ExampleSwiftUI/ExampleSwiftUI.xcodeproj -scheme $scheme -sdk iphoneos
+          xcodebuild clean build -project Examples/PlayerSwiftUI/PlayerSwiftUI.xcodeproj -scheme $scheme -sdk iphoneos
