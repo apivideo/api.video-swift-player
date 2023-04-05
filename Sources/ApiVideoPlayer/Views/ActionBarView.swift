@@ -30,6 +30,7 @@ class ActionBarView: UIView {
     private let actionStackView: UIStackView = {
         let hStack = UIStackView()
         hStack.axis = .horizontal
+        hStack.spacing = 10
         hStack.distribution = .fillEqually
         hStack.alignment = .center
         return hStack
@@ -40,6 +41,14 @@ class ActionBarView: UIView {
         btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
         btn.tintColor = .white
         btn.isHidden = true
+        btn.sizeToFit()
+        return btn
+    }()
+
+    let speedometerButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
+        btn.tintColor = .white
         btn.sizeToFit()
         return btn
     }()
@@ -93,10 +102,12 @@ class ActionBarView: UIView {
 
         bottomActionView.addSubview(actionStackView)
         actionStackView.addArrangedSubview(subtitleButton)
+        actionStackView.addArrangedSubview(speedometerButton)
         bottomActionView.addSubview(liveButton)
 
         liveButton.addTarget(self, action: #selector(goToLive), for: .touchUpInside)
         subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
+        speedometerButton.addTarget(self, action: #selector(self.toggleSpeedometerView), for: .touchUpInside)
 
         addConstraints()
     }
@@ -160,6 +171,9 @@ class ActionBarView: UIView {
     private func toggleSubtitleView() {
         delegate?.subtitleButtonTapped(subtitleButton: subtitleButton)
     }
+
+    @objc
+    private func toggleSpeedometerView() {}
 }
 
 extension ActionBarView: ApiVideoPlayerControllerPlayerDelegate {
