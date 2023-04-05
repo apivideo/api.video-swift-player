@@ -15,6 +15,7 @@ public class ApiVideoPlayerController: NSObject {
     private let taskExecutor: TasksExecutorProtocol.Type
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
     private var playerItemFactory: ApiVideoPlayerItemFactory?
+    private var storedVideoSpeed: Double?
 
     #if !os(macOS)
     /// Initializes a player controller.
@@ -206,6 +207,9 @@ public class ApiVideoPlayerController: NSObject {
     /// Plays the video.
     public func play() {
         self.avPlayer.play()
+        if storedVideoSpeed != nil, storedVideoSpeed != 1.0 {
+            self.avPlayer.rate = Float(self.storedVideoSpeed ?? 1.0)
+        }
     }
 
     private func seekImpl(to time: CMTime, completion: @escaping (Bool) -> Void) {
@@ -387,6 +391,10 @@ public class ApiVideoPlayerController: NSObject {
         return nil
     }
 
+    public var currentSpeedRate: Double? {
+        return Double(avPlayer.rate)
+    }
+
     /// Sets the current subtitle locale.
     /// - Parameter locale: The new subtitle locale
     public func setCurrentSubtitleLocale(locale: Locale) {
@@ -398,6 +406,11 @@ public class ApiVideoPlayerController: NSObject {
                 playerItem.select(option, in: group)
             }
         }
+    }
+
+    public func setCurrentSpeedRate(speed: Double) {
+        self.storedVideoSpeed = speed
+        avPlayer.rate = Float(speed)
     }
 
     /// Hides the current subtitle.

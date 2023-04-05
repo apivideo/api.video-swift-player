@@ -173,7 +173,9 @@ class ActionBarView: UIView {
     }
 
     @objc
-    private func toggleSpeedometerView() {}
+    private func toggleSpeedometerView() {
+        delegate?.speedometerButtonTapped(speedometerButton: speedometerButton)
+    }
 }
 
 extension ActionBarView: ApiVideoPlayerControllerPlayerDelegate {
@@ -257,10 +259,15 @@ extension ActionBarView: TimeSliderViewDelegate {
 
 public protocol ActionBarViewDelegate: AnyObject {
     func subtitleButtonTapped(subtitleButton: UIButton)
-
+    func speedometerButtonTapped(speedometerButton: UIButton)
     func sliderValueChangedDidStart(position: Float64)
     func sliderValueChangedDidMove(position: Float64)
     func sliderValueChangedDidStop(position: Float64)
+}
+
+public enum ButtonType {
+    case subtitle
+    case speedometer
 }
 
 #endif
