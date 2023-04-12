@@ -394,7 +394,7 @@ extension ControlsView: SubtitleViewDelegate {
 }
 
 extension ControlsView: SpeedometerViewDelegate {
-    func speedSelected(speed: Double?) {
+    func speedSelected(speed: Float?) {
         playerController.setCurrentSpeedRate(speed: speed ?? 1.0)
         removeSpeedometerView()
     }

@@ -7,12 +7,12 @@ class SpeedometerListView: UIView {
     private var tableview = UITableView()
     private let cellReuseIdentifier = "CellWithTextField"
 
-    private let speeds = [0.5, 1.0, 1.25, 1.5, 2.0]
-    private var selectedSpeed: Double
+    private let speeds: [Float] = [0.5, 1.0, 1.25, 1.5, 2.0]
+    private var selectedSpeed: Float
 
     public weak var delegate: SpeedometerViewDelegate?
 
-    public init(frame: CGRect, selectedSpeed: Double?) {
+    public init(frame: CGRect, selectedSpeed: Float?) {
 
         self.selectedSpeed = selectedSpeed ?? 1.0
 
@@ -93,12 +93,12 @@ extension SpeedometerListView: UITableViewDataSource, UITableViewDelegate {
         delegate?.speedSelected(speed: selectedRowSpeed)
     }
 
-    private func getRowForSpeed(_ speed: Double) -> Int? {
+    private func getRowForSpeed(_ speed: Float) -> Int? {
         speeds.firstIndex(of: speed)
     }
 }
 
 public protocol SpeedometerViewDelegate: AnyObject {
-    func speedSelected(speed: Double?)
+    func speedSelected(speed: Float?)
 }
 #endif
