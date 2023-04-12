@@ -393,11 +393,20 @@ public class ApiVideoPlayerController: NSObject {
         return nil
     }
 
-    public var currentSpeedRate: Float? {
-        if #available(iOS 16.0, *) {
-            return avPlayer.defaultRate
-        } else {
-            return avPlayer.rate
+    public var currentSpeedRate: Float {
+        get {
+            if #available(iOS 16.0, *) {
+                return avPlayer.defaultRate
+            } else {
+                return storedVideoSpeed ?? 1.0
+            }
+        }
+        set(newRate) {
+            if #available(iOS 16.0, *) {
+                avPlayer.defaultRate = newRate
+            } else {
+                storedVideoSpeed = newRate
+            }
         }
     }
 
@@ -411,15 +420,6 @@ public class ApiVideoPlayerController: NSObject {
             if let option = options.first {
                 playerItem.select(option, in: group)
             }
-        }
-    }
-
-    public func setCurrentSpeedRate(speed: Float) {
-        if #available(iOS 16.0, *) {
-            avPlayer.defaultRate = speed
-        } else {
-            self.storedVideoSpeed = speed
-            avPlayer.rate = speed
         }
     }
 
