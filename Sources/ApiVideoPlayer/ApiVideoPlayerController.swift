@@ -207,8 +207,10 @@ public class ApiVideoPlayerController: NSObject {
     /// Plays the video.
     public func play() {
         self.avPlayer.play()
-        if storedVideoSpeed != nil, storedVideoSpeed != 1.0 {
-            self.avPlayer.rate = Float(self.storedVideoSpeed ?? 1.0)
+        if let storedSpeed = storedVideoSpeed {
+            if storedSpeed != Float(1.0) {
+                self.avPlayer.rate = storedSpeed
+            }
         }
     }
 
