@@ -9,8 +9,8 @@ class ControlsView: UIView {
     private let actionBarView: ActionBarView
     private let timer = ScheduledTimer()
 
-    private var subtitleView: SubtitleListView?
-    private var speedometerView: SpeedometerListView?
+    private var subtitleView: SelectableListView<SubtitleLanguage>?
+    private var speedometerView: SelectableListView<Float>?
 
     public var viewController: UIViewController? {
         didSet {
@@ -323,10 +323,13 @@ extension ControlsView: ActionBarViewDelegate {
             {
                 removeSubtitleView()
             } else {
-                let notOptionalSubtitleView = SubtitleListView(
+                var languages: [SubtitleLanguage] = [SubtitleLanguage.off]
+                playerController.subtitleLocales.forEach { languages.append($0.toSubtitleLanguage()) }
+                let notOptionalSubtitleView = SelectableListView(
                     frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                    locales: playerController.subtitleLocales,
-                    selectedLocale: playerController.currentSubtitleLocale
+                    list: languages,
+                    selectedElement: playerController.currentSubtitleLocale?.toSubtitleLanguage() ?? SubtitleLanguage
+                        .off
                 )
                 notOptionalSubtitleView.delegate = self
                 addSubview(notOptionalSubtitleView)
@@ -346,9 +349,10 @@ extension ControlsView: ActionBarViewDelegate {
             {
                 removeSpeedometerView()
             } else {
-                let notOptionalSpeedometerView = SpeedometerListView(
+                let notOptionalSpeedometerView = SelectableListView(
                     frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                    selectedSpeed: playerController.currentSpeedRate
+                    list: [0.5, 1.0, 1.25, 1.5, 2.0],
+                    selectedElement: playerController.currentSpeedRate
                 )
                 notOptionalSpeedometerView.delegate = self
                 addSubview(notOptionalSpeedometerView)
@@ -393,12 +397,20 @@ extension ControlsView: SubtitleViewDelegate {
     }
 }
 
-extension ControlsView: SpeedometerViewDelegate {
-    func speedSelected(speed: Float?) {
-        playerController.currentSpeedRate = speed ?? 1.0
-        removeSpeedometerView()
+extension ControlsView: SelectableViewDelegate {
+    func newElementSelected(element: Any) {
+        if let valueFloat = element as? Float {
+            playerController.currentSpeedRate = valueFloat
+            removeSpeedometerView()
+        }
+        if let valueLocale = element as? Locale {
+            playerController.setCurrentSubtitleLocale(locale: valueLocale)
+            removeSubtitleView()
+        } else {
+            playerController.hideSubtitle()
+            removeSubtitleView()
+        }
     }
-
 }
 
 extension ControlsView: ScheduledTimerDelegate {

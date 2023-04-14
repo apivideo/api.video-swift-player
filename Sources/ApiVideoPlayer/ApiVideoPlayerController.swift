@@ -404,6 +404,10 @@ public class ApiVideoPlayerController: NSObject {
         set(newRate) {
             if #available(iOS 16.0, *) {
                 avPlayer.defaultRate = newRate
+                // if isplaying update the new video rate by forcing play
+                if isPlaying {
+                    play()
+                }
             } else {
                 storedVideoSpeed = newRate
             }
