@@ -386,17 +386,6 @@ extension ControlsView: ActionBarViewDelegate {
     }
 }
 
-extension ControlsView: SubtitleViewDelegate {
-    func languageSelected(locale: Locale?) {
-        if let locale = locale {
-            playerController.setCurrentSubtitleLocale(locale: locale)
-        } else {
-            playerController.hideSubtitle()
-        }
-        removeSubtitleView()
-    }
-}
-
 extension ControlsView: SelectableViewDelegate {
     func newElementSelected(element: Any) {
         if let valueFloat = element as? Float {
