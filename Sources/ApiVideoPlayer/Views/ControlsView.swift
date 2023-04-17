@@ -352,7 +352,7 @@ extension ControlsView: ActionBarViewDelegate {
                 let notOptionalSpeedometerView = SelectableListView(
                     frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
                     list: [0.5, 1.0, 1.25, 1.5, 2.0],
-                    selectedElement: playerController.currentSpeedRate
+                    selectedElement: playerController.speedRate
                 )
                 notOptionalSpeedometerView.delegate = self
                 addSubview(notOptionalSpeedometerView)
@@ -389,7 +389,7 @@ extension ControlsView: ActionBarViewDelegate {
 extension ControlsView: SelectableViewDelegate {
     func newElementSelected(element: Any) {
         if let valueFloat = element as? Float {
-            playerController.currentSpeedRate = valueFloat
+            playerController.speedRate = valueFloat
             removeSpeedometerView()
         }
         if let valueLocale = element as? Locale {
