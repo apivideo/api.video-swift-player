@@ -3,23 +3,19 @@ import AVFoundation
 import Foundation
 import UIKit
 
-class SelectableListView<T: Equatable>: UIView, UITableViewDataSource, UITableViewDelegate {
+class SelectableListView<T: Equatable & CustomStringConvertible>: UIView, UITableViewDataSource, UITableViewDelegate {
     private var tableview = UITableView()
     private let cellReuseIdentifier = "CellWithTextField"
 
-    private let listAny: [T]
-    private var selectedAny: T?
+    private let elements: [T]
+    private var selectedElement: T
 
-    public weak var delegate: SelectableViewDelegate?
+    public weak var delegate: SelectableListViewDelegate?
 
-    public init(frame: CGRect, list: [T], selectedElement: T?) {
-
-        self.listAny = list
-        self.selectedAny = selectedElement
+    public init(frame: CGRect, elements: [T], selectedElement: T) {
+        self.elements = elements
+        self.selectedElement = selectedElement
         super.init(frame: frame)
-        if let sub = self.selectedAny as? SubtitleLanguage {
-            print(sub.language)
-        }
 
         layer.cornerRadius = 15
         tableview.layer.cornerRadius = 15
@@ -41,7 +37,7 @@ class SelectableListView<T: Equatable>: UIView, UITableViewDataSource, UITableVi
     }
 
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        listAny.count
+        elements.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -50,34 +46,19 @@ class SelectableListView<T: Equatable>: UIView, UITableViewDataSource, UITableVi
             for: indexPath
         )
 
-        let rowElement = listAny[indexPath.row]
+        let rowElement = elements[indexPath.row]
 
         if #available(iOS 14.0, *) {
             var content = cell.defaultContentConfiguration()
-            // do if T is Float
-            if let rowElementIsFloat = rowElement as? Float {
-                content.text = rowElementIsFloat.description
-            }
-            // do if T is Locale
-            if let rowElementIsFloat = rowElement as? SubtitleLanguage {
-                content.text = rowElementIsFloat.language
-            }
+            content.text = String(describing: rowElement)
             cell.contentConfiguration = content
         } else {
-            if let rowElementIsFloat = rowElement as? Float {
-                cell.textLabel?.text = rowElementIsFloat.description
-            }
-            // do if T is SubtitleLanguage
-            if let rowElementIsFloat = rowElement as? SubtitleLanguage {
-                cell.textLabel?.text = rowElementIsFloat.language
-            }
+            cell.textLabel?.text = String(describing: rowElement)
         }
 
-        if let notOptionaleSelectedAny = selectedAny {
-            if type(of: rowElement) == type(of: notOptionaleSelectedAny) {
-                if rowElement == notOptionaleSelectedAny {
-                    cell.accessoryType = .checkmark
-                }
+        if type(of: rowElement) == type(of: selectedElement) {
+            if rowElement == selectedElement {
+                cell.accessoryType = .checkmark
             }
         }
 
@@ -87,43 +68,34 @@ class SelectableListView<T: Equatable>: UIView, UITableViewDataSource, UITableVi
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
 
-        let selectedRowElement = listAny[indexPath.row]
-        if selectedRowElement != selectedAny {
+        let selectedRowElement = elements[indexPath.row]
+        if selectedRowElement != selectedElement {
             // Uncheck previous selected element
-            if let selected = selectedAny {
-                if let previousSelectedElementIndex = getRowForElement(selected) {
-                    if let previousCell = tableView
-                        .cellForRow(at: IndexPath(row: previousSelectedElementIndex, section: indexPath.section))
-                    {
-                        previousCell.accessoryType = .none
-                    }
+            if let previousSelectedElementIndex = getRowForElement(selectedElement) {
+                if let previousCell = tableView
+                    .cellForRow(at: IndexPath(row: previousSelectedElementIndex, section: indexPath.section))
+                {
+                    previousCell.accessoryType = .none
                 }
             }
-            selectedAny = selectedRowElement
+            selectedElement = selectedRowElement
             if let cell = tableView.cellForRow(at: indexPath) {
                 cell.accessoryType = .checkmark
             }
         }
 
-        if let selectedRowIsSubtitle = selectedRowElement as? SubtitleLanguage {
-            delegate?.newElementSelected(element: selectedRowIsSubtitle.toLocale())
-        } else {
-            delegate?.newElementSelected(element: selectedRowElement)
-        }
-
+        delegate?.newElementSelected(view: self, element: selectedRowElement)
     }
 
     private func getRowForElement(_ element: T) -> Int? {
-        listAny.firstIndex(of: element)
+        elements.firstIndex(of: element)
     }
-
-    private func convertToString<T: LosslessStringConvertible>(value: T) -> String {
-        return String(value)
-    }
-
 }
 
-public protocol SelectableViewDelegate: AnyObject {
-    func newElementSelected(element: Any)
+protocol SelectableListViewDelegate: AnyObject {
+    func newElementSelected(
+        view: SelectableListView<some Equatable & CustomStringConvertible>,
+        element: some Equatable & CustomStringConvertible
+    )
 }
 #endif

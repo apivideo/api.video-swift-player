@@ -36,7 +36,7 @@ class ActionBarView: UIView {
         return hStack
     }()
 
-    let subtitleButton: UIButton = {
+    private let subtitleButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
         btn.tintColor = .white
@@ -45,7 +45,7 @@ class ActionBarView: UIView {
         return btn
     }()
 
-    let speedometerButton: UIButton = {
+    private let speedometerButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
         btn.tintColor = .white
@@ -263,11 +263,6 @@ public protocol ActionBarViewDelegate: AnyObject {
     func sliderValueChangedDidStart(position: Float64)
     func sliderValueChangedDidMove(position: Float64)
     func sliderValueChangedDidStop(position: Float64)
-}
-
-public enum ButtonType {
-    case subtitle
-    case speedometer
 }
 
 #endif

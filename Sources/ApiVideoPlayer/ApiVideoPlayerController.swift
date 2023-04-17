@@ -412,7 +412,9 @@ public class ApiVideoPlayerController: NSObject {
             } else {
                 storedSpeedRate = newRate
             }
-            avPlayer.rate = newRate
+            if isPlaying {
+                avPlayer.rate = newRate
+            }
         }
     }
 
