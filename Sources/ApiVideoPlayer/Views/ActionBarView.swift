@@ -30,16 +30,25 @@ class ActionBarView: UIView {
     private let actionStackView: UIStackView = {
         let hStack = UIStackView()
         hStack.axis = .horizontal
+        hStack.spacing = 10
         hStack.distribution = .fillEqually
         hStack.alignment = .center
         return hStack
     }()
 
-    let subtitleButton: UIButton = {
+    private let subtitleButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
         btn.tintColor = .white
         btn.isHidden = true
+        btn.sizeToFit()
+        return btn
+    }()
+
+    private let speedometerButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
+        btn.tintColor = .white
         btn.sizeToFit()
         return btn
     }()
@@ -93,10 +102,12 @@ class ActionBarView: UIView {
 
         bottomActionView.addSubview(actionStackView)
         actionStackView.addArrangedSubview(subtitleButton)
+        actionStackView.addArrangedSubview(speedometerButton)
         bottomActionView.addSubview(liveButton)
 
         liveButton.addTarget(self, action: #selector(goToLive), for: .touchUpInside)
         subtitleButton.addTarget(self, action: #selector(self.toggleSubtitleView), for: .touchUpInside)
+        speedometerButton.addTarget(self, action: #selector(self.toggleSpeedometerView), for: .touchUpInside)
 
         addConstraints()
     }
@@ -159,6 +170,11 @@ class ActionBarView: UIView {
     @objc
     private func toggleSubtitleView() {
         delegate?.subtitleButtonTapped(subtitleButton: subtitleButton)
+    }
+
+    @objc
+    private func toggleSpeedometerView() {
+        delegate?.speedometerButtonTapped(speedometerButton: speedometerButton)
     }
 }
 
@@ -243,7 +259,7 @@ extension ActionBarView: TimeSliderViewDelegate {
 
 public protocol ActionBarViewDelegate: AnyObject {
     func subtitleButtonTapped(subtitleButton: UIButton)
-
+    func speedometerButtonTapped(speedometerButton: UIButton)
     func sliderValueChangedDidStart(position: Float64)
     func sliderValueChangedDidMove(position: Float64)
     func sliderValueChangedDidStop(position: Float64)

@@ -9,7 +9,8 @@ class ControlsView: UIView {
     private let actionBarView: ActionBarView
     private let timer = ScheduledTimer()
 
-    private var subtitleView: SubtitleListView?
+    private var subtitleView: SelectableListView<SubtitleLanguage>?
+    private var speedometerView: SelectableListView<Float>?
 
     public var viewController: UIViewController? {
         didSet {
@@ -183,6 +184,7 @@ class ControlsView: UIView {
     @objc
     func handleTap(_: UIGestureRecognizer) {
         removeSubtitleView()
+        removeSpeedometerView()
         timer.reset {
             showControls()
         }
@@ -191,6 +193,11 @@ class ControlsView: UIView {
     private func removeSubtitleView() {
         subtitleView?.removeFromSuperview()
         subtitleView = nil
+    }
+
+    private func removeSpeedometerView() {
+        speedometerView?.removeFromSuperview()
+        speedometerView = nil
     }
 
     @objc
@@ -243,6 +250,7 @@ class ControlsView: UIView {
         fullScreenButton.isHidden = isHidden
         if isHidden {
             removeSubtitleView()
+            removeSpeedometerView()
         }
     }
 
@@ -261,6 +269,7 @@ extension ControlsView: ApiVideoPlayerControllerPlayerDelegate {
     func didReady() {
         // remove subtitle view if it is present when loading another video to force user to reload it
         removeSubtitleView()
+        removeSpeedometerView()
     }
 
     func didPause() {
@@ -295,31 +304,73 @@ extension ControlsView: ApiVideoPlayerControllerPlayerDelegate {
 }
 
 extension ControlsView: ActionBarViewDelegate {
-    private func toggleSubtitleView(subtitleButton: UIButton) {
+    private func toggleView(view: UIView) {
+        if view.isDescendant(of: self) {
+            view.removeFromSuperview()
+        } else {
+            addSubview(view)
+        }
+    }
+
+    func subtitleButtonTapped(subtitleButton: UIButton) {
         timer.clear()
         let posX = subtitleButton.frame.origin.x + 6
         let posY = self.frame.height - 90
 
+        // remove speedometerView if on screen
+        removeSpeedometerView()
+
+        // Do toggle
         if let subtitleView = subtitleView,
            subtitleView.isDescendant(of: self)
         {
             removeSubtitleView()
         } else {
-            let notOptionalSubtitleView = SubtitleListView(
+            var languages: [SubtitleLanguage] = [SubtitleLanguage.off]
+            playerController.subtitleLocales.forEach {
+                languages.append($0.toSubtitleLanguage())
+            }
+            let notOptionalSubtitleView = SelectableListView(
                 frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
-                locales: playerController.subtitleLocales,
-                selectedLocale: playerController.currentSubtitleLocale
+                elements: languages,
+                selectedElement: playerController.currentSubtitleLocale?.toSubtitleLanguage() ?? SubtitleLanguage
+                    .off
             )
             notOptionalSubtitleView.delegate = self
             addSubview(notOptionalSubtitleView)
             bringSubviewToFront(notOptionalSubtitleView)
             subtitleView = notOptionalSubtitleView
         }
+
         timer.activate()
     }
 
-    func subtitleButtonTapped(subtitleButton: UIButton) {
-        toggleSubtitleView(subtitleButton: subtitleButton)
+    func speedometerButtonTapped(speedometerButton: UIButton) {
+        timer.clear()
+        let posX = speedometerButton.frame.origin.x + 6
+        let posY = self.frame.height - 90
+
+        // remove subtitleview if on screen
+        removeSubtitleView()
+
+        // Do toggle
+        if let speedometerView = speedometerView,
+           speedometerView.isDescendant(of: self)
+        {
+            removeSpeedometerView()
+        } else {
+            let notOptionalSpeedometerView = SelectableListView(
+                frame: CGRect(x: posX, y: posY, width: 130, height: 3 * 45),
+                elements: [0.5, 1.0, 1.25, 1.5, 2.0],
+                selectedElement: playerController.speedRate
+            )
+            notOptionalSpeedometerView.delegate = self
+            addSubview(notOptionalSpeedometerView)
+            bringSubviewToFront(notOptionalSpeedometerView)
+            speedometerView = notOptionalSpeedometerView
+        }
+
+        timer.activate()
     }
 
     func sliderValueChangedDidStart(position _: Float64) {
@@ -335,15 +386,34 @@ extension ControlsView: ActionBarViewDelegate {
     }
 }
 
-extension ControlsView: SubtitleViewDelegate {
-    func languageSelected(locale: Locale?) {
-        if let locale = locale {
-            playerController.setCurrentSubtitleLocale(locale: locale)
-        } else {
-            playerController.hideSubtitle()
+extension ControlsView: SelectableListViewDelegate {
+    func newElementSelected(
+        view: SelectableListView<some Equatable & CustomStringConvertible>,
+        element: some Equatable & CustomStringConvertible
+    ) {
+        if view == subtitleView {
+            guard let subtitleLanguage = element as? SubtitleLanguage else {
+                fatalError("Subtitle language must be a SubtitleLanguage")
+            }
+
+            let locale = subtitleLanguage.toLocale()
+            if let locale = locale {
+                playerController.setCurrentSubtitleLocale(locale: locale)
+            } else {
+                playerController.hideSubtitle()
+            }
+            removeSubtitleView()
+        } else if view == speedometerView {
+            guard let speed = element as? Float else {
+                fatalError("Speed rate must be a Float")
+            }
+
+            playerController.speedRate = speed
+            removeSpeedometerView()
         }
-        removeSubtitleView()
     }
+
+    func newElementSelected(element _: Any) {}
 }
 
 extension ControlsView: ScheduledTimerDelegate {

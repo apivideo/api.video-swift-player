@@ -2,7 +2,7 @@ import Foundation
 
 /// Represents a subtitle language.
 /// There are used by ``ApiVideoPlayerView`` to list the subtitles languages.
-struct SubtitleLanguage: Equatable {
+struct SubtitleLanguage: Equatable, CustomStringConvertible {
     let language: String
     let code: String?
 
@@ -13,6 +13,11 @@ struct SubtitleLanguage: Equatable {
     init(language: String, code: String?) {
         self.language = language
         self.code = code
+    }
+
+    /// A string representation of the language.
+    var description: String {
+        language
     }
 
     static func == (lhs: SubtitleLanguage, rhs: SubtitleLanguage) -> Bool {
