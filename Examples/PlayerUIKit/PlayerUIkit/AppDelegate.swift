@@ -7,6 +7,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         // Override point for customization after application launch.
+        UIApplication.shared.beginReceivingRemoteControlEvents()
         return true
     }
 

@@ -44,4 +44,25 @@ enum RequestsBuilder {
             }
         }
     }
+
+    static func getThumbnailImage(
+        taskExecutor: TasksExecutorProtocol.Type,
+        url: URL,
+        completion: @escaping (Data) -> Void,
+        didError: @escaping (Error) -> Void
+    ) {
+        let request = buildUrlRequest(url: url)
+        let session = buildUrlSession()
+        taskExecutor.execute(session: session, request: request) { data, error in
+            if let data = data {
+                completion(data)
+            } else {
+                if let error = error {
+                    didError(error)
+                } else {
+                    didError(PlayerError.sessionTokenError("Request error, failed to get thumbnail"))
+                }
+            }
+        }
+    }
 }

@@ -238,6 +238,10 @@ public class ApiVideoPlayerView: UIView {
             self.playerController.isLooping = newValue
         }
     }
+
+    public func remoteControlEventReceived(with event: UIEvent?) {
+        self.playerController.remoteControlEventReceived(with: event)
+    }
 }
 
 #else

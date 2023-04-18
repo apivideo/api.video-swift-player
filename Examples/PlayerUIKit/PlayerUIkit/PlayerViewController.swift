@@ -125,6 +125,8 @@ class PlayerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(self.scrollView)
+        self.becomeFirstResponder()
+
         self.scrollView.addSubview(self.playerView)
         self.playerView.addDelegate(self)
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
@@ -181,6 +183,18 @@ class PlayerViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.playerView.viewController = self
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+
+    override func remoteControlReceived(with event: UIEvent?) {
+        if let event = event {
+            if event.type == .remoteControl {
+                self.playerView.remoteControlEventReceived(with: event)
+            }
+        }
     }
 
     private func constraints() {
