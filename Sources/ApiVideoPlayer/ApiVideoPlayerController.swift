@@ -17,6 +17,7 @@ public class ApiVideoPlayerController: NSObject {
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
+    private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying?
 
     #if !os(macOS)
     /// Initializes a player controller.
@@ -55,6 +56,7 @@ public class ApiVideoPlayerController: NSObject {
     ) {
         multicastDelegate.addDelegates(delegates)
         self.taskExecutor = taskExecutor
+        self.infoNowPlaying = ApiVideoPlayerInformationNowPlaying(taskExecutor: taskExecutor)
 
         super.init()
         defer {
@@ -227,6 +229,10 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
+            self.infoNowPlaying?.overrideInformations(
+                for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
+                value: self.currentTime.seconds
+            )
             completion(completed)
         }
     }
@@ -541,28 +547,15 @@ public class ApiVideoPlayerController: NSObject {
         let infoCenter = MPNowPlayingInfoCenter.default()
         if self.isFirstPlay {
             self.isFirstPlay = false
-            // TODO: add MPNowPlayingInfoCenter
+            var metadata = [
+                "duration": self.duration,
+                "currentTime": self.currentTime
+            ] as [String: Any]
 
-            // Configure Now Playing Info
-            let infoCenter = MPNowPlayingInfoCenter.default()
-
-            loadThumabnail(completion: { image in
-                let artwork = MPMediaItemArtwork(boundsSize: image!.size, requestHandler: { _ -> UIImage in
-                    return image ?? UIImage()
-                })
-
-                // Set the title of the video as the Now Playing Info title
-                let nowPlayingInfo: [String: Any] = [
-                    MPMediaItemPropertyArtwork: artwork,
-                    MPMediaItemPropertyPlaybackDuration: self.duration.seconds,
-                    MPNowPlayingInfoPropertyElapsedPlaybackTime: self.currentTime.seconds
-                ]
-                print("currentime second first play: \(self.currentTime.seconds)")
-//                nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = self.currentTime.seconds
-//                nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.duration.seconds
-                infoCenter.nowPlayingInfo = nowPlayingInfo
-            })
-            // setupCommandCenter()
+            if let thumbnail = self.videoOptions?.thumbnailUrl {
+                metadata["thumbnailUrl"] = thumbnail
+            }
+            self.infoNowPlaying?.update(metadata: metadata)
 
             self.analytics?.play { result in
                 switch result {
@@ -571,7 +564,6 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         } else {
-//            updatePlaybackProgress(currentTime: currentTime.seconds, duration: duration.seconds)
             self.analytics?.resume { result in
                 switch result {
                 case .success: break
@@ -591,30 +583,21 @@ public class ApiVideoPlayerController: NSObject {
         commandCenter.pauseCommand.isEnabled = true
     }
 
-    private func updatePlaybackProgress() {
-        // Update the Now Playing Info with the playback progress
-        let infoCenter = MPNowPlayingInfoCenter.default()
-        var nowPlayingInfo = infoCenter.nowPlayingInfo ?? [:]
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = round(self.currentTime.seconds)
-        print("currentime second update: \(round(self.currentTime.seconds))")
-        infoCenter.nowPlayingInfo = nowPlayingInfo
-    }
-
     func remoteControlEventReceived(with event: UIEvent?) {
-        updatePlaybackProgress()
         if let event = event {
             switch event.subtype {
             case .remoteControlPlay:
                 // Handle play remote control event
+                self.infoNowPlaying?.play(currentTime: self.currentTime)
                 self.play()
             case .remoteControlPause:
+                self.infoNowPlaying?.pause(currentTime: self.currentTime)
                 self.pause()
             // Handle pause remote control event
             case .remoteControlNextTrack:
                 self.seek(to: self.duration)
             // Handle next track remote control event
             case .remoteControlPreviousTrack:
-
                 self.replay()
             // Handle previous track remote control event
             case .remoteControlStop:
@@ -626,7 +609,6 @@ public class ApiVideoPlayerController: NSObject {
             default:
                 break
             }
-
         }
     }
 
