@@ -18,6 +18,7 @@ public class SwiftUIPlayerViewController: UIViewController {
         )
         self.events = events
         super.init(nibName: nil, bundle: nil)
+        UIApplication.shared.beginReceivingRemoteControlEvents()
         playerView.addDelegate(self)
     }
 
@@ -45,6 +46,18 @@ public class SwiftUIPlayerViewController: UIViewController {
     override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
         super.viewDidDisappear(animated)
+    }
+
+    override public var canBecomeFirstResponder: Bool {
+        true
+    }
+
+    override public func remoteControlReceived(with event: UIEvent?) {
+        if let event = event {
+            if event.type == .remoteControl {
+                self.playerView.remoteControlEventReceived(with: event)
+            }
+        }
     }
 
     public func play() {
