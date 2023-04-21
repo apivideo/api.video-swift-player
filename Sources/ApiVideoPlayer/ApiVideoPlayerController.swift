@@ -17,9 +17,10 @@ public class ApiVideoPlayerController: NSObject {
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
-    private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying?
 
     #if !os(macOS)
+    private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying?
+
     /// Initializes a player controller.
     /// - Parameters:
     ///   - videoOptions: The video to play.
@@ -37,6 +38,7 @@ public class ApiVideoPlayerController: NSObject {
             delegates: delegates,
             autoplay: autoplay
         )
+        self.infoNowPlaying = ApiVideoPlayerInformationNowPlaying(taskExecutor: taskExecutor)
         playerLayer.player = self.avPlayer
     }
     #endif
@@ -229,10 +231,12 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
+            #if !os(macOS)
             self.infoNowPlaying?.overrideInformations(
                 for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
                 value: self.currentTime.seconds
             )
+            #endif
             completion(completed)
         }
     }
@@ -523,30 +527,14 @@ public class ApiVideoPlayerController: NSObject {
         self.multicastDelegate.didPause()
     }
 
-    private func loadThumabnail(completion: @escaping (UIImage?) -> Void) {
-        if let thumbnailUrl = self.videoOptions?.thumbnailUrl {
-            if let url = URL(string: thumbnailUrl) {
-                RequestsBuilder.getThumbnailImage(taskExecutor: self.taskExecutor, url: url, completion: { data in
-                    completion(UIImage(data: data))
-                }, didError: { error in
-                    self.multicastDelegate.didError(error)
-                })
-            } else {
-                self.multicastDelegate.didError(PlayerError.urlError("Error on URL with this thumbnail string url"))
-            }
-        } else {
-            self.multicastDelegate.didError(PlayerError.urlError("can not get thumbnail from this url"))
-        }
-    }
-
     private func doPlayAction() {
         if self.isSeeking {
             self.isSeeking = false
             return
         }
-        let infoCenter = MPNowPlayingInfoCenter.default()
         if self.isFirstPlay {
             self.isFirstPlay = false
+            #if !os(macOS)
             var metadata = [
                 "duration": self.duration,
                 "currentTime": self.currentTime
@@ -555,8 +543,13 @@ public class ApiVideoPlayerController: NSObject {
             if let thumbnail = self.videoOptions?.thumbnailUrl {
                 metadata["thumbnailUrl"] = thumbnail
             }
-            self.infoNowPlaying?.update(metadata: metadata)
+            if let videoType = self.videoOptions?.videoType {
+                let isLive = videoType == .live ? true : false
+                metadata["isLive"] = isLive
+            }
 
+            self.infoNowPlaying?.update(metadata: metadata)
+            #endif
             self.analytics?.play { result in
                 switch result {
                 case .success: break
@@ -571,9 +564,10 @@ public class ApiVideoPlayerController: NSObject {
                 }
             }
         }
+        #if !os(macOS)
         try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
         try? AVAudioSession.sharedInstance().setActive(true)
-        infoCenter.playbackState = .playing
+        #endif
         self.multicastDelegate.didPlay()
     }
 
@@ -583,6 +577,7 @@ public class ApiVideoPlayerController: NSObject {
         commandCenter.pauseCommand.isEnabled = true
     }
 
+    #if !os(macOS)
     func remoteControlEventReceived(with event: UIEvent?) {
         if let event = event {
             switch event.subtype {
@@ -590,27 +585,34 @@ public class ApiVideoPlayerController: NSObject {
                 // Handle play remote control event
                 self.infoNowPlaying?.play(currentTime: self.currentTime)
                 self.play()
+
             case .remoteControlPause:
-                self.infoNowPlaying?.pause(currentTime: self.currentTime)
                 self.pause()
+                self.infoNowPlaying?.pause(currentTime: self.currentTime)
+
             // Handle pause remote control event
             case .remoteControlNextTrack:
                 self.seek(to: self.duration)
+
             // Handle next track remote control event
             case .remoteControlPreviousTrack:
                 self.replay()
+
             // Handle previous track remote control event
             case .remoteControlStop:
                 // Handle stop remote control event
                 break
+
             case .remoteControlTogglePlayPause:
                 // Handle toggle play/pause remote control event
                 break
+
             default:
                 break
             }
         }
     }
+    #endif
 
     private func doTimeControlStatus() {
         let status = self.avPlayer.timeControlStatus
