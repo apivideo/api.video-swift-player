@@ -8,7 +8,8 @@ protocol InformationNowPlaying {
     func overrideInformations(for key: String, value: Any)
 }
 
-final class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
+#if !os(macOS)
+class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     private var infos = [String: Any]()
     private let taskExecutor: TasksExecutorProtocol.Type
 
@@ -25,6 +26,9 @@ final class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
         if let currentTime = metadata?["currentTime"] as? CMTime {
             infos[MPNowPlayingInfoPropertyElapsedPlaybackTime] = round(currentTime.seconds)
         }
+        if let isLive = metadata?["isLive"] as? Bool {
+            infos[MPNowPlayingInfoPropertyIsLiveStream] = isLive
+        }
         infos[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
 
         if let imageStr = metadata?["thumbnailUrl"] as? String {
@@ -37,12 +41,14 @@ final class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
 
     func pause(currentTime: CMTime) {
         infos[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
-        self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: round(currentTime.seconds))
+        MPNowPlayingInfoCenter.default().playbackState = .paused
+        self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
 
     func play(currentTime: CMTime) {
         infos[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
-        self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: round(currentTime.seconds))
+        MPNowPlayingInfoCenter.default().playbackState = .playing
+        self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
 
     func overrideInformations(for key: String, value: Any) {
@@ -68,3 +74,4 @@ final class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     }
 
 }
+#endif
