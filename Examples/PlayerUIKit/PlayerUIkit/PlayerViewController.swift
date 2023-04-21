@@ -186,7 +186,7 @@ class PlayerViewController: UIViewController {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override func remoteControlReceived(with event: UIEvent?) {
