@@ -339,6 +339,7 @@ extension PlayerViewController: ApiVideoPlayerControllerPlayerDelegate {
     }
 
     public func didEnd() {
+        self.playerView.removeRemoteControl()
         print("app didEnd")
     }
 
