@@ -17,7 +17,9 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     }
 
     func update(metadata: [String: Any]?) {
-        infos[MPMediaItemPropertyTitle] = metadata?["title"] ?? ""
+        if let title = metadata?["title"] {
+            infos[MPMediaItemPropertyTitle] = title
+        }
         if let duration = metadata?["duration"] as? CMTime {
             infos[MPMediaItemPropertyPlaybackDuration] = duration.seconds
         }
