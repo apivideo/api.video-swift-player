@@ -2,7 +2,7 @@ import Foundation
 import MediaPlayer
 
 protocol InformationNowPlaying {
-    func update(metadata: [String: Any]?)
+    var nowPlayingData: NowPlayingData? { get set }
     func pause(currentTime: CMTime, currentRate: Float)
     func play(currentTime: CMTime, currentRate: Float)
     func overrideInformations(for key: String, value: Any)
@@ -17,30 +17,30 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
         self.taskExecutor = taskExecutor
     }
 
-    func update(metadata: [String: Any]?) {
-        if let title = metadata?["title"] {
-            infos[MPMediaItemPropertyTitle] = title
-        }
-        if let duration = metadata?["duration"] as? CMTime {
-            infos[MPMediaItemPropertyPlaybackDuration] = duration.seconds
-        }
-        if let currentTime = metadata?["currentTime"] as? CMTime {
-            infos[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime.seconds
-        }
-        if let isLive = metadata?["isLive"] as? Bool {
-            infos[MPNowPlayingInfoPropertyIsLiveStream] = isLive
-        }
-        infos[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
-
-        #if !os(macOS)
-        if let imageStr = metadata?["thumbnailUrl"] as? String {
-            if let url = URL(string: imageStr) {
-                updateRemoteArtwork(url: url)
+    var nowPlayingData: NowPlayingData? {
+        didSet {
+            if let title = nowPlayingData?.title {
+                infos[MPMediaItemPropertyTitle] = title
             }
+            if let duration = nowPlayingData?.duration {
+                infos[MPMediaItemPropertyPlaybackDuration] = duration.seconds
+            }
+            if let currentTime = nowPlayingData?.currentTime {
+                infos[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime.seconds
+            }
+            if let live = nowPlayingData?.isLive {
+                infos[MPNowPlayingInfoPropertyIsLiveStream] = live
+            }
+            infos[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+            #if !os(macOS)
+            if let thumb = nowPlayingData?.thumbnailUrl {
+                if let url = URL(string: thumb) {
+                    updateRemoteArtwork(url: url)
+                }
+            }
+            #endif
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = infos
         }
-        #endif
-
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = infos
     }
 
     func pause(currentTime: CMTime, currentRate: Float) {

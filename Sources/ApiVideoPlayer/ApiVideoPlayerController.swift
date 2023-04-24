@@ -544,20 +544,14 @@ public class ApiVideoPlayerController: NSObject {
         if self.isFirstPlay {
             self.isFirstPlay = false
             #if !os(macOS)
-            var metadata = [
-                "duration": self.duration,
-                "currentTime": self.currentTime
-            ] as [String: Any]
+            let isLive = self.videoOptions?.videoType == .live ? true : false
 
-            if let thumbnail = self.videoOptions?.thumbnailUrl {
-                metadata["thumbnailUrl"] = thumbnail
-            }
-            if let videoType = self.videoOptions?.videoType {
-                let isLive = videoType == .live ? true : false
-                metadata["isLive"] = isLive
-            }
-
-            self.infoNowPlaying?.update(metadata: metadata)
+            self.infoNowPlaying?.nowPlayingData = NowPlayingData(
+                duration: self.duration,
+                currentTime: self.currentTime,
+                thumbnailUrl: self.videoOptions?.thumbnailUrl,
+                isLive: isLive
+            )
             #endif
             self.analytics?.play { result in
                 switch result {
