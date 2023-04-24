@@ -27,7 +27,13 @@ To do so follow the instruction :
 On your AppDelegate.swift, 
     - add in 'didFinishLaunchingWithOptions' function: 
 ```
+// Start receiving events
 UIApplication.shared.beginReceivingRemoteControlEvents()
+```
+    - add in 'didDiscardSceneSessions' function:
+```
+// Stop receiving events
+UIApplication.shared.endReceivingRemoteControlEvents()
 ```
 Then in your ViewController.swift
 
