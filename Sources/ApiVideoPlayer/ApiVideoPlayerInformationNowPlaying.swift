@@ -34,7 +34,7 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
         #if !os(macOS)
         if let imageStr = metadata?["thumbnailUrl"] as? String {
             if let url = URL(string: imageStr) {
-                updateRemoteImage(url: url)
+                updateRemoteArtwork(url: url)
             }
         }
         #endif
@@ -64,7 +64,7 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
         return MPMediaItemArtwork(boundsSize: image.size) { _ in image }
     }
 
-    private func updateRemoteImage(url: URL) {
+    private func updateRemoteArtwork(url: URL) {
         RequestsBuilder.getThumbnail(taskExecutor: self.taskExecutor, url: url, completion: { image in
             let artwork = self.getArtwork(image: image)
             self.overrideInformations(for: MPMediaItemPropertyArtwork, value: artwork)
