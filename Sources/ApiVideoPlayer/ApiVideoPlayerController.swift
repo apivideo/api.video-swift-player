@@ -283,6 +283,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets and sets the video options.
     public var videoOptions: VideoOptions? {
         didSet {
+            self.isFirstPlay = true
             guard let videoOptions = videoOptions else {
                 resetPlayer(with: nil)
                 return
@@ -520,6 +521,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on pause event: \(error)")
             }
         }
+        self.infoNowPlaying?.pause(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
         self.multicastDelegate.didPause()
     }
 
@@ -559,6 +561,7 @@ public class ApiVideoPlayerController: NSObject {
                 case let .failure(error): print("analytics error on resume event: \(error)")
                 }
             }
+            self.infoNowPlaying?.play(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
         }
         #if !os(macOS)
         try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
