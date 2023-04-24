@@ -17,10 +17,9 @@ public class ApiVideoPlayerController: NSObject {
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
-
-    #if !os(macOS)
     private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying?
 
+    #if !os(macOS)
     /// Initializes a player controller.
     /// - Parameters:
     ///   - videoOptions: The video to play.
@@ -38,7 +37,6 @@ public class ApiVideoPlayerController: NSObject {
             delegates: delegates,
             autoplay: autoplay
         )
-        self.infoNowPlaying = ApiVideoPlayerInformationNowPlaying(taskExecutor: taskExecutor)
         playerLayer.player = self.avPlayer
     }
     #endif
@@ -231,12 +229,10 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
-            #if !os(macOS)
             self.infoNowPlaying?.overrideInformations(
                 for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
                 value: self.currentTime.seconds
             )
-            #endif
             completion(completed)
         }
     }
@@ -583,12 +579,12 @@ public class ApiVideoPlayerController: NSObject {
             switch event.subtype {
             case .remoteControlPlay:
                 // Handle play remote control event
-                self.infoNowPlaying?.play(currentTime: self.currentTime)
                 self.play()
+                self.infoNowPlaying?.play(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
 
             case .remoteControlPause:
                 self.pause()
-                self.infoNowPlaying?.pause(currentTime: self.currentTime)
+                self.infoNowPlaying?.pause(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
 
             // Handle pause remote control event
             case .remoteControlNextTrack:
