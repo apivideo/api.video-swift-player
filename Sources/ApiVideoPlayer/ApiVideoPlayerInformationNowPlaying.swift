@@ -6,6 +6,7 @@ protocol InformationNowPlaying {
     func pause(currentTime: CMTime, currentRate: Float)
     func play(currentTime: CMTime, currentRate: Float)
     func overrideInformations(for key: String, value: Any)
+    func clearMPNowPlayingInfoCenter()
 }
 
 class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
@@ -57,6 +58,10 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     func overrideInformations(for key: String, value: Any) {
         infos[key] = value
         MPNowPlayingInfoCenter.default().nowPlayingInfo = infos
+    }
+
+    func clearMPNowPlayingInfoCenter() {
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
     }
 
     #if !os(macOS)

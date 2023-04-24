@@ -239,8 +239,20 @@ public class ApiVideoPlayerView: UIView {
         }
     }
 
+    /// Pass events received from remote control, to handle actions.
+    /// - Parameter event: event of type remoteControl
     public func remoteControlEventReceived(with event: UIEvent?) {
         self.playerController.remoteControlEventReceived(with: event)
+    }
+
+    /// Allow video interaction with the remote control on lockscreen and notification center
+    public func allowRemoteControl() {
+        self.playerController.allowRemoteControl()
+    }
+
+    /// Remove remote control from lockscreen and notification center
+    public func removeRemoteControl() {
+        self.playerController.removeRemoteControl()
     }
 }
 

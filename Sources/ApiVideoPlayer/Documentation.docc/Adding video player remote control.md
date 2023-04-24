@@ -37,7 +37,16 @@ UIApplication.shared.endReceivingRemoteControlEvents()
 ```
 Then in your ViewController.swift
 
-override the 'remoteControlReceived' function and pass the events to 'remoteControlEventReceived' of ApiVideoSwiftPlayer
+After you have instanciated the player, call the method 'allowRemoteControl' to send data to the remote control
+
+```
+override func viewDidLoad() {
+...
+self.playerView.allowRemoteControl()
+...
+```
+
+Now you need to override the 'remoteControlReceived' function and pass the events to 'remoteControlEventReceived' of ApiVideoSwiftPlayer
 
 ```
 override func remoteControlReceived(with event: UIEvent?) {
@@ -51,6 +60,19 @@ override func remoteControlReceived(with event: UIEvent?) {
 
 ### SwiftUI
 For SwiftUI you don't have any to do, it's already handle by the library.
+
+## Remove remote control
+Don't forget to remove it when player is stopped or destroyed.
+for exemple on didEnd event
+
+```
+public func didEnd() {
+...
+    self.playerView.removeRemoteControl()
+...
+
+}
+```
 
 That's it, now you can test it and play with the remote control.
 
