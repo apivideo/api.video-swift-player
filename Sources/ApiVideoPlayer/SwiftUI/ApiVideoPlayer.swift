@@ -113,6 +113,12 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
         }
     }
 
+    public var enableRemoteControl: Bool = false {
+        didSet {
+            self.playerViewController.enableRemoteControl = enableRemoteControl
+        }
+    }
+
 }
 
 struct SwiftUIView_Previews: PreviewProvider {

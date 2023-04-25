@@ -18,7 +18,6 @@ public class SwiftUIPlayerViewController: UIViewController {
         )
         self.events = events
         super.init(nibName: nil, bundle: nil)
-        UIApplication.shared.beginReceivingRemoteControlEvents()
         playerView.addDelegate(self)
     }
 
@@ -45,11 +44,8 @@ public class SwiftUIPlayerViewController: UIViewController {
 
     override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
+        UIApplication.shared.endReceivingRemoteControlEvents()
         super.viewDidDisappear(animated)
-    }
-
-    override public var canBecomeFirstResponder: Bool {
-        true
     }
 
     override public func remoteControlReceived(with event: UIEvent?) {
@@ -128,6 +124,16 @@ public class SwiftUIPlayerViewController: UIViewController {
         }
         set(newValue) {
             self.playerView.isLooping = newValue
+        }
+    }
+
+    public var enableRemoteControl: Bool = false {
+        didSet {
+            if enableRemoteControl {
+                UIApplication.shared.beginReceivingRemoteControlEvents()
+            } else {
+                UIApplication.shared.endReceivingRemoteControlEvents()
+            }
         }
     }
 
