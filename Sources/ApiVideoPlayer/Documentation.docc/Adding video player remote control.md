@@ -62,9 +62,10 @@ override func remoteControlReceived(with event: UIEvent?) {
 For SwiftUI you don't have any to do, it's already handle by the library.
 
 ## Remove remote control
-Don't forget to remove it when player is stopped or destroyed.
-for exemple on didEnd event
+You can use the 'removeRemoteControl' function to take out the remote control.
 
+For instance, when a video reaches its end, you have the option to remove it.
+It's important to note that using this method will pause the video, and if you play it again, the remote control will be displayed one more.
 ```
 public func didEnd() {
 ...

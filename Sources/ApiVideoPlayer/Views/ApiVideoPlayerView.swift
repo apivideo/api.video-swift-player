@@ -250,7 +250,9 @@ public class ApiVideoPlayerView: UIView {
         self.playerController.allowRemoteControl()
     }
 
-    /// Remove remote control from lockscreen and notification center
+    /// Remove remote control from lockscreen and notification center.
+    /// This is not definitive, when play again a video the remote control will be displayed.
+    /// It's recommended to call this function when you're done playing the video.
     public func removeRemoteControl() {
         self.playerController.removeRemoteControl()
     }
