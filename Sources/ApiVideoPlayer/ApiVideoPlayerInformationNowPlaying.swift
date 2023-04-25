@@ -61,7 +61,7 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     }
 
     func clearMPNowPlayingInfoCenter() {
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = [:]
     }
 
     #if !os(macOS)

@@ -118,6 +118,11 @@ public class ApiVideoPlayerController: NSObject {
     /// remove remote control from lockscreen and notification center
     func removeRemoteControl() {
         self.pause()
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            print("Error deactivating audio session: \(error.localizedDescription)")
+        }
         self.infoNowPlaying?.clearMPNowPlayingInfoCenter()
     }
 
@@ -544,13 +549,11 @@ public class ApiVideoPlayerController: NSObject {
         if self.isFirstPlay {
             self.isFirstPlay = false
             #if !os(macOS)
-            let isLive = self.videoOptions?.videoType == .live ? true : false
-
             self.infoNowPlaying?.nowPlayingData = NowPlayingData(
                 duration: self.duration,
                 currentTime: self.currentTime,
-                thumbnailUrl: self.videoOptions?.thumbnailUrl,
-                isLive: isLive
+                isLive: self.isLive,
+                thumbnailUrl: self.videoOptions?.thumbnailUrl
             )
             #endif
             self.analytics?.play { result in
@@ -573,12 +576,6 @@ public class ApiVideoPlayerController: NSObject {
         try? AVAudioSession.sharedInstance().setActive(true)
         #endif
         self.multicastDelegate.didPlay()
-    }
-
-    func setupCommandCenter() {
-        let commandCenter = MPRemoteCommandCenter.shared()
-        commandCenter.playCommand.isEnabled = true
-        commandCenter.pauseCommand.isEnabled = true
     }
 
     #if !os(macOS)
