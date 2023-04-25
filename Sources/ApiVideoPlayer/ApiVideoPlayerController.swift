@@ -110,11 +110,6 @@ public class ApiVideoPlayerController: NSObject {
         multicastDelegate.removeDelegates(delegates)
     }
 
-    /// Allow video interaction with the remote control on lockscreen and notification center
-    func allowRemoteControl() {
-        self.infoNowPlaying = ApiVideoPlayerInformationNowPlaying(taskExecutor: taskExecutor)
-    }
-
     /// remove remote control from lockscreen and notification center
     func removeRemoteControl() {
         self.pause()
@@ -557,6 +552,7 @@ public class ApiVideoPlayerController: NSObject {
                 isLive: self.isLive,
                 thumbnailUrl: self.videoOptions?.thumbnailUrl
             )
+
             #endif
             self.analytics?.play { result in
                 switch result {
@@ -587,11 +583,9 @@ public class ApiVideoPlayerController: NSObject {
             case .remoteControlPlay:
                 // Handle play remote control event
                 self.play()
-                self.infoNowPlaying?.play(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
 
             case .remoteControlPause:
                 self.pause()
-                self.infoNowPlaying?.pause(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
 
             // Handle pause remote control event
             case .remoteControlNextTrack:
