@@ -4,23 +4,11 @@ On this article we will dive on how to display a remote controller on your locks
 
 ## Table of contents
 
-- [Adding permission](#adding-permission)
-    - [Swift Package Manager](#swift-package-manager)
-    - [Cocoapods](#cocoapods)
 - [Receive events from remote-control](#receive-events-from-remote-control)
     - [UIKit](#uikit)
     - [SwiftUI](#swiftui)
 - [Documentation](#documentation)
 - [Dependencies](#dependencies)
-
-## Adding permission
-First of all you have to add audio in background permission. 
-To do so follow the instruction : 
-    1. Go to your target application
-    2. Select "Signing & Capabilities"
-    3. Then click on " + Capability" button 
-    4. On this pop up select "Background Modes"
-    5. finally select "Audio, AirPlay and Picture in Picture"
 
 ## Receive events from remote-control
 ### UIKit

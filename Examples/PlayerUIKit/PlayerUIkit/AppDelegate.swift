@@ -9,7 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 
         // Allow application to receive events from remote control
-        UIApplication.shared.beginReceivingRemoteControlEvents()
+//        UIApplication.shared.beginReceivingRemoteControlEvents()
         return true
     }
 
