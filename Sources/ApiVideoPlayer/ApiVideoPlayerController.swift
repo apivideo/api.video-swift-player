@@ -118,11 +118,13 @@ public class ApiVideoPlayerController: NSObject {
     /// remove remote control from lockscreen and notification center
     func removeRemoteControl() {
         self.pause()
+        #if !os(macOS)
         do {
             try AVAudioSession.sharedInstance().setActive(false)
         } catch {
             print("Error deactivating audio session: \(error.localizedDescription)")
         }
+        #endif
         self.infoNowPlaying?.clearMPNowPlayingInfoCenter()
     }
 
