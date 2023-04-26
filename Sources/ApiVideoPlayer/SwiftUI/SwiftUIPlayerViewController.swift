@@ -121,11 +121,7 @@ public class SwiftUIPlayerViewController: UIViewController {
 
     public var enableRemoteControl: Bool = false {
         didSet {
-            if enableRemoteControl {
-                UIApplication.shared.beginReceivingRemoteControlEvents()
-            } else {
-                UIApplication.shared.endReceivingRemoteControlEvents()
-            }
+            self.playerView.enableRemotteControl = enableRemoteControl
         }
     }
 
