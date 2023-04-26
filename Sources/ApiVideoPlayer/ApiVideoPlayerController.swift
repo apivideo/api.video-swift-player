@@ -445,7 +445,9 @@ public class ApiVideoPlayerController: NSObject {
             if enableRemoteControl {
                 self.setupRemoteControls()
             } else {
+                #if !os(macOS)
                 UIApplication.shared.endReceivingRemoteControlEvents()
+                #endif
             }
         }
     }
