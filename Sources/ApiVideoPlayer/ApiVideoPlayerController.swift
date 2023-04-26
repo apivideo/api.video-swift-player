@@ -240,10 +240,7 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
-            self.infoNowPlaying.overrideInformations(
-                for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
-                value: self.currentTime.seconds
-            )
+            self.infoNowPlaying.currentTime = self.currentTime
             completion(completed)
         }
     }

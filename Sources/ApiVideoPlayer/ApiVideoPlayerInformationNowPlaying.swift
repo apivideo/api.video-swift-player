@@ -3,9 +3,10 @@ import MediaPlayer
 
 protocol InformationNowPlaying {
     var nowPlayingData: NowPlayingData? { get set }
+    var currentTime: CMTime? { get set }
+    var playbackRate: Float? { get set }
     func pause(currentTime: CMTime, currentRate: Float)
     func play(currentTime: CMTime, currentRate: Float)
-    func overrideInformations(for key: String, value: Any)
 }
 
 class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
@@ -14,6 +15,30 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
 
     init(taskExecutor: TasksExecutorProtocol.Type) {
         self.taskExecutor = taskExecutor
+    }
+
+    var currentTime: CMTime? {
+        didSet {
+            guard let currentTime = currentTime else {
+                return
+            }
+            self.overrideInformations(
+                for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
+                value: currentTime.seconds
+            )
+        }
+    }
+
+    var playbackRate: Float? {
+        didSet {
+            guard let playbackRate = playbackRate else {
+                return
+            }
+            self.overrideInformations(
+                for: MPNowPlayingInfoPropertyPlaybackRate,
+                value: playbackRate
+            )
+        }
     }
 
     var nowPlayingData: NowPlayingData? {
@@ -53,7 +78,7 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
 
-    func overrideInformations(for key: String, value: Any) {
+    private func overrideInformations(for key: String, value: Any) {
         infos[key] = value
         MPNowPlayingInfoCenter.default().nowPlayingInfo = infos
     }
