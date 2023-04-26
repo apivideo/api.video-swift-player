@@ -119,9 +119,12 @@ public class SwiftUIPlayerViewController: UIViewController {
         }
     }
 
-    public var enableRemoteControl: Bool = false {
-        didSet {
-            self.playerView.enableRemotteControl = enableRemoteControl
+    public var enableRemoteControl: Bool {
+        get {
+            self.playerView.enableRemotteControl
+        }
+        set(newValue) {
+            self.playerView.enableRemotteControl = newValue
         }
     }
 

@@ -116,9 +116,12 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
     /// Toggle the visibility of the remote control.
     /// Setting it to true will display it, while setting it to False will hide it.
     /// By default the remote is hidden.
-    public var enableRemoteControl: Bool = false {
-        didSet {
-            self.playerViewController.enableRemoteControl = enableRemoteControl
+    public var enableRemoteControl: Bool {
+        get {
+            self.playerViewController.enableRemoteControl
+        }
+        set(newValue) {
+            self.playerViewController.enableRemoteControl = newValue
         }
     }
 
