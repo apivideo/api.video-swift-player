@@ -9,7 +9,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 
         // Allow application to receive events from remote control
-//        UIApplication.shared.beginReceivingRemoteControlEvents()
         return true
     }
 
@@ -32,6 +31,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 
         // Stop receiving remote control events
-        UIApplication.shared.endReceivingRemoteControlEvents()
     }
 }
