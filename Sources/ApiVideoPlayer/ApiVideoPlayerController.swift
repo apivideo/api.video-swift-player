@@ -17,7 +17,8 @@ public class ApiVideoPlayerController: NSObject {
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
-    private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying?
+    private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying
+    private let rcc = MPRemoteCommandCenter.shared()
 
     #if !os(macOS)
     /// Initializes a player controller.
@@ -62,7 +63,6 @@ public class ApiVideoPlayerController: NSObject {
         defer {
             self.videoOptions = videoOptions
         }
-
         self.autoplay = autoplay
         self.avPlayer.addObserver(
             self,
@@ -120,7 +120,7 @@ public class ApiVideoPlayerController: NSObject {
             print("Error deactivating audio session: \(error.localizedDescription)")
         }
         #endif
-        self.infoNowPlaying?.clearMPNowPlayingInfoCenter()
+        self.infoNowPlaying.clearMPNowPlayingInfoCenter()
     }
 
     private func resetPlayer(with playerItem: AVPlayerItem? = nil) {
@@ -242,7 +242,7 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
-            self.infoNowPlaying?.overrideInformations(
+            self.infoNowPlaying.overrideInformations(
                 for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
                 value: self.currentTime.seconds
             )
@@ -436,6 +436,17 @@ public class ApiVideoPlayerController: NSObject {
             if isPlaying {
                 avPlayer.rate = newRate
             }
+
+        }
+    }
+
+    public var enableRemoteControl: Bool = false {
+        didSet {
+            if enableRemoteControl {
+                self.setupRemoteControls()
+            } else {
+                UIApplication.shared.endReceivingRemoteControlEvents()
+            }
         }
     }
 
@@ -488,6 +499,29 @@ public class ApiVideoPlayerController: NSObject {
         self.multicastDelegate.didEnd()
     }
 
+    private func setupRemoteControls() {
+        rcc.skipForwardCommand.preferredIntervals = [15.0]
+        rcc.skipBackwardCommand.preferredIntervals = [15.0]
+        rcc.skipForwardCommand.addTarget { event in
+            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            self.seek(offset: CMTime(seconds: event.interval, preferredTimescale: 1_000))
+            return .success
+        }
+        rcc.skipBackwardCommand.addTarget { event in
+            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            self.seek(offset: CMTime(seconds: -event.interval, preferredTimescale: 1_000))
+            return .success
+        }
+        rcc.playCommand.addTarget { _ in
+            self.play()
+            return .success
+        }
+        rcc.pauseCommand.addTarget { _ in
+            self.pause()
+            return .success
+        }
+    }
+
     private func doFallbackOnFailed() {
         if self.avPlayer.currentItem?.status == .failed {
             guard let url = (avPlayer.currentItem?.asset as? AVURLAsset)?.url else {
@@ -534,7 +568,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on pause event: \(error)")
             }
         }
-        self.infoNowPlaying?.pause(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
+        self.infoNowPlaying.pause(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
         self.multicastDelegate.didPause()
     }
 
@@ -546,7 +580,7 @@ public class ApiVideoPlayerController: NSObject {
         if self.isFirstPlay {
             self.isFirstPlay = false
             #if !os(macOS)
-            self.infoNowPlaying?.nowPlayingData = NowPlayingData(
+            self.infoNowPlaying.nowPlayingData = NowPlayingData(
                 duration: self.duration,
                 currentTime: self.currentTime,
                 isLive: self.isLive,
@@ -567,7 +601,7 @@ public class ApiVideoPlayerController: NSObject {
                 case let .failure(error): print("analytics error on resume event: \(error)")
                 }
             }
-            self.infoNowPlaying?.play(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
+            self.infoNowPlaying.play(currentTime: self.currentTime, currentRate: self.avPlayer.rate)
         }
         #if !os(macOS)
         try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
@@ -575,41 +609,6 @@ public class ApiVideoPlayerController: NSObject {
         #endif
         self.multicastDelegate.didPlay()
     }
-
-    #if !os(macOS)
-    func remoteControlEventReceived(with event: UIEvent?) {
-        if let event = event {
-            switch event.subtype {
-            case .remoteControlPlay:
-                // Handle play remote control event
-                self.play()
-
-            case .remoteControlPause:
-                self.pause()
-
-            // Handle pause remote control event
-            case .remoteControlNextTrack:
-                self.seek(to: self.duration)
-
-            // Handle next track remote control event
-            case .remoteControlPreviousTrack:
-                self.replay()
-
-            // Handle previous track remote control event
-            case .remoteControlStop:
-                // Handle stop remote control event
-                break
-
-            case .remoteControlTogglePlayPause:
-                // Handle toggle play/pause remote control event
-                break
-
-            default:
-                break
-            }
-        }
-    }
-    #endif
 
     private func doTimeControlStatus() {
         let status = self.avPlayer.timeControlStatus

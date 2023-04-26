@@ -239,10 +239,13 @@ public class ApiVideoPlayerView: UIView {
         }
     }
 
-    /// Pass events received from remote control, to handle actions.
-    /// - Parameter event: event of type remoteControl
-    public func remoteControlEventReceived(with event: UIEvent?) {
-        self.playerController.remoteControlEventReceived(with: event)
+    /// Toggle the visibility of the remote control.
+    /// Setting it to true will display it, while setting it to False will hide it.
+    /// By default the remote is hidden.
+    public var enableRemotteControl: Bool = false {
+        didSet {
+            self.playerController.enableRemoteControl = enableRemotteControl
+        }
     }
 
     /// Remove remote control from lockscreen and notification center.

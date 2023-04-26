@@ -48,14 +48,6 @@ public class SwiftUIPlayerViewController: UIViewController {
         super.viewDidDisappear(animated)
     }
 
-    override public func remoteControlReceived(with event: UIEvent?) {
-        if let event = event {
-            if event.type == .remoteControl {
-                self.playerView.remoteControlEventReceived(with: event)
-            }
-        }
-    }
-
     public func play() {
         self.playerView.play()
     }
