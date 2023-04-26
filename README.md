@@ -180,7 +180,16 @@ override func viewDidAppear(_ animated: Bool) {
 ```
 
 ### Remote control
-If you want to enable the remote control please check this [documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/adding-video-player-remote-control)
+If you want to enable the remote control do the following : 
+```swift
+override func viewDidLoad() {
+    ...
+    self.playerView.enableRemoteControl = true
+}
+```
+When you have to remove it set `enableRemoteControl` to false
+
+By default the remote control is hidden.
 
 # Sample application
 

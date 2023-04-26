@@ -10,7 +10,6 @@ Swift library to add player for your videos stored at api.video.
 
 ### Essentials
 - <doc:Getting-Started>
-- <doc:Adding-video-player-remote-control>
 ### UIKit
 
 - ``ApiVideoPlayerView``
