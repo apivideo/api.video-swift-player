@@ -6,7 +6,6 @@ protocol InformationNowPlaying {
     func pause(currentTime: CMTime, currentRate: Float)
     func play(currentTime: CMTime, currentRate: Float)
     func overrideInformations(for key: String, value: Any)
-    func clearMPNowPlayingInfoCenter()
 }
 
 class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
@@ -19,21 +18,20 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
 
     var nowPlayingData: NowPlayingData? {
         didSet {
-            if let title = nowPlayingData?.title {
+            guard let nowPlayingData = nowPlayingData else {
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = [:]
+                return
+            }
+            if let title = nowPlayingData.title {
                 infos[MPMediaItemPropertyTitle] = title
             }
-            if let duration = nowPlayingData?.duration {
-                infos[MPMediaItemPropertyPlaybackDuration] = duration.seconds
-            }
-            if let currentTime = nowPlayingData?.currentTime {
-                infos[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime.seconds
-            }
-            if let live = nowPlayingData?.isLive {
-                infos[MPNowPlayingInfoPropertyIsLiveStream] = live
-            }
+            infos[MPMediaItemPropertyPlaybackDuration] = nowPlayingData.duration.seconds
+            infos[MPNowPlayingInfoPropertyElapsedPlaybackTime] = nowPlayingData.currentTime.seconds
+            infos[MPNowPlayingInfoPropertyIsLiveStream] = nowPlayingData.isLive
+
             infos[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
             #if !os(macOS)
-            if let thumb = nowPlayingData?.thumbnailUrl {
+            if let thumb = nowPlayingData.thumbnailUrl {
                 if let url = URL(string: thumb) {
                     updateRemoteArtwork(url: url)
                 }
@@ -58,10 +56,6 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     func overrideInformations(for key: String, value: Any) {
         infos[key] = value
         MPNowPlayingInfoCenter.default().nowPlayingInfo = infos
-    }
-
-    func clearMPNowPlayingInfoCenter() {
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = [:]
     }
 
     #if !os(macOS)
