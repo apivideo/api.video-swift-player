@@ -180,7 +180,7 @@ override func viewDidAppear(_ animated: Bool) {
 ```
 
 ### Remote control
-If you want to enable the remote control do the following : 
+If you want to enable the remote control do the following: 
 ```swift
 override func viewDidLoad() {
     ...
