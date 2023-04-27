@@ -18,7 +18,6 @@ public class ApiVideoPlayerController: NSObject {
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
     private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying
-    private let rcc = MPRemoteCommandCenter.shared()
     private var enableRC = false {
         didSet {
             if enableRC {
@@ -494,6 +493,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func setupRemoteControls() {
+        let rcc = MPRemoteCommandCenter.shared()
         rcc.skipForwardCommand.preferredIntervals = [15.0]
         rcc.skipBackwardCommand.preferredIntervals = [15.0]
         rcc.skipForwardCommand.addTarget { event in
