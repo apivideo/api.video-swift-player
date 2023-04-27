@@ -242,7 +242,7 @@ public class ApiVideoPlayerView: UIView {
     /// Toggle the visibility of the remote control.
     /// Setting it to true will display it, while setting it to False will hide it.
     /// By default the remote is hidden.
-    public var enableRemotteControl: Bool {
+    public var enableRemoteControl: Bool {
         get {
             self.playerController.enableRemoteControl
         }

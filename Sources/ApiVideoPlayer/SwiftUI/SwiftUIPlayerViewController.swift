@@ -121,10 +121,10 @@ public class SwiftUIPlayerViewController: UIViewController {
 
     public var enableRemoteControl: Bool {
         get {
-            self.playerView.enableRemotteControl
+            self.playerView.enableRemoteControl
         }
         set(newValue) {
-            self.playerView.enableRemotteControl = newValue
+            self.playerView.enableRemoteControl = newValue
         }
     }
 
