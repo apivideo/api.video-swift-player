@@ -479,6 +479,7 @@ public class ApiVideoPlayerController: NSObject {
     public func goToFullScreen(viewController: UIViewController) {
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
+        playerViewController.updatesNowPlayingInfoCenter = false
         viewController.present(playerViewController, animated: true) {
             self.play()
         }
