@@ -18,17 +18,6 @@ public class ApiVideoPlayerController: NSObject {
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
     private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying
-    private var enableRC = false {
-        didSet {
-            if enableRC {
-                self.setupRemoteControls()
-            } else {
-                #if !os(macOS)
-                UIApplication.shared.endReceivingRemoteControlEvents()
-                #endif
-            }
-        }
-    }
 
     #if !os(macOS)
     /// Initializes a player controller.
@@ -434,12 +423,15 @@ public class ApiVideoPlayerController: NSObject {
         }
     }
 
-    public var enableRemoteControl: Bool {
-        get {
-            self.enableRC
-        }
-        set(newValue) {
-            self.enableRC = newValue
+    public var enableRemoteControl = false {
+        didSet {
+            if enableRemoteControl {
+                self.setupRemoteControls()
+            } else {
+                #if !os(macOS)
+                UIApplication.shared.endReceivingRemoteControlEvents()
+                #endif
+            }
         }
     }
 

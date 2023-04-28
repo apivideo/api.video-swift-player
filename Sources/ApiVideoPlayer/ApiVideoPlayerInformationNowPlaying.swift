@@ -3,10 +3,10 @@ import MediaPlayer
 
 protocol InformationNowPlaying {
     var nowPlayingData: NowPlayingData? { get set }
-    var currentTime: CMTime? { get set }
-    var playbackRate: Float? { get set }
     func pause(currentTime: CMTime, currentRate: Float)
     func play(currentTime: CMTime, currentRate: Float)
+    func updateCurrentTime(currentTime: CMTime)
+    func updatePlabackRate(rate: Float)
 }
 
 class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
@@ -15,30 +15,6 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
 
     init(taskExecutor: TasksExecutorProtocol.Type) {
         self.taskExecutor = taskExecutor
-    }
-
-    var currentTime: CMTime? {
-        didSet {
-            guard let currentTime = currentTime else {
-                return
-            }
-            self.overrideInformations(
-                for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
-                value: currentTime.seconds
-            )
-        }
-    }
-
-    var playbackRate: Float? {
-        didSet {
-            guard let playbackRate = playbackRate else {
-                return
-            }
-            self.overrideInformations(
-                for: MPNowPlayingInfoPropertyPlaybackRate,
-                value: playbackRate
-            )
-        }
     }
 
     var nowPlayingData: NowPlayingData? {
@@ -64,6 +40,20 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
             #endif
             MPNowPlayingInfoCenter.default().nowPlayingInfo = infos
         }
+    }
+
+    func updateCurrentTime(currentTime: CMTime) {
+        self.overrideInformations(
+            for: MPNowPlayingInfoPropertyElapsedPlaybackTime,
+            value: currentTime.seconds
+        )
+    }
+
+    func updatePlabackRate(rate: Float) {
+        self.overrideInformations(
+            for: MPNowPlayingInfoPropertyPlaybackRate,
+            value: rate
+        )
     }
 
     func pause(currentTime: CMTime, currentRate: Float) {
