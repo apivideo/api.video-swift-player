@@ -75,6 +75,11 @@ public class ApiVideoPlayerController: NSObject {
             options: NSKeyValueObservingOptions.new,
             context: nil
         )
+        if #available(iOS 15.0, *) {
+            NotificationCenter.default.addObserver(self, selector: #selector(handlePlaybackRateChange(_:)), name: AVPlayer.rateDidChangeNotification, object: self.avPlayer)
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
     private func retrySetUpPlayerUrlWithMp4() {
@@ -419,7 +424,13 @@ public class ApiVideoPlayerController: NSObject {
             if isPlaying {
                 avPlayer.rate = newRate
             }
-            infoNowPlaying.updatePlabackRate(rate: newRate)
+            if #available(iOS 15, *) {
+                // do nothing Notification will handle updatePlaybackRate
+            } else {
+                // iOS version is less than iOS 15
+                infoNowPlaying.updatePlabackRate(rate: newRate)
+                infoNowPlaying.updateCurrentTime(currentTime: self.currentTime)
+            }
         }
     }
 
@@ -594,6 +605,15 @@ public class ApiVideoPlayerController: NSObject {
         try? AVAudioSession.sharedInstance().setActive(true)
         #endif
         self.multicastDelegate.didPlay()
+    }
+    
+    @objc
+    func handlePlaybackRateChange(_ notification: Notification) {
+        guard let player = notification.object as? AVPlayer else {
+            return
+        }
+        infoNowPlaying.updatePlabackRate(rate: player.rate)
+        infoNowPlaying.updateCurrentTime(currentTime: self.currentTime)
     }
 
     private func doTimeControlStatus() {
