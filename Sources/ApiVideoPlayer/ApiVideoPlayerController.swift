@@ -75,7 +75,7 @@ public class ApiVideoPlayerController: NSObject {
             options: NSKeyValueObservingOptions.new,
             context: nil
         )
-        if #available(iOS 15.0, *) {
+        if #available(iOS 15.0, macOS 12.0, *) {
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(handlePlaybackRateChange(_:)),
