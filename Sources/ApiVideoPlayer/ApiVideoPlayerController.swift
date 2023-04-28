@@ -228,7 +228,7 @@ public class ApiVideoPlayerController: NSObject {
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
-            self.infoNowPlaying.currentTime = self.currentTime
+            self.infoNowPlaying.updateCurrentTime(currentTime: from)
             completion(completed)
         }
     }
@@ -419,7 +419,7 @@ public class ApiVideoPlayerController: NSObject {
             if isPlaying {
                 avPlayer.rate = newRate
             }
-
+            infoNowPlaying.updatePlabackRate(rate: newRate)
         }
     }
 
