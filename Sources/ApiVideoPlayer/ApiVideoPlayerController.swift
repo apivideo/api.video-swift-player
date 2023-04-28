@@ -76,7 +76,12 @@ public class ApiVideoPlayerController: NSObject {
             context: nil
         )
         if #available(iOS 15.0, *) {
-            NotificationCenter.default.addObserver(self, selector: #selector(handlePlaybackRateChange(_:)), name: AVPlayer.rateDidChangeNotification, object: self.avPlayer)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handlePlaybackRateChange(_:)),
+                name: AVPlayer.rateDidChangeNotification,
+                object: self.avPlayer
+            )
         } else {
             // Fallback on earlier versions
         }
@@ -606,7 +611,7 @@ public class ApiVideoPlayerController: NSObject {
         #endif
         self.multicastDelegate.didPlay()
     }
-    
+
     @objc
     func handlePlaybackRateChange(_ notification: Notification) {
         guard let player = notification.object as? AVPlayer else {
