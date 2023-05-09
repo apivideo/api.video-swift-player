@@ -3,10 +3,10 @@ import MediaPlayer
 
 protocol InformationNowPlaying {
     var nowPlayingData: NowPlayingData? { get set }
-    func pause(currentTime: CMTime, currentRate: Float)
-    func play(currentTime: CMTime, currentRate: Float)
+    func pause(currentTime: CMTime)
+    func play(currentTime: CMTime)
     func updateCurrentTime(currentTime: CMTime)
-    func updatePlabackRate(rate: Float)
+    func updatePlaybackRate(rate: Float)
 }
 
 class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
@@ -49,21 +49,19 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
         )
     }
 
-    func updatePlabackRate(rate: Float) {
+    func updatePlaybackRate(rate: Float) {
         self.overrideInformations(
             for: MPNowPlayingInfoPropertyPlaybackRate,
             value: rate
         )
     }
 
-    func pause(currentTime: CMTime, currentRate: Float) {
-        infos[MPNowPlayingInfoPropertyPlaybackRate] = currentRate
+    func pause(currentTime: CMTime) {
         MPNowPlayingInfoCenter.default().playbackState = .paused
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
 
-    func play(currentTime: CMTime, currentRate: Float) {
-        infos[MPNowPlayingInfoPropertyPlaybackRate] = currentRate
+    func play(currentTime: CMTime) {
         MPNowPlayingInfoCenter.default().playbackState = .playing
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
