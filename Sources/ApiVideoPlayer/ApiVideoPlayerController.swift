@@ -478,6 +478,7 @@ public class ApiVideoPlayerController: NSObject {
     public func goToFullScreen(viewController: UIViewController) {
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
+        // set updatesNowPlayingInfoCenter to false to avoid issue with artwork (blink when play/pause video)
         playerViewController.updatesNowPlayingInfoCenter = false
         viewController.present(playerViewController, animated: true) {
             self.play()
