@@ -230,7 +230,7 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
             self.analytics?
                 .seek(
-                    from: Float(CMTimeGetSeconds(from)),
+                    from: Float(from.seconds),
                     to: Float(time.seconds)
                 ) { result in
                     switch result {
