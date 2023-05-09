@@ -44,7 +44,7 @@ public class SwiftUIPlayerViewController: UIViewController {
 
     override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
-        UIApplication.shared.endReceivingRemoteControlEvents()
+        enableRemoteControl = false
         super.viewDidDisappear(animated)
     }
 
