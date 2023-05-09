@@ -433,8 +433,7 @@ public class ApiVideoPlayerController: NSObject {
                 // do nothing Notification will handle updatePlaybackRate
             } else {
                 // iOS version is less than iOS 15
-                infoNowPlaying.updatePlabackRate(rate: newRate)
-                infoNowPlaying.updateCurrentTime(currentTime: self.currentTime)
+                infoNowPlaying.updatePlaybackRate(rate: newRate)
             }
         }
     }
@@ -618,8 +617,7 @@ public class ApiVideoPlayerController: NSObject {
         guard let player = notification.object as? AVPlayer else {
             return
         }
-        infoNowPlaying.updatePlabackRate(rate: player.rate)
-        infoNowPlaying.updateCurrentTime(currentTime: self.currentTime)
+        infoNowPlaying.updatePlaybackRate(rate: player.rate)
     }
 
     private func doTimeControlStatus() {
