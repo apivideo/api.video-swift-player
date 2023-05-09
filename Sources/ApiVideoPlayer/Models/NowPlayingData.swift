@@ -7,4 +7,5 @@ struct NowPlayingData {
     let isLive: Bool
     let thumbnailUrl: String?
     let title: String? = nil
+    let playbackRate: Float
 }

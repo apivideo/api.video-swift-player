@@ -587,7 +587,8 @@ public class ApiVideoPlayerController: NSObject {
                 duration: self.duration,
                 currentTime: self.currentTime,
                 isLive: self.isLive,
-                thumbnailUrl: self.videoOptions?.thumbnailUrl
+                thumbnailUrl: self.videoOptions?.thumbnailUrl,
+                playbackRate: self.avPlayer.rate
             )
 
             #endif

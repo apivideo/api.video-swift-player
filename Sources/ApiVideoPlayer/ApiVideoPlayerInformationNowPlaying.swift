@@ -30,7 +30,7 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
             infos[MPNowPlayingInfoPropertyElapsedPlaybackTime] = nowPlayingData.currentTime.seconds
             infos[MPNowPlayingInfoPropertyIsLiveStream] = nowPlayingData.isLive
 
-            infos[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
+            infos[MPNowPlayingInfoPropertyPlaybackRate] = nowPlayingData.playbackRate
             #if !os(macOS)
             if let thumb = nowPlayingData.thumbnailUrl {
                 if let url = URL(string: thumb) {
