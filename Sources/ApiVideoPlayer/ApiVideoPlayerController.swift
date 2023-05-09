@@ -231,14 +231,14 @@ public class ApiVideoPlayerController: NSObject {
             self.analytics?
                 .seek(
                     from: Float(CMTimeGetSeconds(from)),
-                    to: Float(CMTimeGetSeconds(self.currentTime))
+                    to: Float(time.seconds)
                 ) { result in
                     switch result {
                     case .success: break
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
-            self.infoNowPlaying.updateCurrentTime(currentTime: from)
+            self.infoNowPlaying.updateCurrentTime(currentTime: time)
             completion(completed)
         }
     }
