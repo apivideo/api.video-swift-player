@@ -1,5 +1,7 @@
 import Foundation
-
+#if !os(macOS)
+import UIKit
+#endif
 /// Static methods to build the network requests.
 enum RequestsBuilder {
     private static func setContentType(request: inout URLRequest) {
@@ -44,4 +46,31 @@ enum RequestsBuilder {
             }
         }
     }
+
+    #if !os(macOS)
+    static func getThumbnail(
+        taskExecutor: TasksExecutorProtocol.Type,
+        url: URL,
+        completion: @escaping (UIImage) -> Void,
+        didError: @escaping (Error) -> Void
+    ) {
+        let request = buildUrlRequest(url: url)
+        let session = buildUrlSession()
+        taskExecutor.execute(session: session, request: request) { data, error in
+            if let data = data {
+                if let uiImage = UIImage(data: data) {
+                    completion(uiImage)
+                } else {
+                    didError(PlayerError.videoError("Unable to create image from data"))
+                }
+            } else {
+                if let error = error {
+                    didError(error)
+                } else {
+                    didError(PlayerError.sessionTokenError("Request error, failed to get thumbnail"))
+                }
+            }
+        }
+    }
+    #endif
 }

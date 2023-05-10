@@ -21,6 +21,7 @@
 		C734306628F453F900A82721 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C734306928F453F900A82721 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C734307128F4540D00A82721 /* api.video-swift-player */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "api.video-swift-player"; path = ../..; sourceTree = "<group>"; };
+		C77D97A629F2CB7C00987B1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +56,7 @@
 		C734306128F453F900A82721 /* PlayerSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				C77D97A629F2CB7C00987B1F /* Info.plist */,
 				C734306228F453F900A82721 /* PlayerSwiftUIApp.swift */,
 				C734306428F453F900A82721 /* ContentView.swift */,
 				C734306628F453F900A82721 /* Assets.xcassets */,
@@ -285,6 +287,7 @@
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PlayerSwiftUI/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -315,6 +318,7 @@
 				DEVELOPMENT_TEAM = VY3VXRC7P4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PlayerSwiftUI/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

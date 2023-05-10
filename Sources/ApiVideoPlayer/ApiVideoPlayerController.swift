@@ -2,6 +2,7 @@ import ApiVideoPlayerAnalytics
 import AVFoundation
 import AVKit
 import Foundation
+import MediaPlayer
 
 /// The ApiVideoPlayerController class is a wrapper around ``AVPlayer``.
 /// It is used internally of the ``ApiVideoPlayerView``.
@@ -16,6 +17,7 @@ public class ApiVideoPlayerController: NSObject {
     private let multicastDelegate = ApiVideoPlayerControllerMulticastDelegate()
     private var playerItemFactory: ApiVideoPlayerItemFactory?
     private var storedSpeedRate: Float = 1.0
+    private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying
 
     #if !os(macOS)
     /// Initializes a player controller.
@@ -54,12 +56,12 @@ public class ApiVideoPlayerController: NSObject {
     ) {
         multicastDelegate.addDelegates(delegates)
         self.taskExecutor = taskExecutor
+        self.infoNowPlaying = ApiVideoPlayerInformationNowPlaying(taskExecutor: taskExecutor)
 
         super.init()
         defer {
             self.videoOptions = videoOptions
         }
-
         self.autoplay = autoplay
         self.avPlayer.addObserver(
             self,
@@ -73,6 +75,16 @@ public class ApiVideoPlayerController: NSObject {
             options: NSKeyValueObservingOptions.new,
             context: nil
         )
+        if #available(iOS 15.0, macOS 12.0, *) {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handlePlaybackRateChange(_:)),
+                name: AVPlayer.rateDidChangeNotification,
+                object: self.avPlayer
+            )
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
     private func retrySetUpPlayerUrlWithMp4() {
@@ -218,14 +230,15 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
             self.analytics?
                 .seek(
-                    from: Float(CMTimeGetSeconds(from)),
-                    to: Float(CMTimeGetSeconds(self.currentTime))
+                    from: Float(from.seconds),
+                    to: Float(time.seconds)
                 ) { result in
                     switch result {
                     case .success: break
                     case let .failure(error): print("analytics error on seek event: \(error)")
                     }
                 }
+            self.infoNowPlaying.updateCurrentTime(currentTime: time)
             completion(completed)
         }
     }
@@ -276,6 +289,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets and sets the video options.
     public var videoOptions: VideoOptions? {
         didSet {
+            self.isFirstPlay = true
             guard let videoOptions = videoOptions else {
                 resetPlayer(with: nil)
                 return
@@ -415,6 +429,24 @@ public class ApiVideoPlayerController: NSObject {
             if isPlaying {
                 avPlayer.rate = newRate
             }
+            if #available(iOS 15, *) {
+                // do nothing Notification will handle updatePlaybackRate
+            } else {
+                // iOS version is less than iOS 15
+                infoNowPlaying.updatePlaybackRate(rate: newRate)
+            }
+        }
+    }
+
+    public var enableRemoteControl = false {
+        didSet {
+            if enableRemoteControl {
+                self.setupRemoteControls()
+            } else {
+                #if !os(macOS)
+                UIApplication.shared.endReceivingRemoteControlEvents()
+                #endif
+            }
         }
     }
 
@@ -446,6 +478,8 @@ public class ApiVideoPlayerController: NSObject {
     public func goToFullScreen(viewController: UIViewController) {
         let playerViewController = AVPlayerViewController()
         playerViewController.player = self.avPlayer
+        // set updatesNowPlayingInfoCenter to false to avoid issue with artwork (blink when play/pause video)
+        playerViewController.updatesNowPlayingInfoCenter = false
         viewController.present(playerViewController, animated: true) {
             self.play()
         }
@@ -465,6 +499,30 @@ public class ApiVideoPlayerController: NSObject {
             }
         }
         self.multicastDelegate.didEnd()
+    }
+
+    private func setupRemoteControls() {
+        let rcc = MPRemoteCommandCenter.shared()
+        rcc.skipForwardCommand.preferredIntervals = [15.0]
+        rcc.skipBackwardCommand.preferredIntervals = [15.0]
+        rcc.skipForwardCommand.addTarget { event in
+            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            self.seek(offset: CMTime(seconds: event.interval, preferredTimescale: 1_000))
+            return .success
+        }
+        rcc.skipBackwardCommand.addTarget { event in
+            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            self.seek(offset: CMTime(seconds: -event.interval, preferredTimescale: 1_000))
+            return .success
+        }
+        rcc.playCommand.addTarget { _ in
+            self.play()
+            return .success
+        }
+        rcc.pauseCommand.addTarget { _ in
+            self.pause()
+            return .success
+        }
     }
 
     private func doFallbackOnFailed() {
@@ -513,6 +571,7 @@ public class ApiVideoPlayerController: NSObject {
             case let .failure(error): print("analytics error on pause event: \(error)")
             }
         }
+        self.infoNowPlaying.pause(currentTime: self.currentTime)
         self.multicastDelegate.didPause()
     }
 
@@ -523,6 +582,16 @@ public class ApiVideoPlayerController: NSObject {
         }
         if self.isFirstPlay {
             self.isFirstPlay = false
+            #if !os(macOS)
+            self.infoNowPlaying.nowPlayingData = NowPlayingData(
+                duration: self.duration,
+                currentTime: self.currentTime,
+                isLive: self.isLive,
+                thumbnailUrl: self.videoOptions?.thumbnailUrl,
+                playbackRate: self.avPlayer.rate
+            )
+
+            #endif
             self.analytics?.play { result in
                 switch result {
                 case .success: break
@@ -536,8 +605,21 @@ public class ApiVideoPlayerController: NSObject {
                 case let .failure(error): print("analytics error on resume event: \(error)")
                 }
             }
+            self.infoNowPlaying.play(currentTime: self.currentTime)
         }
+        #if !os(macOS)
+        try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+        try? AVAudioSession.sharedInstance().setActive(true)
+        #endif
         self.multicastDelegate.didPlay()
+    }
+
+    @objc
+    func handlePlaybackRateChange(_ notification: Notification) {
+        guard let player = notification.object as? AVPlayer else {
+            return
+        }
+        infoNowPlaying.updatePlaybackRate(rate: player.rate)
     }
 
     private func doTimeControlStatus() {

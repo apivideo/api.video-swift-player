@@ -44,6 +44,7 @@ public class SwiftUIPlayerViewController: UIViewController {
 
     override public func viewDidDisappear(_ animated: Bool) {
         self.playerView.viewController = nil
+        enableRemoteControl = false
         super.viewDidDisappear(animated)
     }
 
@@ -115,6 +116,15 @@ public class SwiftUIPlayerViewController: UIViewController {
         }
         set(newValue) {
             self.playerView.isLooping = newValue
+        }
+    }
+
+    public var enableRemoteControl: Bool {
+        get {
+            self.playerView.enableRemoteControl
+        }
+        set(newValue) {
+            self.playerView.enableRemoteControl = newValue
         }
     }
 

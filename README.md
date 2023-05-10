@@ -77,7 +77,6 @@ a video Id to use this component and play a video from api.video. To get yours, 
 Alternatively, you can find your video Id in the video details of
 your [dashboard](https://dashboard.api.video).
 
-## Code sample
 
 ## Code sample
 
@@ -180,6 +179,19 @@ override func viewDidAppear(_ animated: Bool) {
 }
 ```
 
+### Remote control
+
+If you want to enable the remote control do the following: 
+```swift
+override func viewDidLoad() {
+    ...
+    self.playerView.enableRemoteControl = true
+}
+```
+When you have to remove it set `enableRemoteControl` to false
+
+By default the remote control is hidden.
+
 # Sample application
 
 A demo application demonstrates how to use player.
@@ -192,7 +204,7 @@ On the first run, you will have to set your video Id:
 
 # Documentation
 
-* [API documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
+* [Player documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
 * [api.video documentation](https://docs.api.video)
 
 # Dependencies

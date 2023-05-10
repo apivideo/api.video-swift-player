@@ -127,6 +127,7 @@ class PlayerViewController: UIViewController {
         view.addSubview(self.scrollView)
         self.scrollView.addSubview(self.playerView)
         self.playerView.addDelegate(self)
+        self.playerView.enableRemoteControl = true
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         self.playerView.addGestureRecognizer(doubleTap)

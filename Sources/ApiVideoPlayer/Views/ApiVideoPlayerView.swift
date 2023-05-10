@@ -238,6 +238,28 @@ public class ApiVideoPlayerView: UIView {
             self.playerController.isLooping = newValue
         }
     }
+
+    /// Toggle the visibility of the remote control.
+    /// Setting it to true will display it, while setting it to False will hide it.
+    /// By default the remote is hidden.
+    public var enableRemoteControl: Bool {
+        get {
+            self.playerController.enableRemoteControl
+        }
+        set(newValue) {
+            self.playerController.enableRemoteControl = newValue
+        }
+    }
+
+    /// Gets and sets the current playback speed rate. Expected values are between 0.5 and 2.0.
+    public var playbackRate: Float {
+        get {
+            self.playerController.speedRate
+        }
+        set(newRate) {
+            self.playerController.speedRate = newRate
+        }
+    }
 }
 
 #else
