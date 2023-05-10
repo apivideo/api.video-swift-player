@@ -250,6 +250,16 @@ public class ApiVideoPlayerView: UIView {
             self.playerController.enableRemoteControl = newValue
         }
     }
+
+    /// Gets and sets the current playback speed rate. Expected values are between 0.5 and 2.0.
+    public var playbackRate: Float {
+        get {
+            self.playerController.speedRate
+        }
+        set(newRate) {
+            self.playerController.speedRate = newRate
+        }
+    }
 }
 
 #else
