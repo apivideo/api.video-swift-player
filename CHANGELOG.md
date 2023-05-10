@@ -1,5 +1,10 @@
 # Changelog
 All changes to this project will be documented in this file.
+
+## [1.1.1] - 2023-05-10
+- Add speedrate selector
+- Add remote control on lockscreen
+
 ## [1.1.0] - 2023-03-15
 - Add private vod videos
 - Add live feature
