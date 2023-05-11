@@ -96,26 +96,26 @@ public class ApiVideoPlayerController: NSObject {
     /// Adds the provided player delegate.
     /// When the delegate is not used anymore, it should be removed with ``removeDelegate(_:)``.
     /// - Parameter delegate: The player delegate to be added.
-    func addDelegate(delegate: ApiVideoPlayerControllerPlayerDelegate) {
+    public func addDelegate(delegate: ApiVideoPlayerControllerPlayerDelegate) {
         multicastDelegate.addDelegate(delegate)
     }
 
     /// Adds the provided player delegates.
     /// When the delegates are not used anymore, it should be removed with ``removeDelegate(_:)``.
     /// - Parameter delegates: The array of player delegate to be added.
-    func addDelegates(delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
+    public func addDelegates(delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         multicastDelegate.addDelegates(delegates)
     }
 
     /// Removes the provided delegate.
     /// - Parameter delegate: The player delegate to be removed.
-    func removeDelegate(delegate: ApiVideoPlayerControllerPlayerDelegate) {
+    public func removeDelegate(delegate: ApiVideoPlayerControllerPlayerDelegate) {
         multicastDelegate.removeDelegate(delegate)
     }
 
     /// Removes the provided delegates.
     /// - Parameter delegates: The array of player delegate to be removed.
-    func removeDelegates(delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
+    public func removeDelegates(delegates: [ApiVideoPlayerControllerPlayerDelegate]) {
         multicastDelegate.removeDelegates(delegates)
     }
 
