@@ -1,6 +1,9 @@
 # Changelog
 All changes to this project will be documented in this file.
 
+## [1.1.2] - 2023-06-05
+- Make method addDelegate(s) and removeDelegate(s) public
+
 ## [1.1.1] - 2023-05-10
 - Add speedrate selector
 - Add remote control on lockscreen
