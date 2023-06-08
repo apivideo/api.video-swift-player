@@ -698,3 +698,20 @@ enum PlayerError: Error {
     case videoIdError(String)
     case sessionTokenError(String)
 }
+
+// MARK: LocalizedError
+
+extension PlayerError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case let .videoError(message):
+            return NSLocalizedString(message, comment: "")
+        case let .urlError(message):
+            return NSLocalizedString(message, comment: "")
+        case let .videoIdError(message):
+            return NSLocalizedString(message, comment: "")
+        case let .sessionTokenError(message):
+            return NSLocalizedString(message, comment: "")
+        }
+    }
+}
