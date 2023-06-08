@@ -532,7 +532,11 @@ public class ApiVideoPlayerController: NSObject {
             }
             if url.absoluteString.contains(".mp4") {
                 print("Failed to read MP4 video")
-                self.notifyError(error: PlayerError.videoError("Failed to read video"))
+                if let error = self.avPlayer.currentItem?.error as? NSError {
+                    self.notifyError(error: PlayerError.videoError(error.localizedDescription))
+                } else {
+                    self.notifyError(error: PlayerError.videoError("Failed to read MP4 video"))
+                }
                 return
             } else {
                 print("Failed to read HLS video, retrying with mp4")
