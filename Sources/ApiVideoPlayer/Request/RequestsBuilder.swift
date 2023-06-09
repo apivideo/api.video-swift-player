@@ -41,7 +41,7 @@ enum RequestsBuilder {
                 if let error = error {
                     didError(error)
                 } else {
-                    didError(PlayerError.sessionTokenError("Request error, failed to get session token"))
+                    didError(PlayerError.sessionTokenError("session token"))
                 }
             }
         }
@@ -67,7 +67,7 @@ enum RequestsBuilder {
                 if let error = error {
                     didError(error)
                 } else {
-                    didError(PlayerError.sessionTokenError("Request error, failed to get thumbnail"))
+                    didError(PlayerError.sessionTokenError("thumbnail"))
                 }
             }
         }

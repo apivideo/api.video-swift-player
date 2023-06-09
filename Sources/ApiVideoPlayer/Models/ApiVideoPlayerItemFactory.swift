@@ -49,7 +49,7 @@ class ApiVideoPlayerItemFactory {
 
     private func createPlayerItem(url: String) -> AVPlayerItem? {
         guard let path = URL(string: url) else {
-            delegate?.didError(PlayerError.urlError("Invalid URL"))
+            delegate?.didError(PlayerError.urlError(url))
             return nil
         }
         return AVPlayerItem(url: path)

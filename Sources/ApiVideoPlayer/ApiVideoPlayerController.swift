@@ -532,10 +532,11 @@ public class ApiVideoPlayerController: NSObject {
             }
             if url.absoluteString.contains(".mp4") {
                 print("Failed to read MP4 video")
-                if let error = self.avPlayer.currentItem?.error as? NSError {
+                if let error = self.avPlayer.currentItem?.error {
+                    print("error : \(error.localizedDescription)")
                     self.notifyError(error: PlayerError.videoError(error.localizedDescription))
                 } else {
-                    self.notifyError(error: PlayerError.videoError("Failed to read MP4 video"))
+                    self.notifyError(error: PlayerError.videoError("HLS then MP4 failed"))
                 }
                 return
             } else {
@@ -699,7 +700,6 @@ extension ApiVideoPlayerController: ApiVideoPlayerItemFactoryDelegate {
 enum PlayerError: Error {
     case videoError(String)
     case urlError(String)
-    case videoIdError(String)
     case sessionTokenError(String)
 }
 
@@ -708,14 +708,12 @@ enum PlayerError: Error {
 extension PlayerError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case let .videoError(message):
-            return NSLocalizedString(message, comment: "")
-        case let .urlError(message):
-            return NSLocalizedString(message, comment: "")
-        case let .videoIdError(message):
-            return NSLocalizedString(message, comment: "")
-        case let .sessionTokenError(message):
-            return NSLocalizedString(message, comment: "")
+        case let .videoError(error):
+            return "Failed to read video: \(error)"
+        case let .urlError(url):
+            return "URL is not valid : \(url)"
+        case let .sessionTokenError(type):
+            return "Request error, failed to get \(type)"
         }
     }
 }
