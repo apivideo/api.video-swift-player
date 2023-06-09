@@ -38,21 +38,42 @@ class ControlsView: UIView {
 
     private let forward15Button: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
+        if #available(iOS 13.0, *) {
+            btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
+        } else {
+            btn.setImage(
+                UIImage(named: "go-forward15", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+                for: .normal
+            )
+        }
         btn.tintColor = .white
         return btn
     }()
 
     private let backward15Button: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
+        if #available(iOS 13.0, *) {
+            btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
+        } else {
+            btn.setImage(
+                UIImage(named: "go-backward15", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+                for: .normal
+            )
+        }
         btn.tintColor = .white
         return btn
     }()
 
     private let fullScreenButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
+        if #available(iOS 13.0, *) {
+            btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
+        } else {
+            btn.setImage(
+                UIImage(named: "fullscreen", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+                for: .normal
+            )
+        }
         btn.tintColor = .white
         return btn
     }()

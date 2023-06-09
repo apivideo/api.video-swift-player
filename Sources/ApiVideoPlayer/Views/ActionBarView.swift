@@ -38,7 +38,15 @@ class ActionBarView: UIView {
 
     private let subtitleButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
+        if #available(iOS 13.0, *) {
+            btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
+        } else {
+            btn.setImage(
+                UIImage(named: "text-bubble", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+                for: .normal
+            )
+
+        }
         btn.tintColor = .white
         btn.isHidden = true
         btn.sizeToFit()
@@ -47,7 +55,14 @@ class ActionBarView: UIView {
 
     private let speedometerButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
+        if #available(iOS 13.0, *) {
+            btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
+        } else {
+            btn.setImage(
+                UIImage(named: "speedometer", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+                for: .normal
+            )
+        }
         btn.tintColor = .white
         btn.sizeToFit()
         return btn

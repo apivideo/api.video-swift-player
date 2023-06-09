@@ -128,6 +128,7 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
 }
 
 struct SwiftUIView_Previews: PreviewProvider {
+    @available(iOS 13.0.0, *)
     static var previews: some View {
         ApiVideoPlayer(videoOptions: VideoOptions(videoId: "vi2G6Qr8ZVE67dWLNymk7qbc", videoType: .vod))
     }

@@ -2,6 +2,8 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
+
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
@@ -12,6 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: UISceneSession Lifecycle
 
+    @available(iOS 13.0, *)
     func application(
         _: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,
@@ -22,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
+    @available(iOS 13.0, *)
     func application(_: UIApplication, didDiscardSceneSessions _: Set<UISceneSession>) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after
