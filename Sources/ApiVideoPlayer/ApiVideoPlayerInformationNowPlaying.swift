@@ -59,8 +59,6 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     func pause(currentTime: CMTime) {
         if #available(iOS 13.0, *) {
             MPNowPlayingInfoCenter.default().playbackState = .paused
-        } else {
-            // Fallback on earlier versions
         }
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
@@ -68,8 +66,6 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     func play(currentTime: CMTime) {
         if #available(iOS 13.0, *) {
             MPNowPlayingInfoCenter.default().playbackState = .playing
-        } else {
-            // Fallback on earlier versions
         }
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
