@@ -688,7 +688,10 @@ public class ApiVideoPlayerController: NSObject {
         avPlayer.removeObserver(self, forKeyPath: "currentItem.presentationSize", context: nil)
         avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
         avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
-        avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
+        if #available(iOS 15.0, macOS 12.0, *) {
+        } else {
+            avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
+        }
         NotificationCenter.default.removeObserver(self)
     }
 }
