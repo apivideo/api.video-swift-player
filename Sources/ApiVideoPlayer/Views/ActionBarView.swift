@@ -38,15 +38,7 @@ class ActionBarView: UIView {
 
     private let subtitleButton: UIButton = {
         let btn = UIButton(type: .system)
-        if #available(iOS 13.0, *) {
-            btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
-        } else {
-            btn.setImage(
-                UIImage(named: "text-bubble", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
-            )
-
-        }
+        // text.bubble
         btn.tintColor = .white
         btn.isHidden = true
         btn.sizeToFit()
@@ -55,14 +47,7 @@ class ActionBarView: UIView {
 
     private let speedometerButton: UIButton = {
         let btn = UIButton(type: .system)
-        if #available(iOS 13.0, *) {
-            btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
-        } else {
-            btn.setImage(
-                UIImage(named: "speedometer", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
-            )
-        }
+        // speedometer
         btn.tintColor = .white
         btn.sizeToFit()
         return btn
@@ -117,7 +102,9 @@ class ActionBarView: UIView {
 
         bottomActionView.addSubview(actionStackView)
         actionStackView.addArrangedSubview(subtitleButton)
+        subtitleButton.setImage(name: "text.bubble")
         actionStackView.addArrangedSubview(speedometerButton)
+        speedometerButton.setImage(name: "speedometer")
         bottomActionView.addSubview(liveButton)
 
         liveButton.addTarget(self, action: #selector(goToLive), for: .touchUpInside)
@@ -278,6 +265,19 @@ public protocol ActionBarViewDelegate: AnyObject {
     func sliderValueChangedDidStart(position: Float64)
     func sliderValueChangedDidMove(position: Float64)
     func sliderValueChangedDidStop(position: Float64)
+}
+
+extension UIButton {
+    func setImage(name: String) {
+        if #available(iOS 13.0, *) {
+            self.setImage(UIImage(systemName: name), for: .normal)
+        } else {
+            self.setImage(
+                UIImage(named: name, in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
+                for: .normal
+            )
+        }
+    }
 }
 
 #endif

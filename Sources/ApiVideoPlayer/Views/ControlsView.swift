@@ -38,42 +38,18 @@ class ControlsView: UIView {
 
     private let forward15Button: UIButton = {
         let btn = UIButton(type: .system)
-        if #available(iOS 13.0, *) {
-            btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
-        } else {
-            btn.setImage(
-                UIImage(named: "go-forward15", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
-            )
-        }
         btn.tintColor = .white
         return btn
     }()
 
     private let backward15Button: UIButton = {
         let btn = UIButton(type: .system)
-        if #available(iOS 13.0, *) {
-            btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
-        } else {
-            btn.setImage(
-                UIImage(named: "go-backward15", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
-            )
-        }
         btn.tintColor = .white
         return btn
     }()
 
     private let fullScreenButton: UIButton = {
         let btn = UIButton(type: .system)
-        if #available(iOS 13.0, *) {
-            btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
-        } else {
-            btn.setImage(
-                UIImage(named: "fullscreen", in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
-            )
-        }
         btn.tintColor = .white
         return btn
     }()
@@ -108,9 +84,12 @@ class ControlsView: UIView {
 
     private func addSubview() {
         addSubview(tapView)
+        fullScreenButton.setImage(name: "arrow.up.left.and.arrow.down.right")
         addSubview(fullScreenButton)
         addSubview(playPauseButton)
+        forward15Button.setImage(name: "goforward.15")
         addSubview(forward15Button)
+        backward15Button.setImage(name: "gobackward.15")
         addSubview(backward15Button)
 
         addSubview(actionBarView)
