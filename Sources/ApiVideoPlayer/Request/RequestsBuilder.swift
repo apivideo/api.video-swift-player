@@ -2,6 +2,7 @@ import Foundation
 #if !os(macOS)
 import UIKit
 #endif
+
 /// Static methods to build the network requests.
 enum RequestsBuilder {
     private static func setContentType(request: inout URLRequest) {
@@ -22,27 +23,24 @@ enum RequestsBuilder {
     static func getSessionToken(
         taskExecutor: TasksExecutorProtocol.Type,
         url: URL,
-        completion: @escaping (TokenSession) -> Void,
-        didError: @escaping (Error) -> Void
+        completion: @escaping (Result<TokenSession, Error>) -> Void
     ) {
         let request = buildUrlRequest(url: url)
         let session = buildUrlSession()
-        taskExecutor.execute(session: session, request: request) { data, error in
-            if let data = data {
+        taskExecutor.execute(session: session, request: request) { result in
+            switch result {
+            case let .success(data):
                 do {
                     let decoder = JSONDecoder()
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let token: TokenSession = try decoder.decode(TokenSession.self, from: data)
-                    completion(token)
+                    completion(.success(token))
                 } catch {
-                    didError(error)
+                    completion(.failure(error))
                 }
-            } else {
-                if let error = error {
-                    didError(error)
-                } else {
-                    didError(PlayerError.sessionTokenError("session token"))
-                }
+
+            case let .failure(error):
+                completion(.failure(error))
             }
         }
     }
@@ -56,19 +54,17 @@ enum RequestsBuilder {
     ) {
         let request = buildUrlRequest(url: url)
         let session = buildUrlSession()
-        taskExecutor.execute(session: session, request: request) { data, error in
-            if let data = data {
+        taskExecutor.execute(session: session, request: request) { result in
+            switch result {
+            case let .success(data):
                 if let uiImage = UIImage(data: data) {
                     completion(uiImage)
                 } else {
-                    didError(PlayerError.videoError("Unable to create image from data"))
+                    didError(PlayerError.thumbnailDecodeFailed(url))
                 }
-            } else {
-                if let error = error {
-                    didError(error)
-                } else {
-                    didError(PlayerError.sessionTokenError("thumbnail"))
-                }
+
+            case let .failure(error):
+                didError(error)
             }
         }
     }

@@ -19,11 +19,15 @@ class MockedTasksExecutor: TasksExecutorProtocol {
         }
     }
 
-    static func execute(session _: URLSession, request _: URLRequest, completion: @escaping (Data?, Error?) -> Void) {
+    static func execute(
+        session _: URLSession,
+        request _: URLRequest,
+        completion: @escaping (Result<Data, Error>) -> Void
+    ) {
         if let data = _data {
-            completion(data, nil)
+            completion(.success(data))
         } else if let error = _error {
-            completion(nil, error)
+            completion(.failure(error))
         }
     }
 }

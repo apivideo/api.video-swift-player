@@ -429,9 +429,7 @@ public class ApiVideoPlayerController: NSObject {
             if isPlaying {
                 avPlayer.rate = newRate
             }
-            if #available(iOS 15, *) {
-                // do nothing Notification will handle updatePlaybackRate
-            } else {
+            if #unavailable(iOS 15) {
                 // iOS version is less than iOS 15
                 infoNowPlaying.updatePlaybackRate(rate: newRate)
             }
@@ -506,12 +504,16 @@ public class ApiVideoPlayerController: NSObject {
         rcc.skipForwardCommand.preferredIntervals = [15.0]
         rcc.skipBackwardCommand.preferredIntervals = [15.0]
         rcc.skipForwardCommand.addTarget { event in
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            guard let event = event as? MPSkipIntervalCommandEvent else {
+                return .commandFailed
+            }
             self.seek(offset: CMTime(seconds: event.interval, preferredTimescale: 1_000))
             return .success
         }
         rcc.skipBackwardCommand.addTarget { event in
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            guard let event = event as? MPSkipIntervalCommandEvent else {
+                return .commandFailed
+            }
             self.seek(offset: CMTime(seconds: -event.interval, preferredTimescale: 1_000))
             return .success
         }
@@ -532,11 +534,11 @@ public class ApiVideoPlayerController: NSObject {
             }
             if url.absoluteString.contains(".mp4") {
                 print("Failed to read MP4 video")
+
                 if let error = self.avPlayer.currentItem?.error {
-                    print("error : \(error.localizedDescription)")
-                    self.notifyError(error: PlayerError.videoError(error.localizedDescription))
+                    self.notifyError(error: error)
                 } else {
-                    self.notifyError(error: PlayerError.videoError("HLS then MP4 failed"))
+                    self.notifyError(error: PlayerError.playbackFailed("Failed to read HLS and MP4 video"))
                 }
                 return
             } else {
@@ -694,26 +696,5 @@ public class ApiVideoPlayerController: NSObject {
 extension ApiVideoPlayerController: ApiVideoPlayerItemFactoryDelegate {
     public func didError(_ error: Error) {
         self.multicastDelegate.didError(error)
-    }
-}
-
-enum PlayerError: Error {
-    case videoError(String)
-    case urlError(String)
-    case sessionTokenError(String)
-}
-
-// MARK: LocalizedError
-
-extension PlayerError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case let .videoError(error):
-            return "Failed to read video: \(error)"
-        case let .urlError(url):
-            return "URL is not valid : \(url)"
-        case let .sessionTokenError(type):
-            return "Request error, failed to get \(type)"
-        }
     }
 }

@@ -52,16 +52,20 @@ class ApiVideoUrlFactory {
                 completion(tempUrl)
             } else {
                 guard let url = URL(string: videoOptions.sessionTokenUrl) else {
-                    delegate?.didError(PlayerError.urlError("Couldn't set up url from this videoId"))
+                    delegate?.didError(PlayerError.invalidUrl(url))
                     return
                 }
-                RequestsBuilder.getSessionToken(taskExecutor: taskExecutor, url: url, completion: { sessionToken in
-                    self.xTokenSession = sessionToken.sessionToken
-                    tempUrl.appendTokenSession(token: sessionToken.sessionToken)
-                    completion(tempUrl)
-                }, didError: { error in
-                    self.delegate?.didError(PlayerError.sessionTokenError(error.localizedDescription))
-                })
+                RequestsBuilder.getSessionToken(taskExecutor: taskExecutor, url: url) { result in
+                    switch result {
+                    case let .success(sessionToken):
+                        self.xTokenSession = sessionToken.sessionToken
+                        tempUrl.appendTokenSession(token: sessionToken.sessionToken)
+                        completion(tempUrl)
+
+                    case let .failure(error):
+                        self.delegate?.didError(error)
+                    }
+                }
             }
         } else {
             // do success with no token session, the video should be public

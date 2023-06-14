@@ -5,6 +5,6 @@ import Foundation
 /// This protocol is used to mock the requests in the tests.
 public protocol TasksExecutorProtocol {
     static func execute(
-        session: URLSession, request: URLRequest, completion: @escaping (Data?, Error?) -> Void
+        session: URLSession, request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void
     )
 }
