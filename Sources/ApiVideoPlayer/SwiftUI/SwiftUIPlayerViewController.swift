@@ -2,6 +2,7 @@
 import AVKit
 import UIKit
 
+@available(iOS 13.0.0, *)
 public class SwiftUIPlayerViewController: UIViewController {
     let playerView: ApiVideoPlayerView
     private var events: PlayerEvents?
@@ -130,6 +131,7 @@ public class SwiftUIPlayerViewController: UIViewController {
 
 }
 
+@available(iOS 13.0.0, *)
 extension SwiftUIPlayerViewController: ApiVideoPlayerControllerPlayerDelegate {
     public func didPrepare() {
         events?.didPrepare?()

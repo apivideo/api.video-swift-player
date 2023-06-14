@@ -83,7 +83,12 @@ public class ApiVideoPlayerController: NSObject {
                 object: self.avPlayer
             )
         } else {
-            // Fallback on earlier versions
+            self.avPlayer.addObserver(
+                self,
+                forKeyPath: "rate",
+                options: NSKeyValueObservingOptions.new,
+                context: nil
+            )
         }
     }
 
@@ -674,12 +679,19 @@ public class ApiVideoPlayerController: NSObject {
             }
             self.multicastDelegate.didVideoSizeChanged(newSize)
         }
+        if keyPath == "rate" {
+            infoNowPlaying.updatePlaybackRate(rate: self.avPlayer.rate)
+        }
     }
 
     deinit {
         avPlayer.removeObserver(self, forKeyPath: "currentItem.presentationSize", context: nil)
         avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
         avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
+        if #available(iOS 15.0, macOS 12.0, *) {
+        } else {
+            avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
+        }
         NotificationCenter.default.removeObserver(self)
     }
 }

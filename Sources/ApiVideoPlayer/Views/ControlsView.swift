@@ -38,21 +38,21 @@ class ControlsView: UIView {
 
     private let forward15Button: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "goforward.15"), for: .normal)
+        btn.setImage(name: "goforward.15")
         btn.tintColor = .white
         return btn
     }()
 
     private let backward15Button: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "gobackward.15"), for: .normal)
+        btn.setImage(name: "gobackward.15")
         btn.tintColor = .white
         return btn
     }()
 
     private let fullScreenButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "arrow.up.left.and.arrow.down.right"), for: .normal)
+        btn.setImage(name: "arrow.up.left.and.arrow.down.right")
         btn.tintColor = .white
         return btn
     }()

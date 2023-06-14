@@ -57,12 +57,16 @@ class ApiVideoPlayerInformationNowPlaying: InformationNowPlaying {
     }
 
     func pause(currentTime: CMTime) {
-        MPNowPlayingInfoCenter.default().playbackState = .paused
+        if #available(iOS 13.0, *) {
+            MPNowPlayingInfoCenter.default().playbackState = .paused
+        }
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
 
     func play(currentTime: CMTime) {
-        MPNowPlayingInfoCenter.default().playbackState = .playing
+        if #available(iOS 13.0, *) {
+            MPNowPlayingInfoCenter.default().playbackState = .playing
+        }
         self.overrideInformations(for: MPNowPlayingInfoPropertyElapsedPlaybackTime, value: currentTime.seconds)
     }
 

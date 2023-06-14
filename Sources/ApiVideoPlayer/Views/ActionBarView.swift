@@ -38,8 +38,8 @@ class ActionBarView: UIView {
 
     private let subtitleButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "text.bubble"), for: .normal)
         btn.tintColor = .white
+        btn.setImage(name: "text.bubble")
         btn.isHidden = true
         btn.sizeToFit()
         return btn
@@ -47,8 +47,8 @@ class ActionBarView: UIView {
 
     private let speedometerButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "speedometer"), for: .normal)
         btn.tintColor = .white
+        btn.setImage(name: "speedometer")
         btn.sizeToFit()
         return btn
     }()
