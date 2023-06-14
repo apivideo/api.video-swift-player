@@ -1,4 +1,5 @@
 import Foundation
+#if !os(macOS)
 import UIKit
 
 extension UIButton {
@@ -13,3 +14,4 @@ extension UIButton {
         }
     }
 }
+#endif
