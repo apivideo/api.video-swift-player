@@ -123,6 +123,7 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+    @available(iOS 13.0, *)
     func testValidPrivateVideoIdPlay() async throws {
         let privateToken = try await Utils.getPrivateToken(videoId: VideoId.privateVideoId)
 

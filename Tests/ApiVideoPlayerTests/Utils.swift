@@ -17,6 +17,7 @@ public enum Utils {
         }
     }
 
+    @available(iOS 13.0, *)
     static func getPrivateToken(videoId _: String) async throws -> String {
         // Init ApiVideoClient
         try XCTSkipIf(Parameters.apiKey == "INTEGRATION_TESTS_API_KEY", "Can't get API key")
