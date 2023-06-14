@@ -38,18 +38,21 @@ class ControlsView: UIView {
 
     private let forward15Button: UIButton = {
         let btn = UIButton(type: .system)
+        btn.setImage(name: "goforward.15")
         btn.tintColor = .white
         return btn
     }()
 
     private let backward15Button: UIButton = {
         let btn = UIButton(type: .system)
+        btn.setImage(name: "gobackward.15")
         btn.tintColor = .white
         return btn
     }()
 
     private let fullScreenButton: UIButton = {
         let btn = UIButton(type: .system)
+        btn.setImage(name: "arrow.up.left.and.arrow.down.right")
         btn.tintColor = .white
         return btn
     }()
@@ -84,12 +87,9 @@ class ControlsView: UIView {
 
     private func addSubview() {
         addSubview(tapView)
-        fullScreenButton.setImage(name: "arrow.up.left.and.arrow.down.right")
         addSubview(fullScreenButton)
         addSubview(playPauseButton)
-        forward15Button.setImage(name: "goforward.15")
         addSubview(forward15Button)
-        backward15Button.setImage(name: "gobackward.15")
         addSubview(backward15Button)
 
         addSubview(actionBarView)

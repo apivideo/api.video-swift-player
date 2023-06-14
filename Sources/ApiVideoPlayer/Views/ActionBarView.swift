@@ -38,8 +38,8 @@ class ActionBarView: UIView {
 
     private let subtitleButton: UIButton = {
         let btn = UIButton(type: .system)
-        // text.bubble
         btn.tintColor = .white
+        btn.setImage(name: "text.bubble")
         btn.isHidden = true
         btn.sizeToFit()
         return btn
@@ -47,8 +47,8 @@ class ActionBarView: UIView {
 
     private let speedometerButton: UIButton = {
         let btn = UIButton(type: .system)
-        // speedometer
         btn.tintColor = .white
+        btn.setImage(name: "speedometer")
         btn.sizeToFit()
         return btn
     }()
@@ -102,9 +102,7 @@ class ActionBarView: UIView {
 
         bottomActionView.addSubview(actionStackView)
         actionStackView.addArrangedSubview(subtitleButton)
-        subtitleButton.setImage(name: "text.bubble")
         actionStackView.addArrangedSubview(speedometerButton)
-        speedometerButton.setImage(name: "speedometer")
         bottomActionView.addSubview(liveButton)
 
         liveButton.addTarget(self, action: #selector(goToLive), for: .touchUpInside)
@@ -265,19 +263,6 @@ public protocol ActionBarViewDelegate: AnyObject {
     func sliderValueChangedDidStart(position: Float64)
     func sliderValueChangedDidMove(position: Float64)
     func sliderValueChangedDidStop(position: Float64)
-}
-
-extension UIButton {
-    func setImage(name: String) {
-        if #available(iOS 13.0, *) {
-            self.setImage(UIImage(systemName: name), for: .normal)
-        } else {
-            self.setImage(
-                UIImage(named: name, in: ApiVideoPlayerResources.resourceBundle, compatibleWith: nil),
-                for: .normal
-            )
-        }
-    }
 }
 
 #endif
