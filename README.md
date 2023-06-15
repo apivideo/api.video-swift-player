@@ -46,13 +46,13 @@ Or add this in your Package.swift
 
 ```
   dependencies: [
-        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.1.2"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.1.3"),
     ],
 ```
 
 ### Cocoapods
 
-Add `pod 'ApiVideoPlayer', '1.1.2'` in your `Podfile`
+Add `pod 'ApiVideoPlayer', '1.1.3'` in your `Podfile`
 
 Run `pod install`
 

@@ -1,6 +1,10 @@
 # Changelog
 All changes to this project will be documented in this file.
 
+## [1.1.3] - 2023-06-15
+- Make player available for iOS 11 and above
+- PlayerError send custom message to LocalizedError
+
 ## [1.1.2] - 2023-06-05
 - Make method addDelegate(s) and removeDelegate(s) public
 
