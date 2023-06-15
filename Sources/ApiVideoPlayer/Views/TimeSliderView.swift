@@ -20,7 +20,7 @@ class TimeSliderView: UIStackView {
     private let remainingTimeLabel: UILabel = {
         let label = UILabel()
         label.text = CMTime.zero.stringRepresentation
-        label.tintColor = .white
+        label.textColor = .white
         label.sizeToFit()
         return label
     }()
@@ -29,7 +29,7 @@ class TimeSliderView: UIStackView {
     private let elapsedTimeLabel: UILabel = {
         let label = UILabel()
         label.text = CMTime.zero.stringRepresentation
-        label.tintColor = .white
+        label.textColor = .white
         label.sizeToFit()
         return label
     }()
