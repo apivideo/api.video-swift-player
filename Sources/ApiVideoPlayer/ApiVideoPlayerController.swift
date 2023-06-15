@@ -189,7 +189,7 @@ public class ApiVideoPlayerController: NSObject {
             let option = try Options(mediaUrl: url, metadata: [])
             self.analytics = PlayerAnalytics(options: option)
         } catch {
-            print("error with the url")
+            print("Failed to initiate analytics for \(url)")
         }
     }
 
@@ -235,7 +235,7 @@ public class ApiVideoPlayerController: NSObject {
                 ) { result in
                     switch result {
                     case .success: break
-                    case let .failure(error): print("analytics error on seek event: \(error)")
+                    case let .failure(error): print("Failed to send seek event to analytics: \(error)")
                     }
                 }
             self.infoNowPlaying.updateCurrentTime(currentTime: time)
@@ -351,7 +351,6 @@ public class ApiVideoPlayerController: NSObject {
             }
             return CMTime(seconds: seekableDuration, preferredTimescale: 1_000)
         } else {
-            print("duration is not available")
             return CMTime.invalid
         }
     }
@@ -493,7 +492,7 @@ public class ApiVideoPlayerController: NSObject {
         self.analytics?.end { result in
             switch result {
             case .success: break
-            case let .failure(error): print("analytics error on ended event: \(error)")
+            case let .failure(error): print("Failed to send end event to analytics: \(error)")
             }
         }
         self.multicastDelegate.didEnd()
@@ -557,7 +556,7 @@ public class ApiVideoPlayerController: NSObject {
             self.analytics?.ready { result in
                 switch result {
                 case .success: break
-                case let .failure(error): print("analytics error ready event: \(error)")
+                case let .failure(error): print("Failed to send ready event to analytics: \(error)")
                 }
             }
         }
@@ -575,7 +574,7 @@ public class ApiVideoPlayerController: NSObject {
         self.analytics?.pause { result in
             switch result {
             case .success: break
-            case let .failure(error): print("analytics error on pause event: \(error)")
+            case let .failure(error): print("Failed to send pause event to analytics: \(error)")
             }
         }
         self.infoNowPlaying.pause(currentTime: self.currentTime)
@@ -602,14 +601,14 @@ public class ApiVideoPlayerController: NSObject {
             self.analytics?.play { result in
                 switch result {
                 case .success: break
-                case let .failure(error): print("analytics error on play event: \(error)")
+                case let .failure(error): print("Failed to send play event to analytics: \(error)")
                 }
             }
         } else {
             self.analytics?.resume { result in
                 switch result {
                 case .success: break
-                case let .failure(error): print("analytics error on resume event: \(error)")
+                case let .failure(error): print("Failed to send resume event to analytics: \(error)")
                 }
             }
             self.infoNowPlaying.play(currentTime: self.currentTime)
