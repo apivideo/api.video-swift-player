@@ -194,7 +194,7 @@ public class ApiVideoPlayerController: NSObject {
             let option = try Options(mediaUrl: url, metadata: [])
             self.analytics = PlayerAnalytics(options: option)
         } catch {
-            print("error with the url")
+            print("Failed to initiate analytics for \(url)")
         }
     }
 
@@ -240,7 +240,7 @@ public class ApiVideoPlayerController: NSObject {
                 ) { result in
                     switch result {
                     case .success: break
-                    case let .failure(error): print("analytics error on seek event: \(error)")
+                    case let .failure(error): print("Failed to send seek event to analytics: \(error)")
                     }
                 }
             self.infoNowPlaying.updateCurrentTime(currentTime: time)
@@ -356,7 +356,6 @@ public class ApiVideoPlayerController: NSObject {
             }
             return CMTime(seconds: seekableDuration, preferredTimescale: 1_000)
         } else {
-            print("duration is not available")
             return CMTime.invalid
         }
     }
@@ -434,9 +433,7 @@ public class ApiVideoPlayerController: NSObject {
             if isPlaying {
                 avPlayer.rate = newRate
             }
-            if #available(iOS 15, *) {
-                // do nothing Notification will handle updatePlaybackRate
-            } else {
+            if #unavailable(iOS 15) {
                 // iOS version is less than iOS 15
                 infoNowPlaying.updatePlaybackRate(rate: newRate)
             }
@@ -500,7 +497,7 @@ public class ApiVideoPlayerController: NSObject {
         self.analytics?.end { result in
             switch result {
             case .success: break
-            case let .failure(error): print("analytics error on ended event: \(error)")
+            case let .failure(error): print("Failed to send end event to analytics: \(error)")
             }
         }
         self.multicastDelegate.didEnd()
@@ -511,12 +508,16 @@ public class ApiVideoPlayerController: NSObject {
         rcc.skipForwardCommand.preferredIntervals = [15.0]
         rcc.skipBackwardCommand.preferredIntervals = [15.0]
         rcc.skipForwardCommand.addTarget { event in
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            guard let event = event as? MPSkipIntervalCommandEvent else {
+                return .commandFailed
+            }
             self.seek(offset: CMTime(seconds: event.interval, preferredTimescale: 1_000))
             return .success
         }
         rcc.skipBackwardCommand.addTarget { event in
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            guard let event = event as? MPSkipIntervalCommandEvent else {
+                return .commandFailed
+            }
             self.seek(offset: CMTime(seconds: -event.interval, preferredTimescale: 1_000))
             return .success
         }
@@ -537,7 +538,12 @@ public class ApiVideoPlayerController: NSObject {
             }
             if url.absoluteString.contains(".mp4") {
                 print("Failed to read MP4 video")
-                self.notifyError(error: PlayerError.videoError("Failed to read video"))
+
+                if let error = self.avPlayer.currentItem?.error {
+                    self.notifyError(error: error)
+                } else {
+                    self.notifyError(error: PlayerError.playbackFailed("Failed to read HLS and MP4 video"))
+                }
                 return
             } else {
                 print("Failed to read HLS video, retrying with mp4")
@@ -555,7 +561,7 @@ public class ApiVideoPlayerController: NSObject {
             self.analytics?.ready { result in
                 switch result {
                 case .success: break
-                case let .failure(error): print("analytics error ready event: \(error)")
+                case let .failure(error): print("Failed to send ready event to analytics: \(error)")
                 }
             }
         }
@@ -573,7 +579,7 @@ public class ApiVideoPlayerController: NSObject {
         self.analytics?.pause { result in
             switch result {
             case .success: break
-            case let .failure(error): print("analytics error on pause event: \(error)")
+            case let .failure(error): print("Failed to send pause event to analytics: \(error)")
             }
         }
         self.infoNowPlaying.pause(currentTime: self.currentTime)
@@ -600,14 +606,14 @@ public class ApiVideoPlayerController: NSObject {
             self.analytics?.play { result in
                 switch result {
                 case .success: break
-                case let .failure(error): print("analytics error on play event: \(error)")
+                case let .failure(error): print("Failed to send play event to analytics: \(error)")
                 }
             }
         } else {
             self.analytics?.resume { result in
                 switch result {
                 case .success: break
-                case let .failure(error): print("analytics error on resume event: \(error)")
+                case let .failure(error): print("Failed to send resume event to analytics: \(error)")
                 }
             }
             self.infoNowPlaying.play(currentTime: self.currentTime)
@@ -702,11 +708,4 @@ extension ApiVideoPlayerController: ApiVideoPlayerItemFactoryDelegate {
     public func didError(_ error: Error) {
         self.multicastDelegate.didError(error)
     }
-}
-
-enum PlayerError: Error {
-    case videoError(String)
-    case urlError(String)
-    case videoIdError(String)
-    case sessionTokenError(String)
 }
