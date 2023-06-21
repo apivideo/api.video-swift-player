@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/apivideo/api.video-ios-player-analytics", from: "1.0.6"),
+        .package(url: "https://github.com/apivideo/api.video-ios-player-analytics", from: "1.1.0"),
         .package(url: "https://github.com/apivideo/api.video-ios-client", from: "1.1.1")
     ],
     targets: [

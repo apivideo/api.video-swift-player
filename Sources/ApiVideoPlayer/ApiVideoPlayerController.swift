@@ -186,7 +186,7 @@ public class ApiVideoPlayerController: NSObject {
 
     private func setUpAnalytics(url: String) {
         do {
-            let option = try Options(mediaUrl: url, metadata: [])
+            let option = try Options(mediaUrl: url)
             self.analytics = PlayerAnalytics(options: option)
         } catch {
             print("Failed to initiate analytics for \(url)")
