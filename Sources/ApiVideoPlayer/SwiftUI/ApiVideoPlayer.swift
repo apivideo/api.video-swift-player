@@ -11,8 +11,12 @@ public struct ApiVideoPlayer: UIViewControllerRepresentable {
     /// - Parameters:
     ///   - videoOptions: The video to play.
     ///   - events: The player events.
-    public init(videoOptions: VideoOptions, events: PlayerEvents? = nil) {
-        self.playerViewController = SwiftUIPlayerViewController(videoOptions: videoOptions, events: events)
+    public init(videoOptions: VideoOptions, events: PlayerEvents? = nil, autoplay: Bool = false) {
+        self.playerViewController = SwiftUIPlayerViewController(
+            videoOptions: videoOptions,
+            events: events,
+            autoplay: autoplay
+        )
     }
 
     public func makeUIViewController(context _: Context) -> SwiftUIPlayerViewController {
