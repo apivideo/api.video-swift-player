@@ -28,7 +28,7 @@ struct ContentView: View {
             }
         )
         self.player = ApiVideoPlayer(
-            videoOptions: VideoOptions(videoId: "YOUR-VIDEO-ID", videoType: .vod),
+            videoOptions: VideoOptions(videoId: "vi77Dgk0F8eLwaFOtC5870yn", videoType: .vod),
             events: events
         )
     }
