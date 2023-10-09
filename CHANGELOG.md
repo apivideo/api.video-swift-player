@@ -1,6 +1,10 @@
 # Changelog
 All changes to this project will be documented in this file.
 
+## [1.1.4] - 2023-10-09
+- Fix analytics when currentTime < 0
+- Examples: Add default videoId
+
 ## [1.1.3] - 2023-06-15
 - Make player available for iOS 11 and above
 - PlayerError send custom message to LocalizedError
