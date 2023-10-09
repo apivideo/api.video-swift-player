@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Cocoapods
         run: gem install cocoapods
       - name: Deploy to Cocoapods
