@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apivideo/api.video-ios-client",
       "state" : {
-        "revision" : "0f98e2d65c628e6ece85e14879462cf4d76f9647",
-        "version" : "1.1.1"
+        "revision" : "ebd726b792dfddad484bc95af92a8cc6e27471ad",
+        "version" : "1.2.1"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apivideo/api.video-ios-player-analytics.git",
       "state" : {
-        "revision" : "410c2c009692c52009e954734e523b36baf1a14b",
-        "version" : "1.1.0"
+        "revision" : "a9811da994c2dedbd387888c92e292abfd738948",
+        "version" : "1.1.1"
       }
     }
   ],
