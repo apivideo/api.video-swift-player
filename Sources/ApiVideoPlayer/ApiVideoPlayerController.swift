@@ -235,8 +235,8 @@ public class ApiVideoPlayerController: NSObject {
         self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
             self.analytics?
                 .seek(
-                    from: Float(from.seconds),
-                    to: Float(time.seconds)
+                    from: Float(max(0, from.seconds)),
+                    to: Float(max(0, time.seconds))
                 ) { result in
                     switch result {
                     case .success: break
