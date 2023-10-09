@@ -14,5 +14,5 @@ Pod::Spec.new do |s|
   s.source_files = 'Sources/**/*.{swift, plist}'
   s.resources = 'Sources/**/*.{storyboard,xib,xcassets,json,png}'
 
-  s.dependency "ApiVideoPlayerAnalytics", "1.1.0"
+  s.dependency "ApiVideoPlayerAnalytics", "1.1.1"
 end
