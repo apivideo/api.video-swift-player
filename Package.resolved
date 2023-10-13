@@ -28,9 +28,9 @@
       }
     },
     {
-      "identity" : "api.video-ios-player-analytics",
+      "identity" : "api.video-swift-player-analytics",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apivideo/api.video-ios-player-analytics.git",
+      "location" : "https://github.com/apivideo/api.video-swift-player-analytics",
       "state" : {
         "revision" : "a9811da994c2dedbd387888c92e292abfd738948",
         "version" : "1.1.1"

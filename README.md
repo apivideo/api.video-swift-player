@@ -213,7 +213,7 @@ We are using external library
 
 | Plugin                                                                                | README                                                                         |
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-ios-player-analytics) | [README.md](https://github.com/apivideo/api.video-ios-player-analytics#readme) |
+| [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-swift-player-analytics) | [README.md](https://github.com/apivideo/api.video-swift-player-analytics#readme) |
 
 # FAQ
 

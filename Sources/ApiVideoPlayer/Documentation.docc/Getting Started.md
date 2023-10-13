@@ -194,11 +194,11 @@ We are using external library
 
 | Plugin                                                                                | README                                                                         |
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-ios-player-analytics) | [README.md](https://github.com/apivideo/api.video-ios-player-analytics#readme) |
+| [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-swift-player-analytics) | [README.md](https://github.com/apivideo/api.video-swift-player-analytics#readme) |
 
 ## FAQ
 
 If you have any questions, ask us here: [https://community.api.video](https://community.api.video) or
-use [Issues](https://github.com/apivideo/api.video-ios-player-analytics/issues).
+use [Issues](https://github.com/apivideo/api.video-swift-player/issues).
 
 

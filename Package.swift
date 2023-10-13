@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/apivideo/api.video-ios-player-analytics", from: "1.1.1"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player-analytics", from: "1.1.1"),
         .package(url: "https://github.com/apivideo/api.video-ios-client", from: "1.2.1")
     ],
     targets: [
@@ -26,7 +26,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "ApiVideoPlayer",
-            dependencies: [.product(name: "ApiVideoPlayerAnalytics", package: "api.video-ios-player-analytics")],
+            dependencies: [.product(name: "ApiVideoPlayerAnalytics", package: "api.video-swift-player-analytics")],
             resources: [.process("Resources")]
         ),
         .testTarget(
