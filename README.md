@@ -20,6 +20,7 @@ your app.
   - [Retrieve your video Id](#retrieve-your-video-id)
   - [Usage](#usage)
     - [Remote control](#remote-control)
+    - [Supported player views](#supported-player-views)
   - [Play an api.video video in your AVPlayer](#play-an-apivideo-video-in-your-avplayer)
 - [Sample application](#sample-application)
 - [Documentation](#documentation)
@@ -197,6 +198,39 @@ override func viewDidLoad() {
 When you have to remove it set `enableRemoteControl` to false
 
 By default the remote control is hidden.
+
+### Supported player views
+
+The api.video Swift player comes with a specific view `ApiVideoPlayerView` to display the video
+and its controller. If you require a customization of this view such as changing a button color,...,
+you can contact [us](https://github.com/apivideo/api.video-swift-player/issues).
+
+Otherwise, in the `ApiVideoPlayerController`, you can also use the following views:
+
+- [`AVPlayerViewController`](https://developer.apple.com/documentation/avkit/avplayerviewcontroller): AVKit view
+
+```swift
+// Create the api.video controller
+let controller = ApiVideoPlayerController(
+    videoOptions: VideoOptions(videoId: "vi77Dgk0F8eLwaFOtC5870yn", videoType: .vod),
+    delegates: [],
+    autoplay: false
+)
+// Create the AVKit AVPlayerViewController
+let viewController = AVPlayerViewController()
+
+/// Pass the api.video controller to the AVKit AVPlayerViewController
+viewController.setApiVideoPlayerController(controller)
+// Prepare the view
+self.addChild(viewController)
+view.addSubview(viewController.view)
+// Set the AVKit AVPlayerViewController frame size according to your needs (here it's the whole screen)
+viewController.view.frame = self.view.frame
+// Do what you want with the video controller (play, pause, seek,...)
+controller.play()
+```
+
+- [`AVPlayerLayer`](https://developer.apple.com/documentation/avfoundation/avplayerlayer). A view that only display the video. It requires more work to be used.
 
 ## Play an api.video video in your AVPlayer
 
