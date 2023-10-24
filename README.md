@@ -2,6 +2,7 @@
 &nbsp; [![badge](https://img.shields.io/github/stars/apivideo/api.video-swift-player?style=social)](https://github.com/apivideo/api.video-swift-player)
 &nbsp; [![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
 ![](https://github.com/apivideo/.github/blob/main/assets/apivideo_banner.png)
+
 <h1 align="center">api.video Swift player</h1>
 
 [api.video](https://api.video) is the video infrastructure for product builders. Lightning fast
@@ -13,13 +14,17 @@ your app.
 - [Table of contents](#table-of-contents)
 - [Project description](#project-description)
 - [Getting started](#getting-started)
-    - [Installation](#installation)
-        - [Swift Package Manager](#swift-package-manager)
-        - [Cocoapods](#cocoapods)
-    - [Retrieve your video Id](#retrieve-your-video-id)
+  - [Installation](#installation)
+    - [Swift Package Manager](#swift-package-manager)
+    - [Cocoapods](#cocoapods)
+  - [Retrieve your video Id](#retrieve-your-video-id)
+  - [Usage](#usage)
+    - [Remote control](#remote-control)
+  - [Play an api.video video in your AVPlayer](#play-an-apivideo-video-in-your-avplayer)
 - [Sample application](#sample-application)
 - [Documentation](#documentation)
 - [Dependencies](#dependencies)
+- [FAQ](#faq)
 
 # Project description
 
@@ -77,8 +82,7 @@ a video Id to use this component and play a video from api.video. To get yours, 
 Alternatively, you can find your video Id in the video details of
 your [dashboard](https://dashboard.api.video).
 
-
-## Code sample
+## Usage
 
 1. Imports the library
 
@@ -181,16 +185,36 @@ override func viewDidAppear(_ animated: Bool) {
 
 ### Remote control
 
-If you want to enable the remote control do the following: 
+If you want to enable the remote control do the following:
+
 ```swift
 override func viewDidLoad() {
     ...
     self.playerView.enableRemoteControl = true
 }
 ```
+
 When you have to remove it set `enableRemoteControl` to false
 
 By default the remote control is hidden.
+
+## Play an api.video video in your AVPlayer
+
+If you are using AVPlayer directly, you can use the api.video Swift extensions:
+
+1. Create a video
+
+```swift
+let videoOptions = VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod))
+// for private video VideoOptions(videoId: "YOUR_VIDEO_ID", videoType: .vod, token: "YOUR_PRIVATE_VIDEO_TOKEN")
+```
+
+2. Pass it to your AVPlayer
+
+```swift
+val player = AVPlayer() // You already have that in your code
+avPlayer.replaceCurrentItem(withHls: videoOptions)
+```
 
 # Sample application
 
@@ -204,15 +228,15 @@ On the first run, you will have to set your video Id:
 
 # Documentation
 
-* [Player documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
-* [api.video documentation](https://docs.api.video)
+- [Player documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
+- [api.video documentation](https://docs.api.video)
 
 # Dependencies
 
 We are using external library
 
-| Plugin                                                                                | README                                                                         |
-|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| Plugin                                                                                  | README                                                                           |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-swift-player-analytics) | [README.md](https://github.com/apivideo/api.video-swift-player-analytics#readme) |
 
 # FAQ
