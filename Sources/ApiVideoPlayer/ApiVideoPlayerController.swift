@@ -8,7 +8,7 @@ import MediaPlayer
 /// It is used internally of the ``ApiVideoPlayerView``.
 /// It could be used directly if you want to use the player with a fully custom UI.
 public class ApiVideoPlayerController: NSObject {
-    private let avPlayer = AVPlayer(playerItem: nil)
+    internal let player = AVPlayer(playerItem: nil)
     private var analytics: PlayerAnalytics?
     private var timeObserver: Any?
     private var isFirstPlay = true
@@ -20,7 +20,7 @@ public class ApiVideoPlayerController: NSObject {
     private var infoNowPlaying: ApiVideoPlayerInformationNowPlaying
 
     #if !os(macOS)
-    /// Initializes a player controller.
+    /// Creates a player controller to display the video in a ``AVPlayerLayer``.
     /// - Parameters:
     ///   - videoOptions: The video to play.
     ///   - playerLayer: The player layer where to display the video.
@@ -37,11 +37,31 @@ public class ApiVideoPlayerController: NSObject {
             delegates: delegates,
             autoplay: autoplay
         )
-        playerLayer.player = self.avPlayer
+        playerLayer.player = self.player
+    }
+
+    /// Creates a player controller to display the video in a ``AVPlayerViewController``.
+    /// - Parameters:
+    ///   - videoOptions: The video to play.
+    ///   - playerViewController: The player view controller where to display the video.
+    ///   - delegates: The delegates of the player events.
+    ///   - autoplay: True to play the video when it has been loaded, false to wait for an explicit play.
+    public convenience init(
+        videoOptions: VideoOptions?,
+        playerViewController: AVPlayerViewController,
+        delegates: [ApiVideoPlayerControllerPlayerDelegate] = [],
+        autoplay: Bool = false
+    ) {
+        self.init(
+            videoOptions: videoOptions,
+            delegates: delegates,
+            autoplay: autoplay
+        )
+        playerViewController.setApiVideoPlayerController(self)
     }
     #endif
 
-    /// Initializes a player controller.
+    /// Creates a player controller without a view.
     /// - Parameters:
     ///   - videoOptions: The video to play.
     ///   - delegates: The delegates of the player events.
@@ -63,13 +83,13 @@ public class ApiVideoPlayerController: NSObject {
             self.videoOptions = videoOptions
         }
         self.autoplay = autoplay
-        self.avPlayer.addObserver(
+        self.player.addObserver(
             self,
             forKeyPath: "timeControlStatus",
             options: [NSKeyValueObservingOptions.new, NSKeyValueObservingOptions.old],
             context: nil
         )
-        self.avPlayer.addObserver(
+        self.player.addObserver(
             self,
             forKeyPath: "currentItem.presentationSize",
             options: NSKeyValueObservingOptions.new,
@@ -80,10 +100,10 @@ public class ApiVideoPlayerController: NSObject {
                 self,
                 selector: #selector(handlePlaybackRateChange(_:)),
                 name: AVPlayer.rateDidChangeNotification,
-                object: self.avPlayer
+                object: self.player
             )
         } else {
-            self.avPlayer.addObserver(
+            self.player.addObserver(
                 self,
                 forKeyPath: "rate",
                 options: NSKeyValueObservingOptions.new,
@@ -125,12 +145,12 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func resetPlayer(with playerItem: AVPlayerItem? = nil) {
-        if let currentItem = avPlayer.currentItem {
+        if let currentItem = player.currentItem {
             currentItem.removeObserver(self, forKeyPath: "status", context: nil)
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: currentItem)
         }
 
-        avPlayer.replaceCurrentItem(with: playerItem)
+        player.replaceCurrentItem(with: playerItem)
     }
 
     private func preparePlayer(playerItem: AVPlayerItem) {
@@ -153,14 +173,14 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     public func addOutput(output: AVPlayerItemOutput) {
-        guard let item = avPlayer.currentItem else {
+        guard let item = player.currentItem else {
             return
         }
         item.add(output)
     }
 
     public func removeOutput(output: AVPlayerItemOutput) {
-        guard let item = avPlayer.currentItem else {
+        guard let item = player.currentItem else {
             return
         }
         item.remove(output)
@@ -173,7 +193,7 @@ public class ApiVideoPlayerController: NSObject {
     /// player.
     public func addTimerObserver(callback: @escaping () -> Void) -> Any {
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        return avPlayer.addPeriodicTimeObserver(
+        return player.addPeriodicTimeObserver(
             forInterval: interval,
             queue: DispatchQueue.main,
             using: { _ in
@@ -186,7 +206,7 @@ public class ApiVideoPlayerController: NSObject {
     ///
     /// - Parameter observer: The time observer to be removed.
     public func removeTimeObserver(_ observer: Any) {
-        avPlayer.removeTimeObserver(observer)
+        player.removeTimeObserver(observer)
     }
 
     private func setUpAnalytics(url: String) {
@@ -201,7 +221,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Get if the player is playing a live stream.
     /// - Returns: True if the player is playing a live stream
     public var isLive: Bool {
-        guard let currentItem = avPlayer.currentItem else {
+        guard let currentItem = player.currentItem else {
             return false
         }
         return currentItem.duration.isIndefinite
@@ -210,7 +230,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets if the player is playing a VOD.
     /// - Returns: True if the player is playing a VOD
     public var isVod: Bool {
-        guard let currentItem = avPlayer.currentItem else {
+        guard let currentItem = player.currentItem else {
             return false
         }
         return !currentItem.duration.isIndefinite
@@ -219,20 +239,20 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets if the video is playing.
     /// - Returns: True if the player is playing a video
     public var isPlaying: Bool {
-        self.avPlayer.isPlaying
+        self.player.isPlaying
     }
 
     /// Plays the video.
     public func play() {
-        self.avPlayer.play()
+        self.player.play()
         if #unavailable(iOS 16.0, macOS 13.0, tvOS 16.0) {
-            self.avPlayer.rate = storedSpeedRate
+            self.player.rate = storedSpeedRate
         }
     }
 
     private func seekImpl(to time: CMTime, completion: @escaping (Bool) -> Void) {
         let from = self.currentTime
-        self.avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
+        self.player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
             self.analytics?
                 .seek(
                     from: Float(max(0, from.seconds)),
@@ -259,14 +279,14 @@ public class ApiVideoPlayerController: NSObject {
 
     /// Pauses the video.
     public func pause() {
-        self.avPlayer.pause()
+        self.player.pause()
     }
 
     /// Pauses the video before seeking.
     /// This is useful to avoid spam of delegate calls.
     public func pauseBeforeSeek() {
         self.isSeeking = true
-        self.avPlayer.pause()
+        self.player.pause()
     }
 
     /// Moves the playback cursor to the ``currentTime`` + offset.
@@ -310,10 +330,10 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets and sets the playback muted state.
     public var isMuted: Bool {
         get {
-            self.avPlayer.isMuted
+            self.player.isMuted
         }
         set(newValue) {
-            self.avPlayer.isMuted = newValue
+            self.player.isMuted = newValue
             if newValue {
                 self.multicastDelegate.didMute()
             } else {
@@ -332,10 +352,10 @@ public class ApiVideoPlayerController: NSObject {
     /// - Parameter volume: The new volume between 0 to 1.
     public var volume: Float {
         get {
-            self.avPlayer.volume
+            self.player.volume
         }
         set(newVolume) {
-            self.avPlayer.volume = newVolume
+            self.player.volume = newVolume
             self.multicastDelegate.didSetVolume(volume)
         }
     }
@@ -344,7 +364,7 @@ public class ApiVideoPlayerController: NSObject {
     /// If the video is live, the duration is the seekable duration.
     /// The duration is invalid if the video is not ready or not set.
     public var duration: CMTime {
-        guard let currentItem = avPlayer.currentItem else {
+        guard let currentItem = player.currentItem else {
             return CMTime.invalid
         }
 
@@ -363,7 +383,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Get the current video position.
     /// The position is invalid if the video is not ready or not set.
     public var currentTime: CMTime {
-        self.avPlayer.currentTime()
+        self.player.currentTime()
     }
 
     public var isAtEnd: Bool {
@@ -373,7 +393,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets the current video size.
     /// - Returns: The video size
     public var videoSize: CGSize {
-        self.avPlayer.videoSize
+        self.player.videoSize
     }
 
     /// Gets if the current video has subtitles.
@@ -386,7 +406,7 @@ public class ApiVideoPlayerController: NSObject {
     /// - Returns: The available subtitles locales
     public var subtitleLocales: [Locale] {
         var locales: [Locale] = []
-        if let playerItem = avPlayer.currentItem,
+        if let playerItem = player.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
         {
             for option in group.options where option.displayName != "CC" {
@@ -401,7 +421,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Gets the current subtitle locale.
     /// - Returns: The current subtitle locale
     public var currentSubtitleLocale: Locale? {
-        if let playerItem = avPlayer.currentItem,
+        if let playerItem = player.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible),
            let selectedOption = playerItem.currentMediaSelection.selectedMediaOption(in: group)
         {
@@ -415,10 +435,10 @@ public class ApiVideoPlayerController: NSObject {
     public var speedRate: Float {
         get {
             if #available(iOS 16.0, macOS 13.0, tvOS 16.0, *) {
-                return avPlayer.defaultRate
+                return player.defaultRate
             } else {
                 if isPlaying {
-                    return avPlayer.rate
+                    return player.rate
                 } else {
                     return storedSpeedRate
                 }
@@ -426,12 +446,12 @@ public class ApiVideoPlayerController: NSObject {
         }
         set(newRate) {
             if #available(iOS 16.0, macOS 13.0, tvOS 16.0, *) {
-                avPlayer.defaultRate = newRate
+                player.defaultRate = newRate
             } else {
                 storedSpeedRate = newRate
             }
             if isPlaying {
-                avPlayer.rate = newRate
+                player.rate = newRate
             }
             if #unavailable(iOS 15) {
                 // iOS version is less than iOS 15
@@ -455,7 +475,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Sets the current subtitle locale.
     /// - Parameter locale: The new subtitle locale
     public func setCurrentSubtitleLocale(locale: Locale) {
-        if let playerItem = avPlayer.currentItem,
+        if let playerItem = player.currentItem,
            let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
         {
             let options = AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
@@ -467,7 +487,7 @@ public class ApiVideoPlayerController: NSObject {
 
     /// Hides the current subtitle.
     public func hideSubtitle() {
-        guard let playerItem = avPlayer.currentItem else {
+        guard let playerItem = player.currentItem else {
             return
         }
         if let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
@@ -479,7 +499,7 @@ public class ApiVideoPlayerController: NSObject {
     /// Sends the player in fullscreen.
     public func goToFullScreen(viewController: UIViewController) {
         let playerViewController = AVPlayerViewController()
-        playerViewController.player = self.avPlayer
+        playerViewController.setApiVideoPlayerController(self)
         // set updatesNowPlayingInfoCenter to false to avoid issue with artwork (blink when play/pause video)
         playerViewController.updatesNowPlayingInfoCenter = false
         viewController.present(playerViewController, animated: true) {
@@ -532,14 +552,14 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func doFallbackOnFailed() {
-        if self.avPlayer.currentItem?.status == .failed {
-            guard let url = (avPlayer.currentItem?.asset as? AVURLAsset)?.url else {
+        if self.player.currentItem?.status == .failed {
+            guard let url = (player.currentItem?.asset as? AVURLAsset)?.url else {
                 return
             }
             if url.absoluteString.contains(".mp4") {
                 print("Failed to read MP4 video")
 
-                if let error = self.avPlayer.currentItem?.error {
+                if let error = self.player.currentItem?.error {
                     self.notifyError(error: error)
                 } else {
                     self.notifyError(error: PlayerError.playbackFailed("Failed to read HLS and MP4 video"))
@@ -553,7 +573,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func doReadyToPlay() {
-        if self.avPlayer.currentItem?.status == .readyToPlay {
+        if self.player.currentItem?.status == .readyToPlay {
             self.multicastDelegate.didReady()
             if self.autoplay {
                 self.play()
@@ -599,7 +619,7 @@ public class ApiVideoPlayerController: NSObject {
                 currentTime: self.currentTime,
                 isLive: self.isLive,
                 thumbnailUrl: self.videoOptions?.thumbnailUrl,
-                playbackRate: self.avPlayer.rate
+                playbackRate: self.player.rate
             )
 
             #endif
@@ -634,7 +654,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func doTimeControlStatus() {
-        let status = self.avPlayer.timeControlStatus
+        let status = self.player.timeControlStatus
         switch status {
         case .paused:
             // Paused mode
@@ -686,17 +706,17 @@ public class ApiVideoPlayerController: NSObject {
             self.multicastDelegate.didVideoSizeChanged(newSize)
         }
         if keyPath == "rate" {
-            infoNowPlaying.updatePlaybackRate(rate: self.avPlayer.rate)
+            infoNowPlaying.updatePlaybackRate(rate: self.player.rate)
         }
     }
 
     deinit {
-        avPlayer.removeObserver(self, forKeyPath: "currentItem.presentationSize", context: nil)
-        avPlayer.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
-        avPlayer.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
+        player.removeObserver(self, forKeyPath: "currentItem.presentationSize", context: nil)
+        player.removeObserver(self, forKeyPath: "timeControlStatus", context: nil)
+        player.currentItem?.removeObserver(self, forKeyPath: "status", context: nil)
         if #available(iOS 15.0, macOS 12.0, *) {
         } else {
-            avPlayer.removeObserver(self, forKeyPath: "rate", context: nil)
+            player.removeObserver(self, forKeyPath: "rate", context: nil)
         }
         NotificationCenter.default.removeObserver(self)
     }
