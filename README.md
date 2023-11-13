@@ -1,3 +1,4 @@
+<!--<documentation_excluded>-->
 [![badge](https://img.shields.io/twitter/follow/api_video?style=social)](https://twitter.com/intent/follow?screen_name=api_video)
 &nbsp; [![badge](https://img.shields.io/github/stars/apivideo/api.video-swift-player?style=social)](https://github.com/apivideo/api.video-swift-player)
 &nbsp; [![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
@@ -9,7 +10,7 @@
 video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in
 your app.
 
-# Table of contents
+## Table of contents
 
 - [Table of contents](#table-of-contents)
 - [Project description](#project-description)
@@ -27,18 +28,31 @@ your app.
 - [Dependencies](#dependencies)
 - [FAQ](#faq)
 
-# Project description
+<!--</documentation_excluded>-->
+<!--<documentation_only>
+---
+title: api.video Swift Player
+meta: 
+  description: The official api.video Swift Player component for api.video. [api.video](https://api.video/) is the video infrastructure for product builders. Lightning fast video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in your app.
+---
 
-Easily integrate a video player for videos from [api.video](https://api.video) in your iOS
+# api.video Swift Player
+
+[api.video](https://api.video/) is the video infrastructure for product builders. Lightning fast video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in your app.
+
+</documentation_only>-->
+## Project description
+
+Easily integrate a video player for videos from [api.video](https://api.video) in your Swift
 application.
 
 ![](https://github.com/apivideo/api.video-swift-player/blob/main/Assets/player-preview.png)
 
-# Getting started
+## Getting started
 
-## Installation
+### Installation
 
-### Swift Package Manager
+#### Swift Package Manager
 
 In the Project Navigator select your own project. Then select the project in the Project section and click on the
 Package Dependencies tab. Click on the "+" button at the bottom. Paste the below url on the search bar on the top right.
@@ -56,34 +70,31 @@ Or add this in your Package.swift
     ],
 ```
 
-### Cocoapods
+#### Cocoapods
 
 Add `pod 'ApiVideoPlayer', '1.1.4'` in your `Podfile`
 
 Run `pod install`
 
-## Retrieve your video Id
+### Retrieve your video Id
 
 At this point, you must have uploaded a least one video to your account. If you haven't
-see [how to upload a video](https://docs.api.video/docs/upload-a-video-regular-upload). You'll need
+see [how to upload a video](https://docs.api.video/vod/upload-a-video-regular-upload/). You'll need
 a video Id to use this component and play a video from api.video. To get yours, follow these steps:
 
 1. [Log into your account](https://dashboard.api.video/login) or create
    one [here](https://dashboard.api.video/register).
 2. Copy your API key (sandbox or production if you are subscribed to one of
    our [plan](https://api.video/pricing)).
-3. Go to [the official api.video documentation](https://docs.api.video/docs).
-4. Log into your account in the top right corner. If it's already done, be sure it's the account you
-   want to use.
-5. Go to API Reference -> Videos -> [List all videos](https://docs.api.video/reference/list-videos)
-6. On the right, be sure the "Authentication" section contains the API key you want to use.
-7. Generate your upload token by clicking the "Try It!" button in the right section
-8. Copy the "videoId" value of one of elements of the response in the right section.
+3. Go to [the official api.video documentation](https://docs.api.video/).
+4. Go to API Reference -> Videos -> [List all videos](https://docs.api.video/reference/api/Videos#list-all-video-objects)
+5. Create a `get` request to the `/videos` endpoint based on the reference, using a tool like Postman.
+6. Copy the "videoId" value of one of elements of the API response.
 
 Alternatively, you can find your video Id in the video details of
 your [dashboard](https://dashboard.api.video).
 
-## Usage
+### Usage
 
 1. Imports the library
 
@@ -184,7 +195,7 @@ override func viewDidAppear(_ animated: Bool) {
 }
 ```
 
-### Remote control
+#### Remote control
 
 If you want to enable the remote control do the following:
 
@@ -199,7 +210,7 @@ When you have to remove it set `enableRemoteControl` to false
 
 By default the remote control is hidden.
 
-### Supported player views
+#### Supported player views
 
 The api.video Swift player comes with a specific view `ApiVideoPlayerView` to display the video
 and its controller. If you require a customization of this view such as changing a button color,...,
@@ -232,7 +243,7 @@ controller.play()
 
 - [`AVPlayerLayer`](https://developer.apple.com/documentation/avfoundation/avplayerlayer). A view that only display the video. It requires more work to be used.
 
-## Play an api.video video in your AVPlayer
+### Play an api.video video in your AVPlayer
 
 If you are using AVPlayer directly, you can use the api.video Swift extensions:
 
@@ -250,7 +261,7 @@ val player = AVPlayer() // You already have that in your code
 avPlayer.replaceCurrentItem(withHls: videoOptions)
 ```
 
-# Sample application
+## Sample application
 
 A demo application demonstrates how to use player.
 See [`/example`](https://github.com/apivideo/api.video-swift-player/tree/main/Examples)
@@ -260,12 +271,12 @@ On the first run, you will have to set your video Id:
 
 1. Replace "YOUR_VIDEO_ID" by your video Id
 
-# Documentation
+## Documentation
 
 - [Player documentation](https://apivideo.github.io/api.video-swift-player/documentation/apivideoplayer/)
 - [api.video documentation](https://docs.api.video)
 
-# Dependencies
+## Dependencies
 
 We are using external library
 
@@ -273,7 +284,7 @@ We are using external library
 | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [ApiVideoPlayerAnalytics](https://github.com/apivideo/api.video-swift-player-analytics) | [README.md](https://github.com/apivideo/api.video-swift-player-analytics#readme) |
 
-# FAQ
+## FAQ
 
 If you have any questions, ask us here: [https://community.api.video](https://community.api.video) or
 use [Issues](https://github.com/apivideo/api.video-swift-player/issues).
