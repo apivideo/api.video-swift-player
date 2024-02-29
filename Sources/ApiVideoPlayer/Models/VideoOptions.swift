@@ -38,7 +38,7 @@ public struct VideoOptions {
             self.sessionTokenUrl = "\(vodUrl)/session"
         } else {
             self.hlsManifestUrl = "\(liveUrl).m3u8"
-            self.sessionTokenUrl = self.hlsManifestUrl
+            self.sessionTokenUrl =  "\(liveUrl)/session"
         }
 
         self.mp4Url = "\(vodUrl)/mp4/source.mp4"
