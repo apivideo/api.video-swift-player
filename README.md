@@ -66,13 +66,13 @@ Or add this in your Package.swift
 
 ```
   dependencies: [
-        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.1.4"),
+        .package(url: "https://github.com/apivideo/api.video-swift-player.git", from: "1.2.0"),
     ],
 ```
 
 #### Cocoapods
 
-Add `pod 'ApiVideoPlayer', '1.1.4'` in your `Podfile`
+Add `pod 'ApiVideoPlayer', '1.2.0'` in your `Podfile`
 
 Run `pod install`
 
@@ -266,10 +266,6 @@ avPlayer.replaceCurrentItem(withHls: videoOptions)
 A demo application demonstrates how to use player.
 See [`/example`](https://github.com/apivideo/api.video-swift-player/tree/main/Examples)
 folder.
-
-On the first run, you will have to set your video Id:
-
-1. Replace "YOUR_VIDEO_ID" by your video Id
 
 ## Documentation
 

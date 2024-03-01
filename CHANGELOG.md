@@ -1,6 +1,10 @@
 # Changelog
 All changes to this project will be documented in this file.
 
+## [1.2.0] - 2024-03-01
+- Add support for private live stream
+- Add an API to set a custom `AVPlayerViewController`
+
 ## [1.1.4] - 2023-10-09
 - Fix analytics when currentTime < 0
 - Examples: Add default videoId
