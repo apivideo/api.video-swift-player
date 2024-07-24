@@ -137,9 +137,9 @@ final class ApiVideoPlayerControllerIntegrationTests: XCTestCase {
             delegates: [mockDelegate]
         )
 
-        self.wait(for: [ready], timeout: 10)
+        await fulfillment(of: [ready], timeout: 10)
         controller.play()
-        self.wait(for: [play], timeout: 2)
-        self.wait(for: [expectationError], timeout: 15)
+        await fulfillment(of: [play], timeout: 2)
+        await fulfillment(of: [expectationError], timeout: 15)
     }
 }
