@@ -65,6 +65,12 @@
 		21F14AE02C50E77A00B61588 /* ApiVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F14ABD2C50E77A00B61588 /* ApiVideoPlayer.swift */; };
 		21F14AE12C50E77A00B61588 /* SwiftUIPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F14ABE2C50E77A00B61588 /* SwiftUIPlayerViewController.swift */; };
 		21F14AE42C50E7E500B61588 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21F14AE22C50E7E400B61588 /* Media.xcassets */; };
+		21F2E1042C52981000E833C2 /* ApiVideoPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */; };
+		21F2E1052C52981000E833C2 /* ApiVideoPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		21F2E1082C52981800E833C2 /* ApiVideoPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */; };
+		21F2E1092C52981800E833C2 /* ApiVideoPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		21F2E10C2C52A28000E833C2 /* ApiVideoPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */; };
+		21F2E10D2C52A28000E833C2 /* ApiVideoPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +95,27 @@
 			remoteGlobalIDString = 21F149552C50DF0E00B61588;
 			remoteInfo = ApiVidePlayer;
 		};
+		21F2E1062C52981000E833C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21F1494D2C50DF0E00B61588 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 21F149552C50DF0E00B61588;
+			remoteInfo = ApiVideoPlayer;
+		};
+		21F2E10A2C52981800E833C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21F1494D2C50DF0E00B61588 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 21F149552C50DF0E00B61588;
+			remoteInfo = ApiVideoPlayer;
+		};
+		21F2E10E2C52A28000E833C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21F1494D2C50DF0E00B61588 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 21F149552C50DF0E00B61588;
+			remoteInfo = ApiVideoPlayer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -98,6 +125,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				21F2E1052C52981000E833C2 /* ApiVideoPlayer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,6 +136,18 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				21F2E1092C52981800E833C2 /* ApiVideoPlayer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		21F2E1102C52A28000E833C2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				21F2E10D2C52A28000E833C2 /* ApiVideoPlayer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -209,6 +249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21F2E10C2C52A28000E833C2 /* ApiVideoPlayer.framework in Frameworks */,
 				21B395962C51340900451CF1 /* ApiVideoClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -217,6 +258,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21F2E1042C52981000E833C2 /* ApiVideoPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +266,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21F2E1082C52981800E833C2 /* ApiVideoPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +328,7 @@
 				21BD67A82C51467B0039DEB6 /* ApiVideoPlayer.framework */,
 				21BD67A92C51467B0039DEB6 /* Example iOS.app */,
 				21BD67AA2C51467B0039DEB6 /* Example iOSSwiftUI.app */,
+				21F2E1032C52981000E833C2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -499,6 +543,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		21F2E1032C52981000E833C2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -540,11 +591,13 @@
 				21F1495C2C50DF0F00B61588 /* Sources */,
 				21F1495D2C50DF0F00B61588 /* Frameworks */,
 				21F1495E2C50DF0F00B61588 /* Resources */,
+				21F2E1102C52A28000E833C2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				21F149632C50DF0F00B61588 /* PBXTargetDependency */,
+				21F2E10F2C52A28000E833C2 /* PBXTargetDependency */,
 			);
 			name = ApiVideoPlayerTests;
 			packageProductDependencies = (
@@ -567,6 +620,7 @@
 			);
 			dependencies = (
 				21B395602C50EE0300451CF1 /* PBXTargetDependency */,
+				21F2E1072C52981000E833C2 /* PBXTargetDependency */,
 			);
 			name = "Example iOS";
 			productName = iOSExampleUIKit;
@@ -586,6 +640,7 @@
 			);
 			dependencies = (
 				21B395652C50FA7B00451CF1 /* PBXTargetDependency */,
+				21F2E10B2C52981800E833C2 /* PBXTargetDependency */,
 			);
 			name = "Example iOSSwiftUI";
 			productName = iOSExampleSwiftUI;
@@ -775,6 +830,21 @@
 			isa = PBXTargetDependency;
 			target = 21F149552C50DF0E00B61588 /* ApiVideoPlayer */;
 			targetProxy = 21F149622C50DF0F00B61588 /* PBXContainerItemProxy */;
+		};
+		21F2E1072C52981000E833C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 21F149552C50DF0E00B61588 /* ApiVideoPlayer */;
+			targetProxy = 21F2E1062C52981000E833C2 /* PBXContainerItemProxy */;
+		};
+		21F2E10B2C52981800E833C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 21F149552C50DF0E00B61588 /* ApiVideoPlayer */;
+			targetProxy = 21F2E10A2C52981800E833C2 /* PBXContainerItemProxy */;
+		};
+		21F2E10F2C52A28000E833C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 21F149552C50DF0E00B61588 /* ApiVideoPlayer */;
+			targetProxy = 21F2E10E2C52A28000E833C2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1237,7 +1307,7 @@
 			repositoryURL = "https://github.com/apivideo/api.video-swift-player-analytics";
 			requirement = {
 				kind = exactVersion;
-				version = 1.1.1;
+				version = 2.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
