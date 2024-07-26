@@ -8,8 +8,7 @@ import MediaPlayer
 /// It is used internally of the ``ApiVideoPlayerView``.
 /// It could be used directly if you want to use the player with a fully custom UI.
 public class ApiVideoPlayerController: NSObject {
-    internal let player = AVPlayer(playerItem: nil)
-    private var analytics: PlayerAnalytics?
+    internal let player = ApiVideoAnalyticsAVPlayer(playerItem: nil)
     private var timeObserver: Any?
     private var isFirstPlay = true
     private var isSeeking = false
@@ -163,9 +162,7 @@ public class ApiVideoPlayerController: NSObject {
             name: .AVPlayerItemDidPlayToEndTime,
             object: playerItem
         )
-        if let urlAsset = playerItem.asset as? AVURLAsset {
-            self.setUpAnalytics(url: urlAsset.url.absoluteString)
-        }
+
     }
 
     private func notifyError(error: Error) {
@@ -209,15 +206,6 @@ public class ApiVideoPlayerController: NSObject {
         player.removeTimeObserver(observer)
     }
 
-    private func setUpAnalytics(url: String) {
-        do {
-            let option = try Options(mediaUrl: url)
-            self.analytics = PlayerAnalytics(options: option)
-        } catch {
-            print("Failed to initiate analytics for \(url)")
-        }
-    }
-
     /// Get if the player is playing a live stream.
     /// - Returns: True if the player is playing a live stream
     public var isLive: Bool {
@@ -251,18 +239,7 @@ public class ApiVideoPlayerController: NSObject {
     }
 
     private func seekImpl(to time: CMTime, completion: @escaping (Bool) -> Void) {
-        let from = self.currentTime
         self.player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { completed in
-            self.analytics?
-                .seek(
-                    from: Float(max(0, from.seconds)),
-                    to: Float(max(0, time.seconds))
-                ) { result in
-                    switch result {
-                    case .success: break
-                    case let .failure(error): print("Failed to send seek event to analytics: \(error)")
-                    }
-                }
             self.infoNowPlaying.updateCurrentTime(currentTime: time)
             completion(completed)
         }
@@ -514,12 +491,6 @@ public class ApiVideoPlayerController: NSObject {
             self.replay()
             self.multicastDelegate.didLoop()
         }
-        self.analytics?.end { result in
-            switch result {
-            case .success: break
-            case let .failure(error): print("Failed to send end event to analytics: \(error)")
-            }
-        }
         self.multicastDelegate.didEnd()
     }
 
@@ -578,12 +549,6 @@ public class ApiVideoPlayerController: NSObject {
             if self.autoplay {
                 self.play()
             }
-            self.analytics?.ready { result in
-                switch result {
-                case .success: break
-                case let .failure(error): print("Failed to send ready event to analytics: \(error)")
-                }
-            }
         }
     }
 
@@ -596,12 +561,6 @@ public class ApiVideoPlayerController: NSObject {
             return
         }
 
-        self.analytics?.pause { result in
-            switch result {
-            case .success: break
-            case let .failure(error): print("Failed to send pause event to analytics: \(error)")
-            }
-        }
         self.infoNowPlaying.pause(currentTime: self.currentTime)
         self.multicastDelegate.didPause()
     }
@@ -623,19 +582,7 @@ public class ApiVideoPlayerController: NSObject {
             )
 
             #endif
-            self.analytics?.play { result in
-                switch result {
-                case .success: break
-                case let .failure(error): print("Failed to send play event to analytics: \(error)")
-                }
-            }
         } else {
-            self.analytics?.resume { result in
-                switch result {
-                case .success: break
-                case let .failure(error): print("Failed to send resume event to analytics: \(error)")
-                }
-            }
             self.infoNowPlaying.play(currentTime: self.currentTime)
         }
         #if !os(macOS)

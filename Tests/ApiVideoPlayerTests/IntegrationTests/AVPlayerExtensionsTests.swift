@@ -10,12 +10,13 @@ final class AVPlayerExtensions: XCTestCase {
         _ = observer.readyExpectation
 
         let avPlayer = AVPlayer(playerItem: nil)
+        avPlayer.addObserver(observer, forKeyPath: "status", options: .new, context: nil)
         avPlayer.replaceCurrentItem(withHls: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod))
-        avPlayer.currentItem?.addObserver(observer, forKeyPath: "status", options: .new, context: nil)
+
         avPlayer.play()
 
         waitForExpectations(timeout: 10, handler: nil)
-        avPlayer.currentItem?.removeObserver(observer, forKeyPath: "status")
+        avPlayer.removeObserver(observer, forKeyPath: "status")
     }
 
     func testValidMP4VideoIdPlay() throws {
@@ -23,12 +24,13 @@ final class AVPlayerExtensions: XCTestCase {
         _ = observer.readyExpectation
 
         let avPlayer = AVPlayer(playerItem: nil)
+        avPlayer.addObserver(observer, forKeyPath: "status", options: .new, context: nil)
         avPlayer.replaceCurrentItem(withMp4: VideoOptions(videoId: VideoId.validVideoId, videoType: .vod))
-        avPlayer.currentItem?.addObserver(observer, forKeyPath: "status", options: .new, context: nil)
+      
         avPlayer.play()
 
         waitForExpectations(timeout: 10, handler: nil)
-        avPlayer.currentItem?.removeObserver(observer, forKeyPath: "status")
+        avPlayer.removeObserver(observer, forKeyPath: "status")
     }
 }
 

@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apivideo/api.video-swift-player-analytics",
       "state" : {
-        "revision" : "a9811da994c2dedbd387888c92e292abfd738948",
-        "version" : "1.1.1"
+        "revision" : "fe35c711a9667a010d921c39364c30ffe8b02e32",
+        "version" : "2.0.0"
       }
     }
   ],
